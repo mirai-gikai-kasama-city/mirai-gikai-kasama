@@ -9,6 +9,7 @@ import type { CommitteeMeetingListItem } from "@/features/committees/shared/type
 import { countMeetingsBySourceKind } from "@/features/committees/shared/utils/committee-source";
 import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
 import { routes } from "@/lib/routes";
+import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
 import { cn } from "@/lib/utils";
 import { formatDateWithDots } from "@/lib/utils/date";
 import { SourceBadge } from "../../shared/components/source-badge";
@@ -252,7 +253,8 @@ export function SourcesPage({ meetings }: SourcesPageProps) {
               ))}
             </ol>
             <p className="text-sm leading-relaxed text-mirai-text-secondary">
-              どの資料がもとでも、見出し・要約・解説は運営者（田川市政ラボ）がAIを使って書いたもので、
+              どの資料がもとでも、見出し・要約・解説は運営者（{OPERATOR_NAME}
+              ）がAIを使って書いたもので、
               市や市議会の公式の見解ではありません。数字・人名・採決の結果はもとの資料と照らして確かめていますが、
               誤りに気づかれた場合は
               <TextLink href={routes.privacy() as Route} className="mx-1">

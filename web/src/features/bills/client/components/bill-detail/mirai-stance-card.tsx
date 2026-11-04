@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 import type { BillStatusEnum, MiraiStance } from "../../../shared/types";
 import { getStanceStyles } from "../../../shared/utils/stance-styles";
 
@@ -29,11 +30,11 @@ export function MiraiStanceCard({ stance, billStatus }: MiraiStanceCardProps) {
           <div className="flex flex-col gap-8">
             {/* ヘッダー部分：ロゴとスタンスバッジ */}
             <div className="flex flex-col items-center gap-8">
-              {/* みらい議会＠田川市ロゴ */}
+              {/* サービスのロゴ */}
               <div className="relative w-37 h-31">
                 <Image
                   src="/img/logo.svg"
-                  alt="みらい議会＠田川市"
+                  alt={SITE_NAME}
                   fill
                   className="object-contain"
                 />

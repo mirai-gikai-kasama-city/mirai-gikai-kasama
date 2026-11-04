@@ -1,5 +1,8 @@
 name: Council Auto Update
 
+# 【停止中】田川市向けの処理のまま笠間市版に引き継いだワークフローのため、スケジュールを外し、
+# 手動実行してもジョブが動かないようにしている。笠間市のデータ取得に作り替えるまで有効にしないこと。
+#
 # 田川市公式サイトと公式YouTubeチャンネルを定期的に見に行き、新しい市議会のデータを
 # 取り込んで公開する（人の手を介さない部分）。
 #
@@ -20,9 +23,6 @@ name: Council Auto Update
 #   REVALIDATE_SECRET（web の /api/revalidate）。無ければDB投入と再検証を飛ばす
 # 手順の詳細: docs/20260923_0000_市議会データの定期自動更新.md
 on:
-  schedule:
-    # 毎日 06:00 JST（21:00 UTC）。公式サイトの更新は平日の日中なので、翌朝に拾う
-    - cron: "0 21 * * *"
   workflow_dispatch:
 
 permissions:
@@ -39,6 +39,7 @@ env:
 
 jobs:
   update:
+    if: ${{ false }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
 

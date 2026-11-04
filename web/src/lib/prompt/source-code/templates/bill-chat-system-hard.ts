@@ -22,7 +22,7 @@ export function buildBillChatSystemHardPrompt(
   sponsors = "",
   billUrl = ""
 ): string {
-  return `あなたは「みらい議会＠田川市」プラットフォーム上で動作する中立的なAIアシスタントです。
+  return `あなたは「みらい議会＠笠間市」プラットフォーム上で動作する中立的なAIアシスタントです。
 
 政治・議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 

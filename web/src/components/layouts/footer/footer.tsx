@@ -1,6 +1,5 @@
 "use client";
 
-import { Instagram } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,8 +7,8 @@ import { usePathname } from "next/navigation";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
-import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
-import { SOCIAL_LINKS } from "@/lib/social-links";
+import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 import { policyLinks, primaryLinks } from "./footer.config";
 
 export function Footer() {
@@ -25,7 +24,6 @@ export function Footer() {
         <FooterLogoSection />
         <FooterPrimaryLinks />
         <FooterPolicies />
-        <FooterSocialLinks />
         <FooterDisclaimer />
         <FooterCopyright />
       </div>
@@ -38,7 +36,7 @@ function FooterLogoSection() {
     <div className="flex flex-col items-center text-center mb-9">
       <Link
         href={routes.home()}
-        aria-label="みらい議会＠田川市 トップページ"
+        aria-label={`${SITE_NAME} トップページ`}
         className="flex items-center gap-2"
       >
         <Image
@@ -50,7 +48,7 @@ function FooterLogoSection() {
         />
         <Image
           src="/img/service-logo.svg"
-          alt="みらい議会＠田川市"
+          alt={SITE_NAME}
           width={136}
           height={25}
           className="h-auto w-[136px]"
@@ -72,8 +70,6 @@ function FooterPrimaryLinks() {
           <li key={link.label} className="whitespace-nowrap">
             <Link
               href={link.href as Route}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noreferrer" : undefined}
               className="transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {link.label}
@@ -93,8 +89,6 @@ function FooterPolicies() {
           <li key={policy.label} className="flex items-center gap-2">
             <Link
               href={policy.href as Route}
-              target={policy.external ? "_blank" : undefined}
-              rel={policy.external ? "noreferrer" : undefined}
               className="whitespace-nowrap transition-colors hover:text-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {policy.label}
@@ -103,22 +97,6 @@ function FooterPolicies() {
           </li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-function FooterSocialLinks() {
-  return (
-    <div className="mb-5 flex items-center justify-center">
-      <a
-        href={SOCIAL_LINKS.instagram.url}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Instagram（田川市政ラボ）"
-        className="text-mirai-text-secondary transition-colors hover:text-primary"
-      >
-        <Instagram className="size-6" />
-      </a>
     </div>
   );
 }
@@ -136,7 +114,10 @@ function FooterDisclaimer() {
         >
           {EXTERNAL_LINKS.UPSTREAM_MIRAI_GIKAI}
         </a>
-        ）を有志団体「田川市政ラボ」が改変・運営する非公式版です。これは政党チームみらいが運営しているものではありません。
+        ）を有志が改変・運営する非公式版です。
+      </p>
+      <p className="mt-1">
+        これは政党チームみらいが運営しているものではありません。
       </p>
       <p className="mt-1">{`運営: ${OPERATOR_NAME}`}</p>
       <p className="mt-1">
@@ -158,7 +139,7 @@ function FooterDisclaimer() {
 function FooterCopyright() {
   return (
     <div className="text-center text-sm font-medium text-mirai-text-secondary">
-      © 2026 田川市政ラボ All rights Reserved
+      {`© 2026 ${OPERATOR_NAME} All rights Reserved`}
     </div>
   );
 }

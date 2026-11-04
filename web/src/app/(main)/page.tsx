@@ -21,7 +21,7 @@ import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/g
 import { countQuestionsForSession } from "@/features/general-questions/server/loaders/get-general-questions";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
-import { buildOrganizationJsonLd } from "@/lib/seo/organization-json-ld";
+import { buildOperatorJsonLd } from "@/lib/seo/operator-json-ld";
 import { PAGE_COPY } from "@/lib/seo/page-copy";
 import {
   buildPageShareMetadata,
@@ -103,7 +103,7 @@ export default async function Home() {
   return (
     <>
       {/* 運営者の構造化データ（WebSite は全ページ共通のレイアウトから出している） */}
-      <JsonLd data={buildOrganizationJsonLd(env.webUrl)} />
+      <JsonLd data={buildOperatorJsonLd(env.webUrl)} />
       <Hero />
 
       {/*

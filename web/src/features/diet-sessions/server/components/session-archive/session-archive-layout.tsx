@@ -29,7 +29,7 @@ export function SessionArchiveLayout({ items }: SessionArchiveLayoutProps) {
               議会ごとのまとめ
             </h1>
             <p className="text-sm font-medium text-mirai-text-muted">
-              田川市議会の全ての会期を新しい順に一覧できます。会期を選ぶと、その会期に提出された議案の集計・ハイライトのまとめを見ることができます。
+              笠間市議会の全ての会期を新しい順に一覧できます。会期を選ぶと、その会期に提出された議案の集計・ハイライトのまとめを見ることができます。
             </p>
           </header>
 

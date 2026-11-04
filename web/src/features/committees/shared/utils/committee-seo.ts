@@ -1,5 +1,5 @@
 import { routes } from "@/lib/routes";
-import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
+import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
 import {
   countCharacters,
   DESCRIPTION_MIN_LENGTH,
@@ -101,7 +101,7 @@ export function buildCommitteeMeetingJsonLd({
     inLanguage: "ja",
     mainEntityOfPage: url,
     author: {
-      "@type": "Organization",
+      "@type": "Person",
       name: OPERATOR_NAME,
     },
     publisher: {

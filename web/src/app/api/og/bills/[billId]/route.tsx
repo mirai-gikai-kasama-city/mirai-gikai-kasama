@@ -26,6 +26,7 @@ import {
   pickCoverVariant,
 } from "@/features/bills/shared/utils/bill-cover";
 import { getBillDateLabel } from "@/features/bills/shared/utils/bill-status";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 import {
   COVER_COLORS,
   type CoverFamily,
@@ -205,7 +206,7 @@ export async function GET(
           opacity: 0.7,
         }}
       >
-        みらい議会＠田川市
+        {SITE_NAME}
       </div>
 
       {/* メインテキスト */}

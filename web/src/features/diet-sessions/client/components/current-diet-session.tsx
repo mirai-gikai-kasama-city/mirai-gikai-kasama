@@ -60,7 +60,7 @@ export function CurrentDietSession({
             `}
           >
             <span className="text-base font-bold leading-[1.48]">
-              {session == null ? "田川市議会閉会中" : "田川市議会会期中"}
+              {session == null ? "笠間市議会閉会中" : "笠間市議会会期中"}
             </span>
           </div>
         </div>

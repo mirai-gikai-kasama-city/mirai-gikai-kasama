@@ -1,16 +1,8 @@
-import { EXTERNAL_LINKS } from "@/config/external-links";
 import { routes } from "@/lib/routes";
 
-export type FooterLink = {
+type FooterLink = {
   label: string;
   href: string;
-  external?: boolean;
-};
-
-export type FooterPolicyLink = {
-  label: string;
-  href: string;
-  external?: boolean;
 };
 
 export const primaryLinks: FooterLink[] = [
@@ -64,17 +56,11 @@ export const primaryLinks: FooterLink[] = [
   },
   {
     label: "みらい議会とは",
-    href: EXTERNAL_LINKS.ABOUT_NOTE,
-    external: true,
+    href: `${routes.home()}#about`,
   },
 ];
 
-export const policyLinks: FooterPolicyLink[] = [
-  {
-    label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
-  },
+export const policyLinks: FooterLink[] = [
   {
     label: "利用規約",
     href: routes.terms(),
@@ -82,10 +68,5 @@ export const policyLinks: FooterPolicyLink[] = [
   {
     label: "プライバシーポリシー",
     href: routes.privacy(),
-  },
-  {
-    label: "自主制作ガイドライン",
-    href: EXTERNAL_LINKS.FORK_GUIDELINES_NOTE,
-    external: true,
   },
 ];

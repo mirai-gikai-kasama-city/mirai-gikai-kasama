@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { InterviewHeaderActions } from "@/features/interview-session/client/components/interview-header-actions";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 import { HamburgerMenu } from "./hamburger-menu";
 import { useHideOnScroll } from "./use-hide-on-scroll";
 
@@ -90,14 +91,14 @@ export function HeaderClient() {
           >
             <Image
               src="/img/logo.svg"
-              alt="みらい議会＠田川市"
+              alt={SITE_NAME}
               width={42}
               height={36}
               className="shrink-0"
             />
             <Image
               src="/img/service-logo.svg"
-              alt="みらい議会＠田川市"
+              alt={SITE_NAME}
               width={115}
               height={21}
               className="h-auto w-[96px] shrink-0 sm:w-[115px]"

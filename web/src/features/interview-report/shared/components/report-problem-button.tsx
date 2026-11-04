@@ -2,6 +2,10 @@ import Image from "next/image";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 
 export function ReportProblemButton() {
+  if (EXTERNAL_LINKS.REPORT == null) {
+    return null;
+  }
+
   return (
     <a
       href={EXTERNAL_LINKS.REPORT}

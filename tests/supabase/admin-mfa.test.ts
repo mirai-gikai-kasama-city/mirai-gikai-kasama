@@ -85,7 +85,7 @@ describe("管理者の二段階認証（TOTP）", () => {
     const { data } = await client.auth.mfa.enroll({
       factorType: "totp",
       friendlyName: "admin-test",
-      issuer: "みらい議会＠田川市 管理画面",
+      issuer: "みらい議会＠笠間市 管理画面",
     });
     expect(data?.totp.qr_code).toMatch(/^data:image\/svg\+xml/);
     expect(data?.totp.secret).toMatch(/^[A-Z2-7]+$/);

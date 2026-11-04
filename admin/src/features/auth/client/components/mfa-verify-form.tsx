@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { routes } from "@/lib/routes";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 import { isCompleteTotpCode } from "../../shared/utils/mfa-error-message";
-import { verifyLoginCode } from "../lib/mfa-client";
+import { TOTP_ISSUER, verifyLoginCode } from "../lib/mfa-client";
 import { TotpCodeField } from "./totp-code-field";
 
 /** ログインのあと、認証アプリの6桁コードを入力して二段階認証を完了する */
@@ -44,9 +44,8 @@ export function MfaVerifyForm() {
         />
         <p className="text-xs text-muted-foreground">
           スマホの認証アプリ（Google Authenticator や Microsoft Authenticator
-          など）を開き、「みらい議会＠田川市
-          管理画面」に表示されている数字を入力してください。
-          30秒ごとに変わります。
+          など）を開き、「{TOTP_ISSUER}
+          」に表示されている数字を入力してください。 30秒ごとに変わります。
         </p>
       </div>
 

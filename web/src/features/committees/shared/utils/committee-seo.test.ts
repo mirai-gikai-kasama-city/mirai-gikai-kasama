@@ -137,12 +137,12 @@ describe("buildCommitteeMeetingJsonLd", () => {
 
   it("author は運営者、publisher はサイト名", () => {
     expect(data.author).toEqual({
-      "@type": "Organization",
-      name: "田川市政ラボ",
+      "@type": "Person",
+      name: "すがのゆういち",
     });
     expect(data.publisher).toEqual({
       "@type": "Organization",
-      name: "みらい議会＠田川市",
+      name: "みらい議会＠笠間市",
     });
   });
 

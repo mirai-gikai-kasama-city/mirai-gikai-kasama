@@ -1,2 +1,4 @@
 id,name,start_date,end_date,created_at,updated_at,slug,shugiin_url,is_active
+1762bdfc-902e-56ab-bc0b-f46a54407250,令和8年第1回臨時会,2026-01-21,2026-01-21,2026-01-21T00:00:00.000Z,2026-01-21T00:00:00.000Z,kasama-r8-1-rinji,https://www.city.kasama.lg.jp/page/page017250.html,false
+c9816f52-7271-5b31-9a99-cd07148da677,令和8年第1回定例会,2026-02-25,2026-03-19,2026-02-25T00:00:00.000Z,2026-02-25T00:00:00.000Z,kasama-r8-1-teirei,https://www.city.kasama.lg.jp/page/page017250.html,false
 1809de64-ebdf-5d95-a1a5-bf2d083509c2,令和8年第2回定例会,2026-06-02,2026-06-18,2026-06-02T00:00:00.000Z,2026-06-02T00:00:00.000Z,kasama-r8-2-teirei,https://www.city.kasama.lg.jp/page/page017485.html,false

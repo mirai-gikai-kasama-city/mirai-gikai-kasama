@@ -30,6 +30,13 @@ describe("getBillResultLabel", () => {
     expect(getBillResultLabel("enacted", "原案承認")).toBe("承認");
   });
 
+  it("笠間市の諮問の答申と選挙は、可決と出さない", () => {
+    expect(getBillResultLabel("enacted", "棄却すべきと答申")).toBe(
+      "棄却すべきと答申"
+    );
+    expect(getBillResultLabel("enacted", "当選")).toBe("当選");
+  });
+
   describe("成立した議案（enacted）", () => {
     it.each([
       ["原案可決", "可決"],

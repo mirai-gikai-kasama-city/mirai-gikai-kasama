@@ -1,5 +1,9 @@
 /**
- * 議員別賛否の公開状況の判定【田川市専用】
+ * 議員別賛否の公開状況の判定
+ *
+ * 笠間市議会も、議会だよりの賛否一覧に載せるのは賛否が分かれた議案だけなので、同じ判定を使う
+ * （異議なく決まったことは会議録で確かめて seed に入れている）。
+ * 下の無記名投票と会期の一覧は、フォーク元の田川市のデータ。
  *
  * 田川市議会は「賛否が分かれた案件」についてのみ、議員別の賛否（○×表）を
  * 議決結果ページに公開している。このため bills.member_votes が無い議案は
@@ -52,8 +56,9 @@ const SESSIONS_WITHOUT_RESULT_PAGE: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * 「全会一致」と判定してよい議決結果。可決系のみを対象とし、
- * 否決系・修正議決・懲罰などの特殊な結果は unknown 扱いにする
+ * 「全会一致」と判定してよい議決結果。可決系と、笠間市の諮問への答申
+ * （議案と同じく異議の有無で決め、賛否が分かれれば賛否一覧に載る）を対象とし、
+ * 否決系・修正議決・懲罰・選挙（当選）などの特殊な結果は unknown 扱いにする
  */
 const UNANIMOUS_ELIGIBLE_RESULTS: ReadonlySet<string> = new Set([
   "原案可決",
@@ -61,8 +66,10 @@ const UNANIMOUS_ELIGIBLE_RESULTS: ReadonlySet<string> = new Set([
   "同意",
   "原案同意",
   "承認",
+  "原案承認",
   "認定",
   "採択",
+  "棄却すべきと答申",
 ]);
 
 export function resolveVoteDisclosure(input: {

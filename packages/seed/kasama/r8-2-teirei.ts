@@ -9,7 +9,7 @@
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  * 議員の評価につながる表現は避け、討論の主張は発言者の主張として書く。
  */
-import type { BillDescriptionSource } from "@mirai-gikai/shared/council/bill-source-section";
+import { type KasamaBill, marks, SENKETSU_NOTE } from "./types";
 
 /** 議会だより 第82号の賛否一覧の列順。氏名は会議録で確認した */
 export const R8_2_MEMBERS = [
@@ -37,30 +37,6 @@ export const R8_2_MEMBERS = [
   "畑岡洋二",
 ] as const;
 
-/** ○賛成 ●反対 欠欠席 －議長（採決に加わらない） */
-export type VoteMark = "○" | "●" | "欠" | "－";
-
-export interface RecordedVote {
-  /** 会議録に記録された本会議の採決結果 */
-  minutes: { total: number; for: number; against: number };
-  /** 議会だよりの賛否一覧。R8_2_MEMBERS と同じ順 */
-  marks: readonly VoteMark[];
-}
-
-export interface KasamaBill {
-  billNumberLabel: string;
-  title: string;
-  resultLabel: "原案同意" | "原案可決";
-  /** YYYY-MM-DD */
-  decidedOn: string;
-  vote?: RecordedVote;
-  source: BillDescriptionSource;
-  summary: string;
-  body: string;
-}
-
-const marks = (text: string): VoteMark[] => [...text] as VoteMark[];
-
 export const R8_2_SESSION = {
   key: "r8-2-teirei",
   name: "令和8年第2回定例会",
@@ -68,7 +44,95 @@ export const R8_2_SESSION = {
   endDate: "2026-06-18",
 } as const;
 
+const REPORT_PROCESS =
+  "委員会での審査は省略され、質疑・討論はなく、6月2日に異議なく承認されました。";
+
 export const R8_2_BILLS: readonly KasamaBill[] = [
+  {
+    billNumberLabel: "選挙第2号",
+    title: "笠間市選挙管理委員会委員及び同補充員の選挙について",
+    resultLabel: "当選",
+    decidedOn: "2026-06-02",
+    submitter: null,
+    source: "minutes",
+    summary:
+      "選挙の事務を管理する選挙管理委員4名と補充員4名を議会が選ぶ選挙。議長の指名により当選した。",
+    body: `選挙の事務を管理する笠間市選挙管理委員会の委員と、欠員が出たときに備える補充員を選びます。投票ではなく議長が指名する方法（指名推選）をとることに異議はなく、6月2日に次の方々が当選しました。
+
+- 委員: 高橋上氏、藤﨑克久氏、水越均氏、大関律子氏
+- 補充員: 第1順位 瀧本一氏、第2順位 廣澤敬氏、第3順位 福田紀子氏、第4順位 久野穣氏`,
+  },
+  {
+    billNumberLabel: "報告第3号",
+    title:
+      "専決処分の承認を求めることについて（令和７年度笠間市一般会計補正予算（第１１号））",
+    resultLabel: "原案承認",
+    decidedOn: "2026-06-02",
+    source: "minutes",
+    summary:
+      "年度末に交付金などの額が確定し、増えた分を企業立地の基金に積み立てるなどの予算を、市長が先に決めたことの承認を求める報告。異議なく承認された。",
+    body: `## ポイント解説
+- ${SENKETSU_NOTE}
+- 各種の交付金や地方交付税の額が確定したため、令和8年3月31日に予算を決めました
+- 令和7年度の予算に3億238万9,000円を追加し、一般会計の総額を387億7,805万3,000円にした
+- 企業立地を促すための基金に3億378万1,000円を積み立てる
+- 市の貯金（財政調整基金）からの繰り入れは3,901万2,000円減らして、ゼロにする
+
+## 審議の経過
+${REPORT_PROCESS}`,
+  },
+  {
+    billNumberLabel: "報告第4号",
+    title:
+      "専決処分の承認を求めることについて（笠間市税条例の一部を改正する条例）",
+    resultLabel: "原案承認",
+    decidedOn: "2026-06-02",
+    source: "minutes",
+    summary:
+      "国の法律の改正に合わせて市税の条例を改めたことの承認を求める報告。自動車の環境性能割の廃止などに対応する。異議なく承認された。",
+    body: `## ポイント解説
+- ${SENKETSU_NOTE}
+- 地方税法の改正が令和8年3月31日に公布され、4月1日から実施する必要があったため、市の条例を改めました
+- 自動車の環境性能割が令和7年度末で廃止されたことに合わせ、軽自動車税「種別割」の名前を「軽自動車税」に改める
+- 所得税の基礎控除が引き上げられたことに合わせ、個人の市民税の住宅ローン控除の上限額の計算方法を加える
+
+## 審議の経過
+${REPORT_PROCESS}`,
+  },
+  {
+    billNumberLabel: "報告第5号",
+    title:
+      "専決処分の承認を求めることについて（笠間市の特別職の職員で常勤のものの給与及び旅費に関する条例の一部を改正する条例）",
+    resultLabel: "原案承認",
+    decidedOn: "2026-06-02",
+    source: "minutes",
+    summary:
+      "令和8年4月23日から令和9年3月31日まで、市長の給料を10%減らす条例改正の承認を求める報告。異議なく承認された。",
+    body: `## ポイント解説
+- ${SENKETSU_NOTE}
+- 令和8年4月23日から令和9年3月31日までの間、市長の給料の月額を10%減らす決まりを加える
+- 令和8年4月23日から実施する
+
+## 審議の経過
+${REPORT_PROCESS}`,
+  },
+  {
+    billNumberLabel: "報告第6号",
+    title:
+      "専決処分の承認を求めることについて（損害賠償の額を定めることについて）",
+    resultLabel: "原案承認",
+    decidedOn: "2026-06-02",
+    source: "minutes",
+    summary:
+      "岩間駅西口のロータリーで木が倒れて車を傷つけた事故について、修理費50万2,810円を支払うことの承認を求める報告。異議なく承認された。",
+    body: `## ポイント解説
+- ${SENKETSU_NOTE}
+- 令和8年5月1日の夜10時に、岩間駅西口のロータリーで強風により木が倒れ、止まっていた乗用車にあたった。乗っていた人にけがはなかった
+- 過失の割合は市が100%として示談し、車の修理費用50万2,810円を支払う
+
+## 審議の経過
+${REPORT_PROCESS}`,
+  },
   {
     billNumberLabel: "議案第29号",
     title: "笠間市副市長の選任に同意を求めることについて",

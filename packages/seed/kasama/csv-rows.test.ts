@@ -1,15 +1,34 @@
 import { describe, expect, it } from "vitest";
-import { buildCsvRows, buildMemberVotes, categorizeBill } from "./csv-rows";
+import {
+  buildBillContent,
+  buildCsvRows,
+  buildMemberVotes,
+  categorizeBill,
+} from "./csv-rows";
 import { R8_2_BILLS } from "./r8-2-teirei";
 import { KASAMA_SESSIONS } from "./sessions";
 
-const session = KASAMA_SESSIONS[0];
+function findSession(slug: string) {
+  const found = KASAMA_SESSIONS.find((item) => item.slug === slug);
+  if (!found) throw new Error(`${slug}がありません`);
+  return found;
+}
+
+const session = findSession("kasama-r8-2-teirei");
+const allBills = KASAMA_SESSIONS.flatMap((item) => item.bills);
 
 describe("categorizeBill", () => {
   it.each([
     ["令和８年度笠間市一般会計補正予算（第１号）", "予算"],
+    [
+      "専決処分の承認を求めることについて（令和７年度笠間市一般会計補正予算（第７号））",
+      "予算",
+    ],
     ["笠間市副市長の選任に同意を求めることについて", "人事"],
     ["笠間市教育委員会委員の任命に同意を求めることについて", "人事"],
+    ["人権擁護委員候補者の推薦に意見を求めることについて", "人事"],
+    ["笠間市選挙管理委員会委員及び同補充員の選挙について", "人事"],
+    ["審査請求に関する諮問について", "その他"],
     ["笠間市国民健康保険税条例の一部を改正する条例について", "条例"],
     ["動産購入契約の締結について（高規格救急自動車購入）", "契約・工事"],
     ["市道路線の認定について", "その他"],
@@ -70,9 +89,32 @@ describe("buildCsvRows", () => {
   const rows = buildCsvRows(KASAMA_SESSIONS);
 
   it("議案ごとに本文とタグの行を作る", () => {
-    expect(rows.billRows).toHaveLength(R8_2_BILLS.length);
-    expect(rows.contentRows).toHaveLength(R8_2_BILLS.length);
-    expect(rows.billTagRows).toHaveLength(R8_2_BILLS.length);
+    expect(rows.billRows).toHaveLength(allBills.length);
+    expect(rows.contentRows).toHaveLength(allBills.length);
+    expect(rows.billTagRows).toHaveLength(allBills.length);
+  });
+
+  it("IDが重複しない（会期が違えば同じ番号でも別の議案になる）", () => {
+    const ids = rows.billRows.map((row) => row.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it("提出者は議案に合わせて書き分ける", () => {
+    const contentOf = (slug: string, label: string) => {
+      const owner = findSession(slug);
+      const bill = owner.bills.find((b) => b.billNumberLabel === label);
+      if (!bill) throw new Error(`${label}がありません`);
+      return buildBillContent(owner, bill);
+    };
+    expect(contentOf("kasama-r8-2-teirei", "議案第35号")).toContain(
+      "**提出者**: 市長提出"
+    );
+    expect(contentOf("kasama-r8-1-teirei", "決議案第1号")).toContain(
+      "**提出者**: 議員提出"
+    );
+    expect(contentOf("kasama-r8-2-teirei", "選挙第2号")).not.toContain(
+      "**提出者**"
+    );
   });
 
   it("IDは実行のたびに同じになる", () => {

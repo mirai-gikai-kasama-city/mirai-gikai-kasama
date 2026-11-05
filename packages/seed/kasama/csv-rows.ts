@@ -4,7 +4,7 @@
  */
 import { buildBillSourceSection } from "@mirai-gikai/shared/council/bill-source-section";
 import { uuidv5 } from "../tagawa/uuidv5";
-import type { KasamaBill, VoteMark } from "./r8-2-teirei";
+import type { KasamaBill, KasamaSession, VoteMark } from "./types";
 
 /** 笠間市版のシードID専用の名前空間。変えると /bills/{id} の URL がすべて変わる */
 const KASAMA_SEED_NAMESPACE = "6f1d2c7e-3b84-4a59-9e21-7c0a5d8b4f13";
@@ -13,27 +13,13 @@ export function seedId(name: string): string {
   return uuidv5(KASAMA_SEED_NAMESPACE, name);
 }
 
-export interface KasamaSession {
-  /** 田川市の静的データと混ざらないよう、必ず kasama- で始める */
-  slug: `kasama-${string}`;
-  name: string;
-  startDate: string;
-  endDate: string;
-  /** 審議結果を確かめられる公式サイトのページ */
-  sourceUrl: string;
-  sourceTitle: string;
-  /** 賛否一覧が載っている PDF */
-  voteSourceUrl: string;
-  members: readonly string[];
-  bills: readonly KasamaBill[];
-}
-
 export type KasamaCategory = "予算" | "条例" | "人事" | "契約・工事" | "その他";
 
 export function categorizeBill(title: string): KasamaCategory {
   if (title.includes("予算")) return "予算";
-  if (/選任|任命/.test(title)) return "人事";
+  // 「選挙」は条例名にも出てくるので、条例を先に判定する
   if (title.includes("条例")) return "条例";
+  if (/選任|任命|推薦|選挙/.test(title)) return "人事";
   if (/契約|工事/.test(title)) return "契約・工事";
   return "その他";
 }
@@ -90,7 +76,9 @@ export function buildBillContent(session: KasamaSession, bill: KasamaBill): stri
     "",
     `- **議案番号**: ${bill.billNumberLabel}`,
     `- **件名**: ${bill.title}`,
-    "- **提出者**: 市長提出",
+    ...(bill.submitter === null
+      ? []
+      : [`- **提出者**: ${bill.submitter ?? "市長提出"}`]),
     `- **会期**: ${session.name}（${session.startDate}〜${session.endDate}）`,
     `- **議決結果**: ${bill.resultLabel}`,
     `- **議決日**: ${bill.decidedOn}`,

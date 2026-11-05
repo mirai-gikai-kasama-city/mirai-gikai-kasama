@@ -1,18 +1,52 @@
-import type { KasamaSession } from "./csv-rows";
+import { R8_1_RINJI_BILLS, R8_1_RINJI_SESSION } from "./r8-1-rinji";
+import {
+  R8_1_MEMBERS,
+  R8_1_TEIREI_BILLS,
+  R8_1_TEIREI_SESSION,
+} from "./r8-1-teirei";
 import { R8_2_BILLS, R8_2_MEMBERS, R8_2_SESSION } from "./r8-2-teirei";
+import type { KasamaSession } from "./types";
+
+/** 第81号（第1回臨時会・第1回定例会）の掲載ページと、審議結果・賛否一覧の PDF */
+const DAYORI_81_URL = "https://www.city.kasama.lg.jp/page/page017250.html";
+const DAYORI_81_RESULTS_PDF =
+  "https://www.city.kasama.lg.jp/data/doc/1778723875_doc_56_0.pdf";
+
+function toSession(
+  {
+    key,
+    name,
+    startDate,
+    endDate,
+  }: { key: string } & Pick<KasamaSession, "name" | "startDate" | "endDate">,
+  rest: Omit<KasamaSession, "slug" | "name" | "startDate" | "endDate">
+): KasamaSession {
+  return { slug: `kasama-${key}`, name, startDate, endDate, ...rest };
+}
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
-  {
-    slug: `kasama-${R8_2_SESSION.key}`,
-    name: R8_2_SESSION.name,
-    startDate: R8_2_SESSION.startDate,
-    endDate: R8_2_SESSION.endDate,
+  toSession(R8_1_RINJI_SESSION, {
+    sourceUrl: DAYORI_81_URL,
+    sourceTitle: "かさま市議会だより 第81号（審議結果）",
+    voteSourceUrl: DAYORI_81_RESULTS_PDF,
+    // 賛否が分かれた議案が無いので、賛否一覧の列順を持たない
+    members: [],
+    bills: R8_1_RINJI_BILLS,
+  }),
+  toSession(R8_1_TEIREI_SESSION, {
+    sourceUrl: DAYORI_81_URL,
+    sourceTitle: "かさま市議会だより 第81号（審議結果・賛否一覧）",
+    voteSourceUrl: DAYORI_81_RESULTS_PDF,
+    members: R8_1_MEMBERS,
+    bills: R8_1_TEIREI_BILLS,
+  }),
+  toSession(R8_2_SESSION, {
     sourceUrl: "https://www.city.kasama.lg.jp/page/page017485.html",
     sourceTitle: "かさま市議会だより 第82号（審議結果・賛否一覧）",
     voteSourceUrl:
       "https://www.city.kasama.lg.jp/data/doc/1785817747_doc_56_0.pdf",
     members: R8_2_MEMBERS,
     bills: R8_2_BILLS,
-  },
+  }),
 ];

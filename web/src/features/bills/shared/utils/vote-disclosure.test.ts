@@ -26,8 +26,10 @@ describe("resolveVoteDisclosure", () => {
       "可決",
       "同意",
       "承認",
+      "原案承認",
       "認定",
       "採択",
+      "棄却すべきと答申",
     ]) {
       expect(resolveVoteDisclosure(input({ statusNote }))).toBe("unanimous");
     }

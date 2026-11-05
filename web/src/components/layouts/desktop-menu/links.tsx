@@ -18,10 +18,6 @@ const links: FooterLinkItem[] = [
     href: routes.sessionArchive(),
   },
   {
-    label: "議員・提出者から見る",
-    href: routes.memberArchive(),
-  },
-  {
     label: "過去の会期",
     href: routes.archive(),
   },

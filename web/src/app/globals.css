@@ -149,12 +149,12 @@
   --color-mirai-chart-remainder: #7fc247;
 
   /* BillCover背景（議案カード用の動的カバー）: カテゴリ系統 × 濃淡3段階。
-     テラコッタ（カテゴリの色。キーカラーとは別）を含む、彩度を抑えた暖色寄りの薄い色面（フラット）。
+     キーカラーを薄めた緑（トークン名は terracotta のまま）を含む、彩度を抑えた薄い色面（フラット）。
      OG画像（api/og/bills/[billId]/cover-colors.ts の COVER_COLORS）と同じ値に保つこと
      （cover-colors.test.ts が一致を検査する） */
-  --color-cover-terracotta-1: #f8e4d8;
-  --color-cover-terracotta-2: #f3d3c1;
-  --color-cover-terracotta-3: #ecc0a8;
+  --color-cover-terracotta-1: #eef7d8;
+  --color-cover-terracotta-2: #e1f0bd;
+  --color-cover-terracotta-3: #d2e6a3;
   --color-cover-slate-1: #e6ebee;
   --color-cover-slate-2: #d7dfe4;
   --color-cover-slate-3: #c6d1d8;

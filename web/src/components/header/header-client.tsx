@@ -1,16 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import {
-  ClipboardList,
-  Landmark,
-  MessageSquareText,
-  ScrollText,
-  Search,
-  UserCheck,
-  Users,
-  Vote,
-} from "lucide-react";
+import { Landmark, Search } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,7 +21,6 @@ type NavLinkItem = {
 };
 
 // lg以上（デスクトップ）: ロゴ右側に主要ページへのテキストリンクを並べる
-// （「かさま議会ノートとは」「選挙の投票率」はハンバーガーメニューとフッターに残し、幅を空けている）
 const DESKTOP_NAV_LINKS: NavLinkItem[] = [
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
@@ -38,31 +28,12 @@ const DESKTOP_NAV_LINKS: NavLinkItem[] = [
     href: routes.sessionArchive(),
     icon: Landmark,
   },
-  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
-  {
-    label: "議員・提出者から見る",
-    href: routes.memberArchive(),
-    icon: Users,
-  },
-  { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
-  { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
-  { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
 ];
 
 // lg未満（モバイル）: ヘッダー2段目の横スクロールクイックナビ
 const MOBILE_QUICK_LINKS: NavLinkItem[] = [
   { label: "議会まとめ", href: routes.sessionArchive(), icon: Landmark },
-  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
-  { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   { label: "議案を検索", href: routes.search(), icon: Search },
-  {
-    label: "議員・提出者から見る",
-    href: routes.memberArchive(),
-    icon: Users,
-  },
-  { label: "委員会の記録", href: routes.committees(), icon: ClipboardList },
-  { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
-  { label: "選挙の投票率", href: routes.elections(), icon: Vote },
 ];
 
 // 難易度切り替え（説明をもっと詳しく）は、田川市版では hard 難易度の

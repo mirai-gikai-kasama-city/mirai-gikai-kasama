@@ -105,9 +105,6 @@ export function CurrentDietSession({
             一般質問（{latest.questionCount}人）を見る
           </SessionLink>
         )}
-        <SessionLink href={routes.committees()}>
-          委員会・本会議の記録を見る
-        </SessionLink>
         {latest == null && (
           <SessionLink href={routes.sessionArchive()}>
             これまでの議会ごとのまとめを見る

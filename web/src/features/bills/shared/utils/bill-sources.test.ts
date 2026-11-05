@@ -32,11 +32,11 @@ describe("buildBillSourceRefs", () => {
     expect(buildBillSourceRefs(null)).toEqual([]);
   });
 
-  it("解説が無い議案は、公式の議決結果のページだけ", () => {
+  it("解説が無い議案は、公式の議会だよりだけ", () => {
     expect(buildBillSourceRefs(contentWith(null, "official"))).toEqual([
       {
         kind: "official",
-        detail: "議決結果のページ",
+        detail: "議会だより",
         scope: "議案番号・件名・提出者・議決結果",
         href: "https://example.com/r8-6",
       },
@@ -47,18 +47,20 @@ describe("buildBillSourceRefs", () => {
     const refs = buildBillSourceRefs(contentWith("minutes", "official"));
 
     expect(refs.map((ref) => [ref.kind, ref.detail])).toEqual([
-      ["official", "議決結果のページ"],
+      ["official", "議会だより"],
       ["official", "会議録"],
     ]);
     expect(refs[1].scope).toContain("解説");
-    expect(refs[1].href).toBe("https://www.kensakusystem.jp/tagawa/index.html");
+    expect(refs[1].href).toBe(
+      "https://www.city.kasama.lg.jp/page/dir000042.html"
+    );
   });
 
   it("中継がもとの解説と結果は、文字起こしの区分で示す", () => {
     const refs = buildBillSourceRefs(contentWith("broadcast", "broadcast"));
 
     expect(refs.map((ref) => [ref.kind, ref.detail])).toEqual([
-      ["official", "議決結果のページ"],
+      ["official", "議会だより"],
       ["transcript", "本会議の中継"],
       ["official", "議案説明資料"],
       ["transcript", "本会議の中継"],

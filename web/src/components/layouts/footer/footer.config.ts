@@ -19,36 +19,8 @@ export const primaryLinks: FooterLink[] = [
     href: routes.sessionArchive(),
   },
   {
-    label: "議員・提出者から見る",
-    href: routes.memberArchive(),
-  },
-  {
     label: "過去の会期",
     href: routes.archive(),
-  },
-  {
-    label: "委員会の記録",
-    href: routes.committees(),
-  },
-  {
-    label: "一般質問",
-    href: routes.questions(),
-  },
-  {
-    label: "請願・陳情",
-    href: routes.petitions(),
-  },
-  {
-    label: "新市長の動き",
-    href: routes.mayor(),
-  },
-  {
-    label: "選挙の投票率",
-    href: routes.elections(),
-  },
-  {
-    label: "本会議の傍聴者数",
-    href: routes.attendance(),
   },
   {
     label: "情報のもと（出典）",

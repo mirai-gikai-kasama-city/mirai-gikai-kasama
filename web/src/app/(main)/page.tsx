@@ -3,7 +3,6 @@ import { Container } from "@/components/layouts/container";
 import { JsonLd } from "@/components/seo/json-ld";
 import { About } from "@/components/top/about";
 import { Hero } from "@/components/top/hero";
-import { MayorHighlights } from "@/components/top/mayor-highlights";
 import {
   SectionJumpNav,
   TOP_SECTION_IDS,
@@ -18,7 +17,6 @@ import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
-import { countQuestionsForSession } from "@/features/general-questions/server/loaders/get-general-questions";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { buildOperatorJsonLd } from "@/lib/seo/operator-json-ld";
@@ -35,7 +33,7 @@ import { getJapanTime } from "@/lib/utils/date";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  // 検索意図「田川市議会」に合わせ、トップだけはサイト名先行の
+  // 検索意図「笠間市議会」に合わせ、トップだけはサイト名先行の
   // defaultタイトルを使わず絶対指定にする
   title: {
     absolute: `${PAGE_COPY.home.title}｜${SITE_NAME}`,
@@ -63,32 +61,10 @@ export default async function Home() {
     getDifficultyLevel(),
   ]);
 
-  // 開催中の会期に一般質問の通告があれば、会期バナーから直接たどれるようにする
-  const currentQuestions = currentSession?.slug
-    ? {
-        count: countQuestionsForSession(currentSession.slug),
-        sessionKey: currentSession.slug,
-      }
-    : null;
-
-  // 閉会中は、終わったばかりの会期のまとめ・一般質問へ会期バナーからたどれるようにする
+  // 閉会中は、終わったばかりの会期のまとめへ会期バナーからたどれるようにする
   const latestSession = previousSessionData
-    ? {
-        session: previousSessionData.session,
-        questionCount: countQuestionsForSession(
-          previousSessionData.session.slug
-        ),
-      }
+    ? { session: previousSessionData.session, questionCount: 0 }
     : null;
-
-  const sessionBanner = (
-    <CurrentDietSession
-      session={currentSession}
-      questions={currentQuestions}
-      latestSession={latestSession}
-    />
-  );
-  const mayorHighlights = <MayorHighlights now={now} />;
 
   const toBillChatContext = (bill: BillWithContent) => {
     return {
@@ -106,21 +82,10 @@ export default async function Home() {
       <JsonLd data={buildOperatorJsonLd(env.webUrl)} />
       <Hero />
 
-      {/*
-        ヒーロー直下の2ブロックは「いま関心が高い順」に並べる。
-        閉会中は市長が代わってからの動きを先に、会期中は開かれている議会を先に出す
-      */}
-      {currentSession ? (
-        <>
-          {sessionBanner}
-          {mayorHighlights}
-        </>
-      ) : (
-        <>
-          {mayorHighlights}
-          {sessionBanner}
-        </>
-      )}
+      <CurrentDietSession
+        session={currentSession}
+        latestSession={latestSession}
+      />
 
       {/* 議案一覧セクション */}
       <Container className="">
@@ -130,6 +95,7 @@ export default async function Home() {
             <SectionJumpNav
               tagLabels={billsByTag.map(({ tag }) => tag.label)}
               hasPreviousSession={previousSessionData != null}
+              hasFeaturedBills={featuredBills.length > 0}
             />
 
             {/* 注目の議案セクション */}
@@ -141,7 +107,7 @@ export default async function Home() {
         </div>
       </Container>
 
-      {/* 前回の田川市議会セクション（Archive） */}
+      {/* 前回の議会セクション（Archive） */}
       {previousSessionData && (
         <div
           id={TOP_SECTION_IDS.previousSession}

@@ -1,18 +1,17 @@
 /**
- * 田川市議会 会議録検索システム（本会議の会議録）へのリンク【田川市専用】
- *
- * 会議録検索システム（kensakusystem.jp/tagawa）は田川市議会が本会議の会議録を
- * 公開しているサイト。委員会の会議録は載っていない。
+ * 笠間市議会の会議録へのリンク。
+ * officialMinutesUrl と minutesFileNameToDate は、フォーク元（田川市）の取り込み用に残している。
  * seed のスクレイパー（会議録の一覧づくり）と web（各ページの「公式の会議録を読む」
  * リンク）の両方から使う
  */
 
-export const OFFICIAL_MINUTES_SYSTEM_NAME = "田川市議会 会議録検索システム";
+export const OFFICIAL_MINUTES_SYSTEM_NAME = "笠間市議会 会議録";
 
 export const OFFICIAL_MINUTES_BASE_URL = "https://www.kensakusystem.jp/tagawa";
 
 /** 会議録検索システムのトップページ */
-export const OFFICIAL_MINUTES_TOP_URL = `${OFFICIAL_MINUTES_BASE_URL}/index.html`;
+export const OFFICIAL_MINUTES_TOP_URL =
+  "https://www.city.kasama.lg.jp/page/dir000042.html";
 
 /**
  * 1日分の会議録を開くURL。

@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { AI_FEATURES_ENABLED, isAiFeaturePath } from "./config/ai-features";
+import { isHiddenSectionPath } from "./config/site-sections";
 import {
   DIFFICULTY_COOKIE_NAME,
   DIFFICULTY_COOKIE_OPTIONS,
@@ -22,6 +23,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(new URL("/not-found", request.url));
     }
     return NextResponse.next();
+  }
+
+  // 笠間市のデータが無いページは公開しない
+  if (isHiddenSectionPath(request.nextUrl.pathname)) {
+    return NextResponse.rewrite(new URL("/not-found", request.url));
   }
 
   // AI機能の停止中は、API も入口のページも動かさない

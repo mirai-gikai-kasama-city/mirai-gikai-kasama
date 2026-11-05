@@ -25,6 +25,11 @@ describe("stripResultNoteSuffix", () => {
 });
 
 describe("getBillResultLabel", () => {
+  it("笠間市の「原案同意」「原案承認」は、同意・承認と出す", () => {
+    expect(getBillResultLabel("enacted", "原案同意")).toBe("同意");
+    expect(getBillResultLabel("enacted", "原案承認")).toBe("承認");
+  });
+
   describe("成立した議案（enacted）", () => {
     it.each([
       ["原案可決", "可決"],

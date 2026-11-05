@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { AI_FEATURES_ENABLED, isAiFeaturePath } from "./config/ai-features";
 import {
   DIFFICULTY_COOKIE_NAME,
   DIFFICULTY_COOKIE_OPTIONS,
@@ -21,6 +22,17 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(new URL("/not-found", request.url));
     }
     return NextResponse.next();
+  }
+
+  // AI機能の停止中は、API も入口のページも動かさない
+  if (!AI_FEATURES_ENABLED && isAiFeaturePath(request.nextUrl.pathname)) {
+    if (request.nextUrl.pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { error: "この機能は現在停止しています" },
+        { status: 503 }
+      );
+    }
+    return NextResponse.rewrite(new URL("/not-found", request.url));
   }
 
   // Supabaseセッションをリフレッシュ（トークン期限切れ時に自動更新）。

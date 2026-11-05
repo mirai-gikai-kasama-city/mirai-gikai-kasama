@@ -7,7 +7,11 @@ import { usePathname } from "next/navigation";
 import { EXTERNAL_LINKS } from "@/config/external-links";
 import { isInterviewPage } from "@/lib/page-layout-utils";
 import { routes } from "@/lib/routes";
-import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
+import {
+  OPERATOR_EMAIL,
+  OPERATOR_NAME,
+  OPERATOR_ROLE,
+} from "@/lib/seo/operator-json-ld";
 import { SITE_NAME } from "@/lib/seo/share-metadata";
 import { policyLinks, primaryLinks } from "./footer.config";
 
@@ -114,12 +118,13 @@ function FooterDisclaimer() {
         >
           {EXTERNAL_LINKS.UPSTREAM_MIRAI_GIKAI}
         </a>
-        ）を有志が改変・運営する非公式版です。
+        ）をもとに改変して運営する非公式版です。
       </p>
       <p className="mt-1">
         これは政党チームみらいが運営しているものではありません。
       </p>
-      <p className="mt-1">{`運営: ${OPERATOR_NAME}`}</p>
+      <p className="mt-1">{`運営: ${OPERATOR_NAME}（${OPERATOR_ROLE}）`}</p>
+      <p className="mt-1">{`連絡先: ${OPERATOR_EMAIL}`}</p>
       <p className="mt-1">
         本サイトのソースコードは AGPL-3.0 に基づき
         <a

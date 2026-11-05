@@ -1,4 +1,4 @@
-# みらい議会＠笠間市
+# かさま議会ノート
 
 > **本リポジトリについて**
 >
@@ -6,7 +6,7 @@
 > [team-mirai/mirai-gikai](https://github.com/team-mirai/mirai-gikai)（「みらい議会」、本家:
 > https://gikai.team-mir.ai/）を福岡県田川市議会向けにカスタマイズした
 > [Suuuisui/mirai-gikai-tagawa](https://github.com/Suuuisui/mirai-gikai-tagawa) をもとに、
-> 茨城県笠間市議会向けに改変している「**みらい議会＠笠間市**」です。
+> 茨城県笠間市議会向けに改変している「**かさま議会ノート**」です。
 >
 > - 運営: すがのゆういち（連絡先: yuichi.sugano.ksm@gmail.com）
 > - 改変日: 2026-11-04

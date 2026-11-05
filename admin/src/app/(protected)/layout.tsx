@@ -33,7 +33,7 @@ export default async function MainLayout({
                 </div>
                 {/* スマホ幅ではサイト名を省き、タイトルが2行に折れてヘッダーを圧迫しないようにする */}
                 <h1 className="text-lg font-semibold text-gray-900 sm:text-xl">
-                  <span className="hidden sm:inline">みらい議会＠笠間市 </span>
+                  <span className="hidden sm:inline">かさま議会ノート </span>
                   管理画面
                 </h1>
               </div>

@@ -158,7 +158,7 @@ export default async function Home() {
       )}
 
       <Container>
-        {/* みらい議会とは セクション */}
+        {/* かさま議会ノートとは セクション */}
         <About />
 
         {/* 免責事項 */}

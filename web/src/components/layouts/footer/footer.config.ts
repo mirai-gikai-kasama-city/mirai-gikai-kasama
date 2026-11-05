@@ -55,7 +55,7 @@ export const primaryLinks: FooterLink[] = [
     href: routes.sources(),
   },
   {
-    label: "みらい議会とは",
+    label: "かさま議会ノートとは",
     href: `${routes.home()}#about`,
   },
 ];

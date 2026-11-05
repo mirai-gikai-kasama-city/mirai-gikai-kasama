@@ -30,7 +30,7 @@ type NavLinkItem = {
 };
 
 // lg以上（デスクトップ）: ロゴ右側に主要ページへのテキストリンクを並べる
-// （「みらい議会とは」「選挙の投票率」はハンバーガーメニューとフッターに残し、幅を空けている）
+// （「かさま議会ノートとは」「選挙の投票率」はハンバーガーメニューとフッターに残し、幅を空けている）
 const DESKTOP_NAV_LINKS: NavLinkItem[] = [
   { label: "議案を検索", href: routes.search(), icon: Search },
   {

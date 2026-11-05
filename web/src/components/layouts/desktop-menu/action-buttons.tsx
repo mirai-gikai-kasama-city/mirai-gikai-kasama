@@ -20,7 +20,7 @@ export function DesktopMenuActionButtons() {
             height={20}
             className="flex-shrink-0"
           />
-          <span className="text-[15px] font-bold">みらい議会とは</span>
+          <span className="text-[15px] font-bold">かさま議会ノートとは</span>
           <ArrowRight aria-hidden className="size-4 flex-shrink-0" />
         </Link>
       </Button>

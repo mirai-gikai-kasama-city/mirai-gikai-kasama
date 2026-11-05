@@ -83,7 +83,7 @@ export function SearchClient({ items }: SearchClientProps) {
             見つかりませんでした
           </p>
           <p className="text-xs leading-[1.8] text-mirai-text-secondary">
-            気になる議案があれば、各議案ページのAIチャットに直接質問してみましょう。
+            別の言葉で検索するか、議会ごとのまとめからお探しください。
           </p>
         </div>
       ) : (

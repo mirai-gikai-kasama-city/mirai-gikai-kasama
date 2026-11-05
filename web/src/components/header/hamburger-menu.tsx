@@ -61,7 +61,7 @@ const NAV_LINKS: NavLinkItem[] = [
   { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
   { label: "選挙の投票率", href: routes.elections(), icon: Vote },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
-  { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
+  { label: "かさま議会ノートとは", href: `${routes.home()}#about`, icon: Info },
 ];
 
 type InfoLinkItem = {

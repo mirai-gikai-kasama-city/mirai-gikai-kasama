@@ -142,7 +142,7 @@ describe("buildCommitteeMeetingJsonLd", () => {
     });
     expect(data.publisher).toEqual({
       "@type": "Organization",
-      name: "みらい議会＠笠間市",
+      name: "かさま議会ノート",
     });
   });
 

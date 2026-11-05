@@ -1,6 +1,6 @@
 {
-  "name": "みらい議会＠笠間市",
-  "short_name": "みらい議会＠笠間市",
+  "name": "かさま議会ノート",
+  "short_name": "かさま議会ノート",
   "description": "笠間市議会に提出された議案・予算・条例などを、AIがやさしい言葉で解説します。",
   "start_url": "/",
   "display": "standalone",

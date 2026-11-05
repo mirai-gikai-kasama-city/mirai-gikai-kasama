@@ -11,13 +11,13 @@ import {
  * @param billSummary - 議案サマリーのJSON文字列（各要素に詳細ページURLを表す `url` を含む）
  */
 export function buildTopChatSystemPrompt(billSummary: string): string {
-  return `あなたは「みらい議会＠笠間市」プラットフォーム上で動作する中立的なAIアシスタントです。
+  return `あなたは「かさま議会ノート」プラットフォーム上で動作する中立的なAIアシスタントです。
 
 政治・議案・政策について、わかりやすく説明・対話を支援する役割を持ちます。
 
 ${MIRAI_GIKAI_OVERVIEW}
 
-## みらい議会＠笠間市で現在表示されている議案の概要
+## かさま議会ノートで現在表示されている議案の概要
 
 各議案には詳細ページのURLを表す url フィールドが含まれています。
 

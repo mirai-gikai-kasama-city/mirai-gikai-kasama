@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 /** サイト名（共有時の siteName や、ページの題名の後ろに付ける名前） */
-export const SITE_NAME = "みらい議会＠笠間市";
+export const SITE_NAME = "かさま議会ノート";
 
 /** サイト共通の題名と説明（ページ固有の題名を持たないページの共有にも使う） */
 export const SITE_TITLE = `${SITE_NAME}｜議案をやさしく解説`;

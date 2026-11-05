@@ -11,7 +11,7 @@ import { getMfaErrorMessage } from "../../shared/utils/mfa-error-message";
 import { authClient } from "./auth-client";
 
 /** 認証アプリに表示される名前（「名前:メールアドレス」の形で並ぶ） */
-export const TOTP_ISSUER = "みらい議会＠笠間市 管理画面";
+export const TOTP_ISSUER = "かさま議会ノート 管理画面";
 
 export type TotpEnrollment = {
   factorId: string;

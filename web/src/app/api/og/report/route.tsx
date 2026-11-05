@@ -181,7 +181,7 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        {/* みらい議会バッジ */}
+        {/* かさま議会ノートバッジ */}
         <div
           style={{
             position: "absolute",

@@ -37,7 +37,7 @@ export function SectionJumpNav({
     ...(hasPreviousSession
       ? [{ label: "過去の会期", href: `#${TOP_SECTION_IDS.previousSession}` }]
       : []),
-    { label: "みらい議会とは", href: `#${TOP_SECTION_IDS.about}` },
+    { label: "かさま議会ノートとは", href: `#${TOP_SECTION_IDS.about}` },
   ];
 
   return <JumpNav entries={entries} />;

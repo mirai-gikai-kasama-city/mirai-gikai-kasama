@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "みらい議会＠笠間市 管理画面",
-  description: "みらい議会＠笠間市の管理者向けダッシュボード",
+  title: "かさま議会ノート 管理画面",
+  description: "かさま議会ノートの管理者向けダッシュボード",
   icons: {
     icon: "/icons/pwa/icon_android_192.png",
   },

@@ -23,6 +23,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.archive(),
   },
   {
+    label: "一般質問",
+    href: routes.questions(),
+  },
+  {
     label: "情報のもと（出典）",
     href: routes.sources(),
   },

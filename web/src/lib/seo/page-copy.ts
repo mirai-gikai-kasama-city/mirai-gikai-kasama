@@ -46,9 +46,9 @@ export const PAGE_COPY = {
       "田川市議会の総務文教委員会・百条委員会（特別委員会）など、公式には公開されていない委員会の議事録・審議内容を、情報開示請求で入手した文書と公式YouTube中継をもとに公開しています。",
   },
   questions: {
-    title: "田川市議会 一般質問（議員が市に問うこと）",
+    title: "笠間市議会 一般質問（議員が市に問うこと）",
     description:
-      "田川市議会の定例会で議員が市長や市に質問する「一般質問」の通告内容を、平成29年から最新の定例会まで一覧にしました。質問事項・要旨・録画・本会議の記録をまとめて確認できます。",
+      "笠間市議会の定例会で議員が市長や市に質問する「一般質問」の通告内容を、公式の一覧からそのまま載せています。質問者と質問事項に、公式の会議録と録画へのリンクを添えています。",
   },
   petitions: {
     title: "田川市議会 請願・陳情（市民からの要望）の審査結果",
@@ -192,7 +192,7 @@ export function describeQuestionSession({
   memberNames: readonly string[];
 }): string {
   return joinWithinLimit({
-    prefix: `田川市議会 ${sessionName}で${memberNames.length}人の議員が通告した一般質問の質問事項と要旨を掲載しています。質問者: `,
+    prefix: `笠間市議会 ${sessionName}で${memberNames.length}人の議員が通告した一般質問の質問事項と要旨を掲載しています。質問者: `,
     items: memberNames,
     overflow: (omitted) => `ほか${omitted}人`,
   });

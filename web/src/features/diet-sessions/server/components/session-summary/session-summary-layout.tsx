@@ -3,6 +3,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TextLink } from "@/components/ui/text-link";
 import type { BillWithContent } from "@/features/bills/shared/types";
+import { SessionQuestionsSection } from "@/features/general-questions/server/components/session-questions-section";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { formatDate } from "@/lib/utils/date";
 import { BillListWithStatusFilter } from "../../../client/components/bill-list-with-status-filter";
@@ -78,6 +79,9 @@ export async function SessionSummaryLayout({
           <SessionHighlightsSection bills={highlights} />
 
           <SplitVoteSection bills={bills} />
+
+          {/* 一般質問は公式の通告から作った静的データ（該当が無ければ何も出さない） */}
+          <SessionQuestionsSection sessionKey={session.slug} />
 
           <section className="flex flex-col gap-4">
             <SectionHeading>全議案リスト</SectionHeading>

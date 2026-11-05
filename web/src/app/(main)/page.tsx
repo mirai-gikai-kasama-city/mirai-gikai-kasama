@@ -17,6 +17,7 @@ import type { BillWithContent } from "@/features/bills/shared/types";
 import { HomeChatClient } from "@/features/chat/client/components/home-chat-client";
 import { CurrentDietSession } from "@/features/diet-sessions/client/components/current-diet-session";
 import { getCurrentDietSession } from "@/features/diet-sessions/server/loaders/get-current-diet-session";
+import { countQuestionsForSession } from "@/features/general-questions/server/loaders/get-general-questions";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { buildOperatorJsonLd } from "@/lib/seo/operator-json-ld";
@@ -61,9 +62,14 @@ export default async function Home() {
     getDifficultyLevel(),
   ]);
 
-  // 閉会中は、終わったばかりの会期のまとめへ会期バナーからたどれるようにする
+  // 閉会中は、終わったばかりの会期のまとめ・一般質問へ会期バナーからたどれるようにする
   const latestSession = previousSessionData
-    ? { session: previousSessionData.session, questionCount: 0 }
+    ? {
+        session: previousSessionData.session,
+        questionCount: countQuestionsForSession(
+          previousSessionData.session.slug
+        ),
+      }
     : null;
 
   const toBillChatContext = (bill: BillWithContent) => {

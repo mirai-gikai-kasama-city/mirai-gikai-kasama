@@ -1,7 +1,7 @@
 "use client";
 
 import type { LucideIcon } from "lucide-react";
-import { Landmark, Search } from "lucide-react";
+import { Landmark, MessageSquareText, Search } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,11 +28,13 @@ const DESKTOP_NAV_LINKS: NavLinkItem[] = [
     href: routes.sessionArchive(),
     icon: Landmark,
   },
+  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
 ];
 
 // lg未満（モバイル）: ヘッダー2段目の横スクロールクイックナビ
 const MOBILE_QUICK_LINKS: NavLinkItem[] = [
   { label: "議会まとめ", href: routes.sessionArchive(), icon: Landmark },
+  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
   { label: "議案を検索", href: routes.search(), icon: Search },
 ];
 

@@ -7,6 +7,7 @@ import {
   Landmark,
   type LucideIcon,
   Menu,
+  MessageSquareText,
   Search,
 } from "lucide-react";
 import type { Route } from "next";
@@ -40,6 +41,7 @@ const NAV_LINKS: NavLinkItem[] = [
     href: routes.archive(),
     icon: History,
   },
+  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "かさま議会ノートとは", href: `${routes.home()}#about`, icon: Info },
 ];

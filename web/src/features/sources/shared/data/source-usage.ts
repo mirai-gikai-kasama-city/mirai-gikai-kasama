@@ -30,6 +30,11 @@ export const SOURCE_USAGES: readonly SourceUsage[] = [
     material: "委員会の記録",
     usedFor: "議案の解説（委員会での審査・質疑）",
   },
+  {
+    material: "一般質問通告",
+    usedFor: "一般質問の質問者・質問事項、会議録と録画へのリンク",
+    page: { label: "一般質問", href: routes.questions() },
+  },
 ];
 
 export const SOURCE_ORIGINS: readonly SourceOrigin[] = [
@@ -44,6 +49,10 @@ export const SOURCE_ORIGINS: readonly SourceOrigin[] = [
   {
     label: "笠間市議会 会議録",
     url: "https://www.city.kasama.lg.jp/page/dir000042.html",
+  },
+  {
+    label: "笠間市議会 一般質問通告",
+    url: "http://kasama.gijiroku.com/g07_Shitsumon.asp",
   },
   {
     label: "笠間市議会 委員会記録",

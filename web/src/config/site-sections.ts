@@ -8,7 +8,6 @@ const HIDDEN_SECTION_PREFIXES = [
   "/elections",
   "/attendance",
   "/committees",
-  "/questions",
   "/petitions",
   "/members",
   "/proposers",

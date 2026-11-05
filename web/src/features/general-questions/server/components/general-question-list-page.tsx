@@ -53,7 +53,7 @@ export function GeneralQuestionListPage({
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs">
             <span className="rounded-md bg-white px-3 py-1.5 font-bold text-mirai-text">
-              {groups.length}回の定例会
+              {groups.length}回の議会
             </span>
             <span className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
               <Users aria-hidden className="size-3.5" />
@@ -105,7 +105,7 @@ export function GeneralQuestionListPage({
 
             {past.length > 0 && (
               <section className="flex flex-col gap-4">
-                <SectionHeading>これまでの定例会の一般質問</SectionHeading>
+                <SectionHeading>これまでの一般質問</SectionHeading>
                 <ShowMoreList
                   initialCount={PAST_SESSIONS_INITIAL}
                   className="flex flex-col gap-2"

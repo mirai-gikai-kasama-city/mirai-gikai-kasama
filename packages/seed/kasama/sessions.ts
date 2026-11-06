@@ -31,17 +31,21 @@ import {
 import { R8_2_BILLS, R8_2_MEMBERS, R8_2_SESSION } from "./r8-2-teirei";
 import type { KasamaSession } from "./types";
 
-/** 議会だより各号の掲載ページと、審議結果・賛否一覧の PDF */
-const dayori = (no: number, page: string, pdf: string, withVotes = true) => ({
+/**
+ * 議会だより各号の掲載ページと、審議結果・賛否一覧の PDF。
+ * members は賛否一覧の列順。空のときは賛否一覧を使わないので、出典名も「審議結果」だけにする
+ */
+const dayori = (
+  no: number,
+  page: string,
+  pdf: string,
+  members: readonly string[]
+) => ({
   sourceUrl: `https://www.city.kasama.lg.jp/page/${page}.html`,
-  sourceTitle: `かさま市議会だより 第${no}号（${withVotes ? "審議結果・賛否一覧" : "審議結果"}）`,
+  sourceTitle: `かさま市議会だより 第${no}号（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
   voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdf}_doc_56_0.pdf`,
+  members,
 });
-
-/** 第81号（第1回臨時会・第1回定例会）の掲載ページと、審議結果・賛否一覧の PDF */
-const DAYORI_81_URL = "https://www.city.kasama.lg.jp/page/page017250.html";
-const DAYORI_81_RESULTS_PDF =
-  "https://www.city.kasama.lg.jp/data/doc/1778723875_doc_56_0.pdf";
 
 function toSession(
   {
@@ -58,110 +62,85 @@ function toSession(
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
-  // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure でも unknown 扱い）
+  // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure の
+  // SESSIONS_WITHOUT_MEMBER_VOTES にも載せ、全会一致と表示しない）
   toSession(R4_1_RINJI_SESSION, {
-    ...dayori(68, "page014169", "1677226651", false),
-    members: [],
+    ...dayori(68, "page014169", "1677226651", []),
     bills: R4_1_RINJI_BILLS,
   }),
   toSession(R5_1_RINJI_SESSION, {
-    ...dayori(68, "page014169", "1677226675", false),
-    members: [],
+    ...dayori(68, "page014169", "1677226675", []),
     bills: R5_1_RINJI_BILLS,
   }),
   toSession(R5_1_TEIREI_SESSION, {
-    ...dayori(69, "page014396", "1684715423", false),
-    members: [],
+    ...dayori(69, "page014396", "1684715423", []),
     bills: R5_1_TEIREI_BILLS,
   }),
   toSession(R5_2_RINJI_SESSION, {
-    ...dayori(70, "page014629", "1692234925", false),
-    members: [],
+    ...dayori(70, "page014629", "1692234925", []),
     bills: R5_2_RINJI_BILLS,
   }),
   toSession(R5_2_TEIREI_SESSION, {
-    ...dayori(70, "page014629", "1692234910", false),
-    members: [],
+    ...dayori(70, "page014629", "1692234910", []),
     bills: R5_2_TEIREI_BILLS,
   }),
   // 令和5年第3回〜令和6年第4回は、賛否一覧の列順が同じ（議長 大関久義が最後の列）
   toSession(R5_3_TEIREI_SESSION, {
-    ...dayori(71, "page014888", "1700099291"),
-    members: R6_MEMBERS,
+    ...dayori(71, "page014888", "1700099291", R6_MEMBERS),
     bills: R5_3_TEIREI_BILLS,
   }),
   toSession(R5_4_TEIREI_SESSION, {
-    ...dayori(72, "page015096", "1707970743"),
-    members: R6_MEMBERS,
+    ...dayori(72, "page015096", "1707970743", R6_MEMBERS),
     bills: R5_4_TEIREI_BILLS,
   }),
   toSession(R6_1_TEIREI_SESSION, {
-    ...dayori(73, "page015331", "1715060052"),
-    members: R6_MEMBERS,
+    ...dayori(73, "page015331", "1715060052", R6_MEMBERS),
     bills: R6_1_TEIREI_BILLS,
   }),
   toSession(R6_2_TEIREI_SESSION, {
-    ...dayori(74, "page015591", "1723017190"),
-    members: R6_MEMBERS,
+    ...dayori(74, "page015591", "1723017190", R6_MEMBERS),
     bills: R6_2_TEIREI_BILLS,
   }),
   toSession(R6_3_TEIREI_SESSION, {
-    ...dayori(75, "page015826", "1731657674"),
-    members: R6_MEMBERS,
+    ...dayori(75, "page015826", "1731657674", R6_MEMBERS),
     bills: R6_3_TEIREI_BILLS,
   }),
   toSession(R6_4_TEIREI_SESSION, {
-    ...dayori(76, "page016013", "1738828095"),
-    members: R6_MEMBERS,
+    ...dayori(76, "page016013", "1738828095", R6_MEMBERS),
     bills: R6_4_TEIREI_BILLS,
   }),
+  // 臨時会は賛否が分かれた議案が無いので、賛否一覧の列順を持たない
   toSession(R7_1_RINJI_SESSION, {
-    ...dayori(77, "page016336", "1746672973", false),
-    // 賛否が分かれた議案が無いので、賛否一覧の列順を持たない
-    members: [],
+    ...dayori(77, "page016336", "1746672973", []),
     bills: R7_1_RINJI_BILLS,
   }),
   toSession(R7_1_TEIREI_SESSION, {
-    ...dayori(77, "page016336", "1746672973"),
-    members: R7_MEMBERS,
+    ...dayori(77, "page016336", "1746672973", R7_MEMBERS),
     bills: R7_1_TEIREI_BILLS,
   }),
   toSession(R7_2_TEIREI_SESSION, {
-    ...dayori(78, "page016584", "1754350795"),
-    members: R7_MEMBERS,
+    ...dayori(78, "page016584", "1754350795", R7_MEMBERS),
     bills: R7_2_TEIREI_BILLS,
   }),
   toSession(R7_3_TEIREI_SESSION, {
-    ...dayori(79, "page016832", "1763108950"),
-    members: R7_MEMBERS,
+    ...dayori(79, "page016832", "1763108950", R7_MEMBERS),
     bills: R7_3_TEIREI_BILLS,
   }),
   toSession(R7_4_TEIREI_SESSION, {
-    ...dayori(80, "page017044", "1771200698"),
-    members: R7_MEMBERS,
+    ...dayori(80, "page017044", "1771200698", R7_MEMBERS),
     bills: R7_4_TEIREI_BILLS,
   }),
+  // 臨時会は賛否が分かれた議案が無いので、賛否一覧の列順を持たない
   toSession(R8_1_RINJI_SESSION, {
-    sourceUrl: DAYORI_81_URL,
-    sourceTitle: "かさま市議会だより 第81号（審議結果）",
-    voteSourceUrl: DAYORI_81_RESULTS_PDF,
-    // 賛否が分かれた議案が無いので、賛否一覧の列順を持たない
-    members: [],
+    ...dayori(81, "page017250", "1778723875", []),
     bills: R8_1_RINJI_BILLS,
   }),
   toSession(R8_1_TEIREI_SESSION, {
-    sourceUrl: DAYORI_81_URL,
-    sourceTitle: "かさま市議会だより 第81号（審議結果・賛否一覧）",
-    voteSourceUrl: DAYORI_81_RESULTS_PDF,
-    members: R8_1_MEMBERS,
+    ...dayori(81, "page017250", "1778723875", R8_1_MEMBERS),
     bills: R8_1_TEIREI_BILLS,
   }),
   toSession(R8_2_SESSION, {
-    sourceUrl: "https://www.city.kasama.lg.jp/page/page017485.html",
-    sourceTitle: "かさま市議会だより 第82号（審議結果・賛否一覧）",
-    voteSourceUrl:
-      "https://www.city.kasama.lg.jp/data/doc/1785817747_doc_56_0.pdf",
-    members: R8_2_MEMBERS,
+    ...dayori(82, "page017485", "1785817747", R8_2_MEMBERS),
     bills: R8_2_BILLS,
   }),
 ];

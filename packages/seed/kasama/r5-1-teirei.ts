@@ -89,9 +89,6 @@ function ordinance(input: {
   const question = input.question
     ? `\n\n## 議会での質疑\n${input.question}`
     : "";
-  const committee = input.committeeNote
-    ? `${input.committeeNote}委員会は`
-    : `${input.committee}は、`;
   return {
     billNumberLabel: `議案第${input.number}号`,
     title: input.title,
@@ -103,7 +100,7 @@ function ordinance(input: {
 ${input.points}${question}
 
 ## 委員会での審査
-${committee}全会一致で可決すべきものとしました。
+${input.committeeNote ?? ""}${input.committee}は、全会一致で可決すべきものとしました。
 
 ## 審議の経過
 3月17日の本会議で異議なく可決されました。`,

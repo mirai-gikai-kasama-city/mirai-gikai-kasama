@@ -44,7 +44,7 @@ function routine(input: {
 ${input.points}
 
 ## 委員会での審査
-${input.committeeNote ? `${input.committeeNote}委員会は` : `${input.committee}は、`}全会一致で可決すべきものとしました。
+${input.committeeNote ?? ""}${input.committee}は、全会一致で可決すべきものとしました。
 
 ## 審議の経過
 6月15日の本会議で異議なく可決されました。`,

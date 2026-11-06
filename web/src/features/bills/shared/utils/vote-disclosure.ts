@@ -56,7 +56,7 @@ const SECRET_BALLOT_BILL_KEYS: ReadonlySet<string> = new Set([
  * - 笠間市 令和4年第1回臨時会〜令和5年第2回定例会: 議会だより第68〜70号の PDF が
  *   文字を図形にしたもので賛否一覧を読み取れず、会議録には票数しか無い
  */
-const SESSIONS_WITHOUT_RESULT_PAGE: ReadonlySet<string> = new Set([
+const SESSIONS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
   "r1-5-teirei",
   "kasama-r4-1-rinji",
   "kasama-r5-1-rinji",
@@ -106,7 +106,7 @@ export function resolveVoteDisclosure(input: {
     return "secret_ballot";
   }
 
-  if (SESSIONS_WITHOUT_RESULT_PAGE.has(input.sessionSlug)) {
+  if (SESSIONS_WITHOUT_MEMBER_VOTES.has(input.sessionSlug)) {
     return "unknown";
   }
 

@@ -17,6 +17,9 @@ import { R1_4_TEIREI_BILLS, R1_4_TEIREI_SESSION } from "./r1-4-teirei";
 import { R2_1_RINJI_BILLS, R2_1_RINJI_SESSION } from "./r2-1-rinji";
 import { R2_1_TEIREI_BILLS, R2_1_TEIREI_SESSION } from "./r2-1-teirei";
 import { R2_2_RINJI_BILLS, R2_2_RINJI_SESSION } from "./r2-2-rinji";
+import { R2_2_TEIREI_BILLS, R2_2_TEIREI_SESSION } from "./r2-2-teirei";
+import { R2_3_RINJI_BILLS, R2_3_RINJI_SESSION } from "./r2-3-rinji";
+import { R2_3_TEIREI_BILLS, R2_3_TEIREI_SESSION } from "./r2-3-teirei";
 import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
 import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
 import { R5_1_TEIREI_BILLS, R5_1_TEIREI_SESSION } from "./r5-1-teirei";
@@ -110,6 +113,18 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(R2_2_RINJI_SESSION, {
     ...dayori(58, "page011631", "1597190591", []),
     bills: R2_2_RINJI_BILLS,
+  }),
+  toSession(R2_2_TEIREI_SESSION, {
+    ...dayori(58, "page011631", "1597191601", H30_MEMBERS),
+    bills: R2_2_TEIREI_BILLS,
+  }),
+  toSession(R2_3_RINJI_SESSION, {
+    ...dayori(59, "page011898", "1605587059", []),
+    bills: R2_3_RINJI_BILLS,
+  }),
+  toSession(R2_3_TEIREI_SESSION, {
+    ...dayori(59, "page011898", "1605587174", H30_MEMBERS),
+    bills: R2_3_TEIREI_BILLS,
   }),
   // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
   // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure の

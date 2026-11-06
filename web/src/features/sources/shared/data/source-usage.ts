@@ -1,4 +1,4 @@
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
 
 /** サイトのどこで何に使っているか */
 export interface SourceUsage {
@@ -20,7 +20,7 @@ export const SOURCE_USAGES: readonly SourceUsage[] = [
   {
     material: "かさま市議会だより",
     usedFor: "議案の番号・件名・審議結果・議決日、議員別の賛否",
-    page: { label: "議会ごとのまとめ", href: routes.sessionArchive() },
+    page: { label: SESSION_ARCHIVE_LABEL, href: routes.sessionArchive() },
   },
   {
     material: "本会議の会議録",

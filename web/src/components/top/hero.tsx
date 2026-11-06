@@ -21,14 +21,16 @@ export function Hero() {
           <div className="relative flex flex-col gap-4">
             {/* 文節単位のinline-blockで、拡大フォント環境でも語の途中で折り返さないようにする */}
             <h1 className="font-bold text-2xl md:text-3xl leading-relaxed text-mirai-text">
-              <span className="inline-block">いま笠間市議会で</span>{" "}
-              <span className="inline-block">議論されていること</span>
+              <span className="inline-block">笠間市議会で</span>
+              <span className="inline-block">議論されてきたこと、</span>
               <br />
-              <span className="inline-block">やさしい言葉で</span>{" "}
-              <span className="inline-block">説明します</span>
+              <span className="inline-block">今まさに</span>
+              <span className="inline-block">議論していること、</span>
+              <br />
+              <span className="inline-block">を整理して説明します</span>
             </h1>
             <p className="max-w-[420px] text-sm leading-relaxed text-mirai-text-secondary md:text-base">
-              議案の要点をAIが整理してお届けします。議案の検索や、議会ごとのまとめもご覧いただけます。
+              議案の要点をAIが整理してお届けします。議案の検索や、会期ごとのまとめもご覧いただけます。
             </p>
           </div>
         </Container>

@@ -1,6 +1,6 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
 import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
 
 type FooterLinkItem = {
@@ -14,7 +14,7 @@ const links: FooterLinkItem[] = [
     href: routes.search(),
   },
   {
-    label: "議会ごとのまとめ",
+    label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
   },
   {

@@ -107,7 +107,7 @@ export function CurrentDietSession({
         )}
         {latest == null && (
           <SessionLink href={routes.sessionArchive()}>
-            これまでの議会ごとのまとめを見る
+            これまでの会期ごとのまとめを見る
           </SessionLink>
         )}
       </div>

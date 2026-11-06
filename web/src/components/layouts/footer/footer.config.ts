@@ -1,4 +1,4 @@
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
 
 type FooterLink = {
   label: string;
@@ -15,7 +15,7 @@ export const primaryLinks: FooterLink[] = [
     href: routes.search(),
   },
   {
-    label: "議会ごとのまとめ",
+    label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
   },
   {

@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
 import { RubyToggle } from "@/lib/rubyful";
 
 type NavLinkItem = {
@@ -32,7 +32,7 @@ const NAV_LINKS: NavLinkItem[] = [
   { label: "ホーム", href: routes.home(), icon: Home },
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
-    label: "議会ごとのまとめ",
+    label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
     icon: Landmark,
   },

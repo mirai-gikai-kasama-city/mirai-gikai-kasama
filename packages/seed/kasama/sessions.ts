@@ -4,6 +4,11 @@ import {
   R8_1_TEIREI_BILLS,
   R8_1_TEIREI_SESSION,
 } from "./r8-1-teirei";
+import {
+  R6_4_TEIREI_BILLS,
+  R6_4_TEIREI_SESSION,
+  R6_MEMBERS,
+} from "./r6-4-teirei";
 import { R7_1_RINJI_BILLS, R7_1_RINJI_SESSION } from "./r7-1-rinji";
 import { R7_1_TEIREI_BILLS, R7_1_TEIREI_SESSION } from "./r7-1-teirei";
 import { R7_2_TEIREI_BILLS, R7_2_TEIREI_SESSION } from "./r7-2-teirei";
@@ -42,6 +47,11 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
+  toSession(R6_4_TEIREI_SESSION, {
+    ...dayori(76, "page016013", "1738828095"),
+    members: R6_MEMBERS,
+    bills: R6_4_TEIREI_BILLS,
+  }),
   toSession(R7_1_RINJI_SESSION, {
     ...dayori(77, "page016336", "1746672973", false),
     // 賛否が分かれた議案が無いので、賛否一覧の列順を持たない

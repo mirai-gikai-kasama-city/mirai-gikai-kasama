@@ -31,6 +31,7 @@ import {
   R3_2_TEIREI_SESSION,
   R3_MEMBERS,
 } from "./r3-2-teirei";
+import { R3_3_TEIREI_BILLS, R3_3_TEIREI_SESSION } from "./r3-3-teirei";
 import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
 import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
 import { R5_1_TEIREI_BILLS, R5_1_TEIREI_SESSION } from "./r5-1-teirei";
@@ -153,6 +154,10 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(R3_2_TEIREI_SESSION, {
     ...dayori(62, "page012623", "1628572690", R3_MEMBERS, 1),
     bills: R3_2_TEIREI_BILLS,
+  }),
+  toSession(R3_3_TEIREI_SESSION, {
+    ...dayori(63, "page012912", "1636352556", R3_MEMBERS),
+    bills: R3_3_TEIREI_BILLS,
   }),
   // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
   // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure の

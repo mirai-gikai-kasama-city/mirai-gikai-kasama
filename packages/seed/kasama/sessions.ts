@@ -36,14 +36,14 @@ import type { KasamaSession } from "./types";
  * members は賛否一覧の列順。空のときは賛否一覧を使わないので、出典名も「審議結果」だけにする
  */
 const dayori = (
-  no: number,
-  page: string,
-  pdf: string,
+  issueNo: number,
+  pageId: string,
+  pdfDocId: string,
   members: readonly string[]
 ) => ({
-  sourceUrl: `https://www.city.kasama.lg.jp/page/${page}.html`,
-  sourceTitle: `かさま市議会だより 第${no}号（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
-  voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdf}_doc_56_0.pdf`,
+  sourceUrl: `https://www.city.kasama.lg.jp/page/${pageId}.html`,
+  sourceTitle: `かさま市議会だより 第${issueNo}号（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
+  voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdfDocId}_doc_56_0.pdf`,
   members,
 });
 

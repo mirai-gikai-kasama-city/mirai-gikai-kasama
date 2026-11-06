@@ -28,11 +28,29 @@ describe("resolveVoteDisclosure", () => {
       "承認",
       "原案承認",
       "認定",
+      "原案認定",
       "採択",
+      "趣旨採択",
       "棄却すべきと答申",
     ]) {
       expect(resolveVoteDisclosure(input({ statusNote }))).toBe("unanimous");
     }
+  });
+
+  it("議員別の賛否を読み取れない笠間市の会期は、可決系でも全会一致にしない", () => {
+    for (const sessionSlug of [
+      "kasama-r4-1-rinji",
+      "kasama-r5-1-rinji",
+      "kasama-r5-1-teirei",
+      "kasama-r5-2-rinji",
+      "kasama-r5-2-teirei",
+    ]) {
+      expect(resolveVoteDisclosure(input({ sessionSlug }))).toBe("unknown");
+    }
+    // 賛否一覧を読める会期は、これまでどおり全会一致と判定する
+    expect(
+      resolveVoteDisclosure(input({ sessionSlug: "kasama-r5-3-teirei" }))
+    ).toBe("unanimous");
   });
 
   it("無記名投票の議案はsecret_ballot（可決系でも全会一致にしない）", () => {

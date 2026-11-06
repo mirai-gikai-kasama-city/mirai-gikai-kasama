@@ -117,6 +117,18 @@ describe("buildCsvRows", () => {
     );
   });
 
+  it("否決・不採択は成立しなかった議案、趣旨採択は成立した議案にする", () => {
+    const statusOf = (statusNote: string) =>
+      new Set(
+        rows.billRows
+          .filter((row) => row.status_note === statusNote)
+          .map((row) => row.status)
+      );
+    expect(statusOf("不採択")).toEqual(new Set(["rejected"]));
+    expect(statusOf("趣旨採択")).toEqual(new Set(["enacted"]));
+    expect(statusOf("原案可決")).toEqual(new Set(["enacted"]));
+  });
+
   it("IDは実行のたびに同じになる", () => {
     expect(buildCsvRows(KASAMA_SESSIONS).billRows[0].id).toBe(
       rows.billRows[0].id

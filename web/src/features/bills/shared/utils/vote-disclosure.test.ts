@@ -53,6 +53,26 @@ describe("resolveVoteDisclosure", () => {
     ).toBe("unanimous");
   });
 
+  it("賛否一覧に載っていない笠間市の議案は、同じ会期のほかの議案と違い全会一致にしない", () => {
+    expect(
+      resolveVoteDisclosure(
+        input({
+          sessionSlug: "kasama-r3-1-teirei",
+          billName: "議案第29号　令和２年度笠間市一般会計補正予算（第１２号）",
+        })
+      )
+    ).toBe("unknown");
+    expect(
+      resolveVoteDisclosure(
+        input({
+          sessionSlug: "kasama-r3-1-teirei",
+          billName:
+            "議案第31号　令和２年度笠間市後期高齢者医療特別会計補正予算（第３号）",
+        })
+      )
+    ).toBe("unanimous");
+  });
+
   it("無記名投票の議案はsecret_ballot（可決系でも全会一致にしない）", () => {
     expect(
       resolveVoteDisclosure(

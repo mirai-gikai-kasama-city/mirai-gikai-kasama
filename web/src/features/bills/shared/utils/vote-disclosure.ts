@@ -66,6 +66,17 @@ const SESSIONS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
 ]);
 
 /**
+ * 賛否は分かれたが、議員別の賛否が公表されていない議案（キーは SECRET_BALLOT_BILL_KEYS と同じ形）。
+ * 笠間市 令和3年第1回定例会の3月3日の3件は、採決システムの票数は会議録にあるが、
+ * 議会だより第61号の賛否一覧に載っていない
+ */
+const BILLS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
+  "kasama-r3-1-teirei:議案第29号　令和２年度笠間市一般会計補正予算（第１２号）",
+  "kasama-r3-1-teirei:議案第30号　令和２年度笠間市国民健康保険特別会計補正予算（第４号）",
+  "kasama-r3-1-teirei:議案第32号　令和２年度笠間市介護保険特別会計補正予算（第３号）",
+]);
+
+/**
  * 「全会一致」と判定してよい議決結果。可決系と、笠間市の諮問への答申
  * （議案と同じく異議の有無で決め、賛否が分かれれば賛否一覧に載る）を対象とし、
  * 否決系・修正議決・懲罰・選挙（当選）などの特殊な結果は unknown 扱いにする
@@ -106,7 +117,10 @@ export function resolveVoteDisclosure(input: {
     return "secret_ballot";
   }
 
-  if (SESSIONS_WITHOUT_MEMBER_VOTES.has(input.sessionSlug)) {
+  if (
+    SESSIONS_WITHOUT_MEMBER_VOTES.has(input.sessionSlug) ||
+    BILLS_WITHOUT_MEMBER_VOTES.has(`${input.sessionSlug}:${input.billName}`)
+  ) {
     return "unknown";
   }
 

@@ -20,6 +20,12 @@ import { R2_2_RINJI_BILLS, R2_2_RINJI_SESSION } from "./r2-2-rinji";
 import { R2_2_TEIREI_BILLS, R2_2_TEIREI_SESSION } from "./r2-2-teirei";
 import { R2_3_RINJI_BILLS, R2_3_RINJI_SESSION } from "./r2-3-rinji";
 import { R2_3_TEIREI_BILLS, R2_3_TEIREI_SESSION } from "./r2-3-teirei";
+import { R2_4_TEIREI_BILLS, R2_4_TEIREI_SESSION } from "./r2-4-teirei";
+import {
+  R2_12_MEMBERS,
+  R3_1_TEIREI_BILLS,
+  R3_1_TEIREI_SESSION,
+} from "./r3-1-teirei";
 import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
 import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
 import { R5_1_TEIREI_BILLS, R5_1_TEIREI_SESSION } from "./r5-1-teirei";
@@ -55,11 +61,13 @@ const dayori = (
   issueNo: number,
   pageId: string,
   pdfDocId: string,
-  members: readonly string[]
+  members: readonly string[],
+  /** 1つの文書IDに複数のPDFがある号（第60号・第61号など）の何番目か */
+  pdfIndex = 0
 ) => ({
   sourceUrl: `https://www.city.kasama.lg.jp/page/${pageId}.html`,
   sourceTitle: `かさま市議会だより 第${issueNo}号（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
-  voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdfDocId}_doc_56_0.pdf`,
+  voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdfDocId}_doc_56_${pdfIndex}.pdf`,
   members,
 });
 
@@ -125,6 +133,16 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(R2_3_TEIREI_SESSION, {
     ...dayori(59, "page011898", "1605587174", H30_MEMBERS),
     bills: R2_3_TEIREI_BILLS,
+  }),
+  // 令和2年第4回の採決は議長の交代の前（議長 飯田正憲）で、議会だより第60号の列順も H30_MEMBERS
+  toSession(R2_4_TEIREI_SESSION, {
+    ...dayori(60, "page012137", "1613118713", H30_MEMBERS, 7),
+    bills: R2_4_TEIREI_BILLS,
+  }),
+  // 令和3年第1回は、議席の一部変更の後の列順（議長 石松俊雄が最後の列）
+  toSession(R3_1_TEIREI_SESSION, {
+    ...dayori(61, "page012376", "1621238018", R2_12_MEMBERS, 2),
+    bills: R3_1_TEIREI_BILLS,
   }),
   // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
   // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure の

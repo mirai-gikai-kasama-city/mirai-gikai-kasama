@@ -4,6 +4,7 @@ import {
   R8_1_TEIREI_BILLS,
   R8_1_TEIREI_SESSION,
 } from "./r8-1-teirei";
+import { R6_1_TEIREI_BILLS, R6_1_TEIREI_SESSION } from "./r6-1-teirei";
 import { R6_2_TEIREI_BILLS, R6_2_TEIREI_SESSION } from "./r6-2-teirei";
 import { R6_3_TEIREI_BILLS, R6_3_TEIREI_SESSION } from "./r6-3-teirei";
 import {
@@ -49,6 +50,11 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
+  toSession(R6_1_TEIREI_SESSION, {
+    ...dayori(73, "page015331", "1715060052"),
+    members: R6_MEMBERS,
+    bills: R6_1_TEIREI_BILLS,
+  }),
   toSession(R6_2_TEIREI_SESSION, {
     ...dayori(74, "page015591", "1723017190"),
     members: R6_MEMBERS,

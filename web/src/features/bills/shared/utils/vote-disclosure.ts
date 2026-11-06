@@ -68,6 +68,7 @@ const UNANIMOUS_ELIGIBLE_RESULTS: ReadonlySet<string> = new Set([
   "承認",
   "原案承認",
   "認定",
+  "原案認定",
   "採択",
   "棄却すべきと答申",
 ]);

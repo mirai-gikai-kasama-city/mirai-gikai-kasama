@@ -13,19 +13,32 @@ export interface RecordedVote {
   marks: readonly VoteMark[];
 }
 
+/** 議会だよりの審議結果欄の言葉 */
+export type KasamaResultLabel =
+  | "原案同意"
+  | "原案可決"
+  | "原案承認"
+  | "原案認定"
+  | "採択"
+  | "棄却すべきと答申"
+  | "当選"
+  | "否決"
+  | "不採択";
+
+/** 成立しなかった結果。bills.status を rejected にする */
+export const REJECTED_RESULT_LABELS: ReadonlySet<KasamaResultLabel> = new Set([
+  "否決",
+  "不採択",
+]);
+
 export interface KasamaBill {
   billNumberLabel: string;
   title: string;
-  resultLabel:
-    | "原案同意"
-    | "原案可決"
-    | "原案承認"
-    | "棄却すべきと答申"
-    | "当選";
+  resultLabel: KasamaResultLabel;
   /** YYYY-MM-DD */
   decidedOn: string;
   /** 省略時は市長提出。選挙のように提出者がいないものは null */
-  submitter?: "議員提出" | null;
+  submitter?: "議員提出" | "委員会提出" | "請願者" | null;
   vote?: RecordedVote;
   source: BillDescriptionSource;
   summary: string;

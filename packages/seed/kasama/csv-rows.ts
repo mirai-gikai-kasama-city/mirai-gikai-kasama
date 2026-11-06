@@ -4,7 +4,12 @@
  */
 import { buildBillSourceSection } from "@mirai-gikai/shared/council/bill-source-section";
 import { uuidv5 } from "../tagawa/uuidv5";
-import type { KasamaBill, KasamaSession, VoteMark } from "./types";
+import {
+  type KasamaBill,
+  type KasamaSession,
+  REJECTED_RESULT_LABELS,
+  type VoteMark,
+} from "./types";
 
 /** 笠間市版のシードID専用の名前空間。変えると /bills/{id} の URL がすべて変わる */
 const KASAMA_SEED_NAMESPACE = "6f1d2c7e-3b84-4a59-9e21-7c0a5d8b4f13";
@@ -125,7 +130,9 @@ export function buildCsvRows(sessions: readonly KasamaSession[]) {
         id: billId,
         name: `${bill.billNumberLabel}　${bill.title}`,
         originating_house: "HR",
-        status: "enacted",
+        status: REJECTED_RESULT_LABELS.has(bill.resultLabel)
+          ? "rejected"
+          : "enacted",
         status_note: bill.resultLabel,
         submitted_date: bill.decidedOn,
         created_at: decidedAt,

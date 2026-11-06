@@ -4,6 +4,9 @@ import {
   R8_1_TEIREI_BILLS,
   R8_1_TEIREI_SESSION,
 } from "./r8-1-teirei";
+import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
+import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
+import { R5_2_RINJI_BILLS, R5_2_RINJI_SESSION } from "./r5-2-rinji";
 import { R5_3_TEIREI_BILLS, R5_3_TEIREI_SESSION } from "./r5-3-teirei";
 import { R5_4_TEIREI_BILLS, R5_4_TEIREI_SESSION } from "./r5-4-teirei";
 import { R6_1_TEIREI_BILLS, R6_1_TEIREI_SESSION } from "./r6-1-teirei";
@@ -52,6 +55,23 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
+  // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
+  // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure でも unknown 扱い）
+  toSession(R4_1_RINJI_SESSION, {
+    ...dayori(68, "page014169", "1677226651", false),
+    members: [],
+    bills: R4_1_RINJI_BILLS,
+  }),
+  toSession(R5_1_RINJI_SESSION, {
+    ...dayori(68, "page014169", "1677226675", false),
+    members: [],
+    bills: R5_1_RINJI_BILLS,
+  }),
+  toSession(R5_2_RINJI_SESSION, {
+    ...dayori(70, "page014629", "1692234925", false),
+    members: [],
+    bills: R5_2_RINJI_BILLS,
+  }),
   // 令和5年第3回〜令和6年第4回は、賛否一覧の列順が同じ（議長 大関久義が最後の列）
   toSession(R5_3_TEIREI_SESSION, {
     ...dayori(71, "page014888", "1700099291"),

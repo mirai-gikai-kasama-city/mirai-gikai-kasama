@@ -4,6 +4,7 @@ import {
   R8_1_TEIREI_BILLS,
   R8_1_TEIREI_SESSION,
 } from "./r8-1-teirei";
+import { R5_3_TEIREI_BILLS, R5_3_TEIREI_SESSION } from "./r5-3-teirei";
 import { R5_4_TEIREI_BILLS, R5_4_TEIREI_SESSION } from "./r5-4-teirei";
 import { R6_1_TEIREI_BILLS, R6_1_TEIREI_SESSION } from "./r6-1-teirei";
 import { R6_2_TEIREI_BILLS, R6_2_TEIREI_SESSION } from "./r6-2-teirei";
@@ -52,6 +53,11 @@ function toSession(
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   // 令和5年第3回〜令和6年第4回は、賛否一覧の列順が同じ（議長 大関久義が最後の列）
+  toSession(R5_3_TEIREI_SESSION, {
+    ...dayori(71, "page014888", "1700099291"),
+    members: R6_MEMBERS,
+    bills: R5_3_TEIREI_BILLS,
+  }),
   toSession(R5_4_TEIREI_SESSION, {
     ...dayori(72, "page015096", "1707970743"),
     members: R6_MEMBERS,

@@ -6,6 +6,7 @@ import {
 } from "./r8-1-teirei";
 import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
 import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
+import { R5_1_TEIREI_BILLS, R5_1_TEIREI_SESSION } from "./r5-1-teirei";
 import { R5_2_RINJI_BILLS, R5_2_RINJI_SESSION } from "./r5-2-rinji";
 import { R5_2_TEIREI_BILLS, R5_2_TEIREI_SESSION } from "./r5-2-teirei";
 import { R5_3_TEIREI_BILLS, R5_3_TEIREI_SESSION } from "./r5-3-teirei";
@@ -67,6 +68,11 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
     ...dayori(68, "page014169", "1677226675", false),
     members: [],
     bills: R5_1_RINJI_BILLS,
+  }),
+  toSession(R5_1_TEIREI_SESSION, {
+    ...dayori(69, "page014396", "1684715423", false),
+    members: [],
+    bills: R5_1_TEIREI_BILLS,
   }),
   toSession(R5_2_RINJI_SESSION, {
     ...dayori(70, "page014629", "1692234925", false),

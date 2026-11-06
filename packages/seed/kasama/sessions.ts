@@ -7,6 +7,7 @@ import {
 import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
 import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
 import { R5_2_RINJI_BILLS, R5_2_RINJI_SESSION } from "./r5-2-rinji";
+import { R5_2_TEIREI_BILLS, R5_2_TEIREI_SESSION } from "./r5-2-teirei";
 import { R5_3_TEIREI_BILLS, R5_3_TEIREI_SESSION } from "./r5-3-teirei";
 import { R5_4_TEIREI_BILLS, R5_4_TEIREI_SESSION } from "./r5-4-teirei";
 import { R6_1_TEIREI_BILLS, R6_1_TEIREI_SESSION } from "./r6-1-teirei";
@@ -71,6 +72,11 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
     ...dayori(70, "page014629", "1692234925", false),
     members: [],
     bills: R5_2_RINJI_BILLS,
+  }),
+  toSession(R5_2_TEIREI_SESSION, {
+    ...dayori(70, "page014629", "1692234910", false),
+    members: [],
+    bills: R5_2_TEIREI_BILLS,
   }),
   // 令和5年第3回〜令和6年第4回は、賛否一覧の列順が同じ（議長 大関久義が最後の列）
   toSession(R5_3_TEIREI_SESSION, {

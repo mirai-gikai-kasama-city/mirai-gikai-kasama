@@ -5,7 +5,14 @@ import { KASAMA_SESSIONS } from "./sessions";
 const votedBills = KASAMA_SESSIONS.flatMap((session) =>
   session.bills.flatMap((bill) =>
     bill.vote
-      ? [{ session, label: `${session.name} ${bill.billNumberLabel}`, vote: bill.vote }]
+      ? [
+          {
+            session,
+            bill,
+            label: `${session.name} ${bill.billNumberLabel}`,
+            vote: bill.vote,
+          },
+        ]
       : []
   )
 );
@@ -16,8 +23,14 @@ describe("全会期の賛否データ", () => {
   });
 
   it.each(votedBills)("$label の賛否一覧は会議録の採決人数と一致する", ({
+    bill,
     vote,
   }) => {
+    if (vote.mismatchNote) {
+      // 食い違いを残す場合は、読む人に分かるよう本文に書いてあること
+      expect(bill.body).toContain(vote.mismatchNote);
+      return;
+    }
     const count = (mark: string) =>
       vote.marks.filter((item) => item === mark).length;
     expect(count("○")).toBe(vote.minutes.for);
@@ -25,8 +38,9 @@ describe("全会期の賛否データ", () => {
     expect(count("○") + count("●")).toBe(vote.minutes.total);
   });
 
-  it.each(votedBills)("$label で議長は採決に加わらない", ({ session, vote }) => {
-    expect(vote.marks[session.members.indexOf("畑岡洋二")]).toBe("－");
+  it.each(votedBills)("$label で議長は採決に加わらない", ({ vote }) => {
+    // 議長は任期の途中で替わるので、名前ではなく「－」がちょうど1つあることで確かめる
+    expect(vote.marks.filter((item) => item === "－")).toHaveLength(1);
   });
 });
 

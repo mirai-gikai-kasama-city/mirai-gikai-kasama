@@ -11,6 +11,11 @@ export interface RecordedVote {
   minutes: { total: number; for: number; against: number };
   /** 議会だよりの賛否一覧。その会期の議員名簿（KasamaSession.members）と同じ順 */
   marks: readonly VoteMark[];
+  /**
+   * 賛否一覧の人数が会議録の票数と合わないときの説明。どちらかに寄せて直さず、
+   * 両方をそのまま載せ、解説の本文にも食い違いを書く
+   */
+  mismatchNote?: string;
 }
 
 /** 議会だよりの審議結果欄の言葉 */

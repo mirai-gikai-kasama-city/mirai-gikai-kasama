@@ -7,8 +7,11 @@ import type { BillDescriptionSource } from "@mirai-gikai/shared/council/bill-sou
 export type VoteMark = "○" | "●" | "欠" | "－";
 
 export interface RecordedVote {
-  /** 会議録に記録された本会議の採決結果 */
-  minutes: { total: number; for: number; against: number };
+  /**
+   * 会議録に記録された本会議の採決結果。
+   * 起立による採決（令和2年第2回定例会ごろまで）は人数が記録されていないので省く
+   */
+  minutes?: { total: number; for: number; against: number };
   /** 議会だよりの賛否一覧。その会期の議員名簿（KasamaSession.members）と同じ順 */
   marks: readonly VoteMark[];
   /**
@@ -69,6 +72,12 @@ export interface KasamaSession {
 
 /** 賛否一覧の記号の並びを、1人ずつの配列にする */
 export const marks = (text: string): VoteMark[] => [...text] as VoteMark[];
+
+/** 賛否一覧から「賛成18、反対2」の形の文を作る（起立採決で会議録に人数が無いとき用） */
+export const tallyText = (votes: readonly VoteMark[]): string => {
+  const count = (mark: VoteMark) => votes.filter((v) => v === mark).length;
+  return `賛成${count("○")}、反対${count("●")}`;
+};
 
 /** 専決処分の報告で共通する説明 */
 export const SENKETSU_NOTE =

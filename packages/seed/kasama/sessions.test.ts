@@ -22,17 +22,23 @@ describe("全会期の賛否データ", () => {
     expect(vote.marks).toHaveLength(session.members.length);
   });
 
-  const matchedBills = votedBills.filter(({ vote }) => !vote.mismatchNote);
+  // 起立による採決は会議録に人数が無いので、照らし合わせられない
+  const matchedBills = votedBills.flatMap(({ label, vote }) =>
+    vote.minutes && !vote.mismatchNote
+      ? [{ label, marks: vote.marks, minutes: vote.minutes }]
+      : []
+  );
   const mismatchedBills = votedBills.filter(({ vote }) => vote.mismatchNote);
 
   it.each(matchedBills)("$label の賛否一覧は会議録の採決人数と一致する", ({
-    vote,
+    marks,
+    minutes,
   }) => {
     const count = (mark: string) =>
-      vote.marks.filter((item) => item === mark).length;
-    expect(count("○")).toBe(vote.minutes.for);
-    expect(count("●")).toBe(vote.minutes.against);
-    expect(count("○") + count("●")).toBe(vote.minutes.total);
+      marks.filter((item) => item === mark).length;
+    expect(count("○")).toBe(minutes.for);
+    expect(count("●")).toBe(minutes.against);
+    expect(count("○") + count("●")).toBe(minutes.total);
   });
 
   it.each(mismatchedBills)("$label の人数の食い違いは本文に書いてある", ({

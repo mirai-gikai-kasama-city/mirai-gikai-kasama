@@ -4,6 +4,12 @@ import {
   R8_1_TEIREI_BILLS,
   R8_1_TEIREI_SESSION,
 } from "./r8-1-teirei";
+import {
+  H30_1_RINJI_BILLS,
+  H30_1_RINJI_SESSION,
+  H30_MEMBERS,
+} from "./h30-1-rinji";
+import { H31_1_TEIREI_BILLS, H31_1_TEIREI_SESSION } from "./h31-1-teirei";
 import { R4_1_RINJI_BILLS, R4_1_RINJI_SESSION } from "./r4-1-rinji";
 import { R5_1_RINJI_BILLS, R5_1_RINJI_SESSION } from "./r5-1-rinji";
 import { R5_1_TEIREI_BILLS, R5_1_TEIREI_SESSION } from "./r5-1-teirei";
@@ -61,6 +67,15 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
+  // 平成30年12月〜令和4年11月の任期。賛否一覧の列順は議席番号の順（議長 飯田正憲が最後の列）
+  toSession(H30_1_RINJI_SESSION, {
+    ...dayori(52, "page009956", "1550103505", []),
+    bills: H30_1_RINJI_BILLS,
+  }),
+  toSession(H31_1_TEIREI_SESSION, {
+    ...dayori(53, "page010123", "1558394245", H30_MEMBERS),
+    bills: H31_1_TEIREI_BILLS,
+  }),
   // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
   // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure の
   // SESSIONS_WITHOUT_MEMBER_VOTES にも載せ、全会一致と表示しない）

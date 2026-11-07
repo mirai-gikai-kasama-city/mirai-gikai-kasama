@@ -8,7 +8,7 @@ interface DietSessionArchiveListProps {
 
 /**
  * 全会期一覧ページのメインコンテンツ
- * 会期を年度（令和N年）ごとにグルーピングして表示する
+ * 会期を西暦の年ごとにグルーピングし、見出しには元号の年（改元の年は「平成31年・令和元年」）を出す
  */
 export function DietSessionArchiveList({ items }: DietSessionArchiveListProps) {
   if (items.length === 0) {
@@ -27,8 +27,10 @@ export function DietSessionArchiveList({ items }: DietSessionArchiveListProps) {
   return (
     <div className="flex flex-col gap-10">
       {groups.map((group) => (
-        <section key={group.label} className="flex flex-col gap-3">
-          <h2 className="text-lg font-bold text-mirai-text">{group.label}</h2>
+        <section key={group.year} className="flex flex-col gap-3">
+          <h2 className="text-lg font-bold text-mirai-text">
+            {group.label || `${group.year}年`}
+          </h2>
           {/* PC幅では2カラムにして縦スクロール量を減らす */}
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
             {group.sessions.map((session) => (

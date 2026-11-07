@@ -29,8 +29,9 @@ describe("全会期の賛否データ", () => {
         bill.vote && !bill.vote.marks ? [bill.vote.minutes] : []
       )
     );
-    // 令和3年第1回定例会の議案第32号。録画配信で確かめたら marks を入れ、この件数も減らす
-    expect(unlisted).toHaveLength(1);
+    // 今は0件（賛否一覧に無かった採決も、録画配信の採決画面で確かめて marks を入れた）。
+    // 確かめられない採決を足したら、ここの件数も増やす
+    expect(unlisted).toHaveLength(0);
     for (const minutes of unlisted) {
       expect(minutes.for).toBeGreaterThan(0);
       expect(minutes.against).toBeGreaterThan(0);

@@ -48,7 +48,7 @@ export default function TermsPage() {
           <div className="space-y-3">
             <LegalSubSectionTitle>不適切な投稿・入力行為</LegalSubSectionTitle>
             <LegalParagraph>
-              以下の内容を含む投稿、AIへの入力、または対話を行うことを禁止します。
+              以下の内容を含む投稿を行うことを禁止します。
             </LegalParagraph>
             <LegalList
               items={[
@@ -77,8 +77,6 @@ export default function TermsPage() {
                 "本サービスの情報を改ざん・加工し、誤解を招く形で利用する行為。",
                 "サーバへの過剰な負荷、システムへの妨害・侵入・解析（リバースエンジニアリング等）行為。",
                 "自動化ツール、ボット等による不正操作。",
-                "AIモデルの悪用：システムプロンプト等の内部設定の推測、プロンプトインジェクション等による意図的な誤動作の誘発。",
-                "目的外利用：「かさま議会ノート」の趣旨（笠間市議会提出議案等の関連テーマ）を著しく逸脱した応答を生成させる行為。",
                 "なりすまし：他の人物や組織になりすまして本サービスを利用する行為。",
               ]}
             />
@@ -92,7 +90,7 @@ export default function TermsPage() {
           </LegalParagraph>
           <LegalList
             items={[
-              "当該対話ログ、投稿、または回答内容の削除",
+              "当該投稿の削除",
               "本サービスの利用停止、制限、またはアカウントの凍結",
               "その他、運営者が必要と判断する適切な措置",
             ]}
@@ -100,81 +98,38 @@ export default function TermsPage() {
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>
-            第3条（AIインタビューの回答およびログの取り扱い）
-          </LegalSectionTitle>
-          <LegalList
-            items={[
-              {
-                id: "publish-consent",
-                content: (
-                  <>
-                    <span className="font-semibold text-mirai-text">
-                      公開と同意：
-                    </span>
-                    AIインタビューを通じて取得した回答ログおよびサマリーは、ユーザー本人が公開に同意した場合、運営者の運営するサービス上で公開されることがあります。
-                  </>
-                ),
-              },
-              {
-                id: "internal-analysis",
-                content: (
-                  <>
-                    <span className="font-semibold text-mirai-text">
-                      内部分析利用：
-                    </span>
-                    本人が公開に同意しなかったデータについても、運営者においてサービス向上や政策検討の目的で活用されるものとし、ユーザーはこれに同意するものとします。
-                  </>
-                ),
-              },
-              {
-                id: "rights-attribution",
-                content: (
-                  <>
-                    <span className="font-semibold text-mirai-text">
-                      権利の帰属：
-                    </span>
-                    本サービスを通じて生成された応答や対話ログに関する権利（著作権法第27条および第28条の権利を含みます。）は、運営者に帰属するか、または無償で利用（複製、加工、公表等）することを許諾したものとみなします。なお、公表については、運営者は、第1項のとおりユーザー本人が公表に同意した場合のみ実施するものとします。
-                  </>
-                ),
-              },
-            ]}
-          />
-        </section>
-
-        <section className="space-y-4">
-          <LegalSectionTitle>第4条（知的財産権）</LegalSectionTitle>
+          <LegalSectionTitle>第3条（知的財産権）</LegalSectionTitle>
           <LegalParagraph>
             本サービスの提供に用いられるプログラム、コンテンツ、テキスト、画像等に関する一切の権利は、運営者または正当な権利者に帰属します。ユーザーは私的利用の範囲を超えてこれらを使用してはなりません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>第5条（情報に係る不保証）</LegalSectionTitle>
+          <LegalSectionTitle>第4条（情報に係る不保証）</LegalSectionTitle>
           <LegalParagraph>
-            運営者は、本サービス（AIによる回答を含む）が提供する情報の正確性、完全性、最新性、有用性、真実性等について、いかなる保証も行いません。
+            運営者は、本サービス（AIが下書きした議案の解説を含む）が提供する情報の正確性、完全性、最新性、有用性、真実性等について、いかなる保証も行いません。
           </LegalParagraph>
           <LegalParagraph>
-            AIによる応答は、その性質上、誤った情報を生成する可能性があることを理解した上で利用するものとします。
+            AIが下書きした文章は、その性質上、誤った情報を含む可能性があることを理解した上で利用するものとします。正確な内容は、各ページに示した出典（会議録・議会だより等）でご確認ください。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>第6条（サービスの変更・停止）</LegalSectionTitle>
+          <LegalSectionTitle>第5条（サービスの変更・停止）</LegalSectionTitle>
           <LegalParagraph>
             運営者は、ユーザーへの事前通知なく本サービスの内容を変更・停止できるものとし、それにより生じた損害について一切の責任を負いません。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>第7条（規約の変更）</LegalSectionTitle>
+          <LegalSectionTitle>第6条（規約の変更）</LegalSectionTitle>
           <LegalParagraph>
             運営者は必要に応じて本規約を変更することができ、変更後にユーザーが本サービスを利用した場合、当該変更に同意したものとみなします。
           </LegalParagraph>
         </section>
 
         <section className="space-y-4">
-          <LegalSectionTitle>第8条（準拠法・管轄）</LegalSectionTitle>
+          <LegalSectionTitle>第7条（準拠法・管轄）</LegalSectionTitle>
           <LegalParagraph>
             本規約は日本法に準拠し、本サービスに関連して生じる一切の紛争については、水戸地方裁判所を第一審の専属的合意管轄裁判所とします。
           </LegalParagraph>

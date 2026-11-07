@@ -4,8 +4,9 @@
  * 事実（番号・件名・結果・議決日・票数）は 第1回定例会 会議録（第1号・第2号・第6号）と
  * 委員会審査報告書（会議録の資料）から転記している。
  * 議員ごとの賛否は かさま市議会だより 第61号 P4-5（賛否一覧）による。
- * 3月3日に採決システムで採決された議案第29・30・32号は、議会だより第61号の賛否一覧に載っておらず、
- * 議員ごとの賛否が分からない（vote に会議録の票数だけを持たせる。web は全会一致と表示しない）。
+ * 3月3日に採決システムで採決された議案第29・30・32号は、議会だより第61号の賛否一覧に載っていない。
+ * 第29・30号は、運営者が確かめた本会議の録画配信の採決画面から議員ごとの賛否を入れた。
+ * 第32号はまだ確かめていないので、vote に会議録の票数だけを持たせる（web は全会一致と表示しない）。
  *
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  * 議員の評価につながる表現は避け、討論の主張は発言者の主張として書く。
@@ -56,6 +57,8 @@ const LAST_DAY = "2021-03-18";
 
 const NOT_IN_TABLE =
   "この採決は議会だより第61号の賛否一覧に載っていないため、議員ごとの賛否は載せていません。";
+const FROM_RECORDING =
+  "この採決は議会だより第61号の賛否一覧に載っていないため、議員ごとの賛否は本会議の録画配信の採決画面によります。";
 
 const ORDER_NOTE =
   "（氏名と番号の対応は、市長が提案理由で読み上げた順によります）";
@@ -180,17 +183,24 @@ function supplementaryBill(input: {
   points: string;
   /** 採決システムで採決された場合の票数（議会だより第61号の賛否一覧には載っていない） */
   minutes?: { total: number; for: number; against: number };
+  /** 運営者が本会議の録画配信の採決画面で確かめた賛否（列は R2_12_MEMBERS の順） */
+  recordedMarks?: string;
 }): KasamaBill {
   const result = input.minutes
-    ? `採決システムで採決され、投票総数${input.minutes.total}、賛成${input.minutes.for}、反対${input.minutes.against}で可決されました。${NOT_IN_TABLE}`
+    ? `採決システムで採決され、投票総数${input.minutes.total}、賛成${input.minutes.for}、反対${input.minutes.against}で可決されました。${input.recordedMarks ? FROM_RECORDING : NOT_IN_TABLE}`
     : "異議なく可決されました。";
+  const vote = input.minutes
+    ? input.recordedMarks
+      ? { minutes: input.minutes, marks: marks(input.recordedMarks) }
+      : { minutes: input.minutes }
+    : undefined;
   return {
     billNumberLabel: `議案第${input.number}号`,
     title: input.title,
     resultLabel: "原案可決",
     decidedOn: SUPPLEMENTARY_DAY,
     source: "minutes",
-    ...(input.minutes ? { vote: { minutes: input.minutes } } : {}),
+    ...(vote ? { vote } : {}),
     summary: `${input.summary}${input.minutes ? `賛成${input.minutes.for}、反対${input.minutes.against}で可決。` : "全会一致で可決。"}`,
     body: `## ポイント解説
 ${input.points}
@@ -606,6 +616,8 @@ export const R3_1_TEIREI_BILLS: readonly KasamaBill[] = [
 - 児童扶養手当は、前年度の実績から15か月分を計上していたため、3か月分を減らします
 - 委員会では、ほかに大日堂の取得の進み具合や、県立中央病院の周辺の渋滞の調査などを確認しました`,
     minutes: { total: 20, for: 18, against: 2 },
+    // 林田美代子・石井栄の両議員が反対。大貫千尋議員は投票していない
+    recordedMarks: "○○○○○○●○○●○○○○○○欠○○○○－",
   }),
   supplementaryBill({
     number: 30,
@@ -616,6 +628,8 @@ export const R3_1_TEIREI_BILLS: readonly KasamaBill[] = [
     points: `- 予算から5,891万8,000円を減らし、総額を77億6,655万7,000円にします
 - 出産育児一時金（756万円）や新型コロナの傷病手当金（800万円）を実績に合わせて減らします`,
     minutes: { total: 20, for: 19, against: 1 },
+    // 林田美代子議員が反対。大貫千尋議員は投票していない
+    recordedMarks: "○○○○○○●○○○○○○○○○欠○○○○－",
   }),
   supplementaryBill({
     number: 31,

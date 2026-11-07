@@ -17,7 +17,7 @@ import {
   type KasamaBill,
   marks,
   SENKETSU_NOTE,
-  tallyText,
+  standingVote,
   type VoteMark,
 } from "./types";
 
@@ -46,10 +46,7 @@ const SPLIT: Readonly<Record<number, readonly VoteMark[]>> = {
 };
 
 /** 起立で採決された議案の賛否と、本文・要約に書く人数 */
-const standing = (number: number) => {
-  const votes = SPLIT[number];
-  return { vote: { marks: votes }, tally: tallyText(votes) };
-};
+const standing = (number: number) => standingVote(SPLIT, number);
 
 const ORDER_NOTE =
   "（氏名と議案番号の対応は、市長が提案理由で読み上げた順によります）";

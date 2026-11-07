@@ -57,7 +57,8 @@ export function buildMemberVotes(session: KasamaSession, bill: KasamaBill) {
   if (!bill.vote) return null;
   const { marks } = bill.vote;
   if (!marks) {
-    // 賛否が分かれたことだけを残す。entries が空なので web は議員別の表を出さない
+    // 賛否が分かれたことだけを残す目印。entries が空なので web は議員別の表を出さず、
+    // 全会一致とも表示しない（notes・URL は今は表示されないが、出典として残しておく）
     return {
       imageUrl: session.voteSourceUrl,
       sourceUrl: session.voteSourceUrl,

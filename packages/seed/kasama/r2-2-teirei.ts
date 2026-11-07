@@ -17,7 +17,7 @@ import {
   type KasamaBill,
   marks,
   SENKETSU_NOTE,
-  tallyText,
+  standingVote,
   type VoteMark,
 } from "./types";
 
@@ -41,10 +41,7 @@ const SPLIT: Readonly<Record<string, readonly VoteMark[]>> = {
   議員提出1: marks("○○○○○○●○○●○○○○●○○○○○○－"),
 };
 
-const standing = (key: string) => {
-  const votes = SPLIT[key];
-  return { vote: { marks: votes }, tally: tallyText(votes) };
-};
+const standing = (key: string) => standingVote(SPLIT, key);
 
 type Committee = "総務産業委員会" | "教育福祉委員会" | "建設土木委員会";
 

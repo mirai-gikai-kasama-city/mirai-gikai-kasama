@@ -17,7 +17,7 @@ import {
   type KasamaBill,
   marks,
   SENKETSU_NOTE,
-  tallyText,
+  standingVote,
   type VoteMark,
 } from "./types";
 
@@ -41,10 +41,7 @@ const SPLIT: Readonly<Record<number, readonly VoteMark[]>> = {
 };
 
 /** 起立で採決された議案の賛否と、本文・要約に書く人数 */
-const standing = (number: number) => {
-  const votes = SPLIT[number];
-  return { vote: { marks: votes }, tally: tallyText(votes) };
-};
+const standing = (number: number) => standingVote(SPLIT, number);
 
 type Committee = "総務産業委員会" | "教育福祉委員会" | "建設土木委員会";
 

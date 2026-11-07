@@ -9,7 +9,7 @@
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  * 議員の評価につながる表現は避け、討論の主張は発言者の主張として書く。
  */
-import { type KasamaBill, marks, tallyText, type VoteMark } from "./types";
+import { type KasamaBill, marks, standingVote, type VoteMark } from "./types";
 
 export const R2_1_TEIREI_SESSION = {
   key: "r2-1-teirei",
@@ -37,10 +37,7 @@ const SPLIT: Readonly<Record<number, readonly VoteMark[]>> = {
 };
 
 /** 起立で採決された議案の賛否と、本文・要約に書く人数 */
-const standing = (number: number) => {
-  const votes = SPLIT[number];
-  return { vote: { marks: votes }, tally: tallyText(votes) };
-};
+const standing = (number: number) => standingVote(SPLIT, number);
 
 /** マイナンバーに関わる費用を理由とした反対の討論（議案第15・16・18号） */
 const MY_NUMBER_DISSENT =

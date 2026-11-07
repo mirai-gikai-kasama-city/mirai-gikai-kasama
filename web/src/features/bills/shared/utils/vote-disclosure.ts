@@ -90,7 +90,8 @@ export function resolveVoteDisclosure(input: {
   /**
    * bills.member_votes が入っているか（議員別の表が空でも true）。
    * 笠間市には、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案があり、
-   * seed は entries が空の member_votes を入れる。この場合は全会一致と言えない
+   * seed は entries が空の member_votes を入れる。この場合は全会一致と言えない。
+   * 読み取れない壊れた値でも、何か入っていれば同じく全会一致と言わない（安全側）
    */
   hasRecordedVote: boolean;
   /** 議案名（bills.name） */

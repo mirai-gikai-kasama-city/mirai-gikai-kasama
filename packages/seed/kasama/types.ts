@@ -93,6 +93,19 @@ export const tallyText = (votes: readonly VoteMark[]): string => {
   return `賛成${count("○")}、反対${count("●")}`;
 };
 
+/**
+ * 起立による採決の賛否（会議録に人数が無い会期用）。議会だよりの賛否一覧から、
+ * 議案の vote と「賛成18、反対2」の文をまとめて作る
+ */
+export function standingVote<K extends PropertyKey>(
+  split: Readonly<Partial<Record<K, readonly VoteMark[]>>>,
+  key: K
+) {
+  const votes = split[key];
+  if (!votes) throw new Error(`${String(key)}: 賛否一覧がありません`);
+  return { vote: { marks: votes }, tally: tallyText(votes) };
+}
+
 /** 専決処分の報告で共通する説明 */
 export const SENKETSU_NOTE =
   "急ぎで議会を開く時間がないとき、市長は議会の議決を待たずに決めることができます（専決処分）。その場合、次の議会に報告して承認を求めます。";

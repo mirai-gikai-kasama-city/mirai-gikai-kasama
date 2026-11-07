@@ -66,6 +66,11 @@ import {
   R7_MEMBERS,
 } from "./r7-4-teirei";
 import { R8_2_BILLS, R8_2_MEMBERS, R8_2_SESSION } from "./r8-2-teirei";
+import {
+  R8_4_SCHEDULE_URL,
+  R8_4_TEIREI_BILLS,
+  R8_4_TEIREI_SESSION,
+} from "./r8-4-teirei";
 import type { KasamaSession } from "./types";
 
 /**
@@ -270,5 +275,13 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(R8_2_SESSION, {
     ...dayori(82, "page017485", "1785817747", R8_2_MEMBERS),
     bills: R8_2_BILLS,
+  }),
+  // 令和8年第4回は会期中。議会だよりがまだ無いので、出典は市の会期日程（案）の PDF
+  toSession(R8_4_TEIREI_SESSION, {
+    sourceUrl: R8_4_SCHEDULE_URL,
+    sourceTitle: "令和8年第4回笠間市議会定例会 会期日程（案）",
+    voteSourceUrl: R8_4_SCHEDULE_URL,
+    members: [],
+    bills: R8_4_TEIREI_BILLS,
   }),
 ];

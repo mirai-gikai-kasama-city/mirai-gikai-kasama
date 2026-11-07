@@ -39,7 +39,7 @@ export async function generateMetadata({
   const { sessionKey } = await params;
   const found = findGroups(sessionKey);
   if (!found) return { title: "一般質問が見つかりません" };
-  const title = `田川市議会 ${found.group.sessionName}の一般質問`;
+  const title = `笠間市議会 ${found.group.sessionName}の一般質問`;
   const description = describeQuestionSession({
     sessionName: found.group.sessionName,
     memberNames: found.group.records.map((r) => r.memberName),

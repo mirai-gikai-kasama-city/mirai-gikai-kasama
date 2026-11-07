@@ -93,7 +93,7 @@ export function buildBillSearchTitle(
  */
 export function buildBillMetaDescription(bill: BillWithContent): string {
   const summary = bill.bill_content?.summary;
-  const prefix = `田川市議会に提出された「${bill.name}」の解説。`;
+  const prefix = `笠間市議会に提出された「${bill.name}」の解説。`;
   if (!summary) {
     return `${prefix}提出日・審議状況・議決結果をやさしくまとめています。`;
   }

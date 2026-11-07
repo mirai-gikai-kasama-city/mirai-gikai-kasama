@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
+import { isHiddenSectionPath } from "@/config/site-sections";
 import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { getCommitteeMeetings } from "@/features/committees/server/loaders/get-committee-meetings";
 import { buildCommitteeGroups } from "@/features/committees/shared/utils/committee-groups";
@@ -213,12 +215,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const publishedBillIds = new Set(bills.map((bill) => bill.id));
   const topicUrls = buildTopicSitemapEntries({
     baseUrl,
-    pages: topicPages,
+    pages: AI_FEATURES_ENABLED ? topicPages : [],
     publishedBillIds,
   });
-  const interviewUrls = buildInterviewSitemapEntries({ baseUrl, bills });
+  const interviewUrls = buildInterviewSitemapEntries({
+    baseUrl,
+    bills: AI_FEATURES_ENABLED ? bills : [],
+  });
 
-  return [
+  const entries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       // トップも他の一覧系と同じく実データの更新に連動させる
@@ -319,4 +324,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...topicUrls,
     ...interviewUrls,
   ];
+
+  return entries.filter(
+    (entry) => !isHiddenSectionPath(new URL(entry.url).pathname)
+  );
 }

@@ -1,5 +1,5 @@
 import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
-import { FileText, MessageSquareText, Youtube } from "lucide-react";
+import { FileText, MessageSquareText, Video } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -135,14 +135,21 @@ export function QuestionCard({
       )}
 
       {(record.videoUrl ||
+        record.minutesUrl ||
         answerRecordId ||
         record.pdfUrl ||
         outlineFromDisclosure) && (
         <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
           {record.videoUrl && (
             <TextLink external href={record.videoUrl}>
-              <Youtube aria-hidden className="size-3.5" />
+              <Video aria-hidden className="size-3.5" />
               録画を見る
+            </TextLink>
+          )}
+          {record.minutesUrl && (
+            <TextLink external href={record.minutesUrl}>
+              <FileText aria-hidden className="size-3.5" />
+              公式の会議録（質問と答弁の全文）
             </TextLink>
           )}
           {answerRecordId && (

@@ -4,10 +4,8 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { TextLink } from "@/components/ui/text-link";
 import type { BillWithContent } from "@/features/bills/shared/types";
 import { SessionQuestionsSection } from "@/features/general-questions/server/components/session-questions-section";
-import { officialMinutesIndex } from "@/features/official-minutes/shared/data/official-minutes-index";
-import { SessionPetitionsSection } from "@/features/petitions/server/components/session-petitions-section";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
-import { formatDate, formatDateWithDots } from "@/lib/utils/date";
+import { formatDate } from "@/lib/utils/date";
 import { BillListWithStatusFilter } from "../../../client/components/bill-list-with-status-filter";
 import type { DietSession } from "../../../shared/types";
 import { buildSessionSummaryBreadcrumbItems } from "../../../shared/utils/session-breadcrumb";
@@ -41,11 +39,6 @@ export async function SessionSummaryLayout({
 
   const summary = summarizeSessionResults(bills);
   const highlights = pickSessionHighlights(bills, HIGHLIGHT_COUNT);
-  // この会期の本会議の会議録（会議録検索システムに公開されている日だけ）
-  const minutes = officialMinutesIndex.findInRange(
-    session.start_date.slice(0, 10),
-    session.end_date.slice(0, 10)
-  );
 
   return (
     <div className="bg-mirai-surface-muted">
@@ -62,11 +55,11 @@ export async function SessionSummaryLayout({
             <p className="text-sm font-medium text-mirai-text-muted">
               {formatDate(session.start_date)} 〜 {formatDate(session.end_date)}
             </p>
-            {/* このページのもとになっている公式の資料（議決結果のページと、公開済みの会議録） */}
+            {/* このページのもとになっている公式の資料 */}
             <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
               <SourceBadge
                 kind="official"
-                detail="市議会の議案のページ"
+                detail="市議会の公開資料"
                 className="bg-white"
               />
               {session.shugiin_url && (
@@ -79,21 +72,6 @@ export async function SessionSummaryLayout({
                 </TextLink>
               )}
             </div>
-            {minutes.length > 0 && (
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-mirai-text-secondary">
-                <span className="font-bold">本会議の会議録</span>
-                {minutes.map((day) => (
-                  <TextLink
-                    key={day.url}
-                    external
-                    href={day.url}
-                    className="text-xs"
-                  >
-                    {day.dayLabel}（{formatDateWithDots(day.date)}）
-                  </TextLink>
-                ))}
-              </div>
-            )}
           </header>
 
           <SessionSummaryStats summary={summary} />
@@ -102,9 +80,8 @@ export async function SessionSummaryLayout({
 
           <SplitVoteSection bills={bills} />
 
-          {/* 一般質問・請願陳情は公式サイト由来の静的データ（該当が無ければ何も出さない） */}
+          {/* 一般質問は公式の通告から作った静的データ（該当が無ければ何も出さない） */}
           <SessionQuestionsSection sessionKey={session.slug} />
-          <SessionPetitionsSection session={session} />
 
           <section className="flex flex-col gap-4">
             <SectionHeading>全議案リスト</SectionHeading>

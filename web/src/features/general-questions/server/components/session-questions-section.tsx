@@ -49,7 +49,7 @@ export async function SessionQuestionsSection({
         ))}
       </div>
       <TextLink href={routes.questionSession(sessionKey) as Route}>
-        質問の要旨・録画・答弁の記録を見る
+        この会期の一般質問のページを見る
       </TextLink>
     </section>
   );

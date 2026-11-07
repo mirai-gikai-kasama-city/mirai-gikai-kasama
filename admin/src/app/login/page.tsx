@@ -11,7 +11,7 @@ export default function LoginPage() {
             管理者ログイン
           </CardTitle>
           <p className="text-sm text-muted-foreground text-center">
-            みらい議会＠田川市 管理画面
+            かさま議会ノート 管理画面
           </p>
         </CardHeader>
         <CardContent>
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-xs text-muted-foreground">
-              © 2026 田川市政ラボ. All rights reserved.
+              © 2026 すがのゆういち. All rights reserved.
             </p>
           </div>
         </CardContent>

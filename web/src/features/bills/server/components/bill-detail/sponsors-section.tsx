@@ -101,12 +101,12 @@ export function SponsorsSection({ bill, memberNameSet }: SponsorsSectionProps) {
         rel="noopener noreferrer"
         className="mt-4 inline-flex items-center gap-1 text-sm text-primary underline underline-offset-[3px] hover:opacity-70"
       >
-        出典: 議案説明資料PDF（田川市公式サイト）
+        出典: 議案説明資料PDF（笠間市公式サイト）
         <ExternalLink className="h-3.5 w-3.5" />
       </a>
 
       <p className="mt-2 text-xs text-mirai-text-note">
-        ※田川市公式サイト掲載の議案説明資料PDFに記載された提出者・賛成者（連署議員）です
+        ※笠間市公式サイト掲載の議案説明資料PDFに記載された提出者・賛成者（連署議員）です
       </p>
     </section>
   );

@@ -1,6 +1,6 @@
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
 import type { SessionArchiveItem } from "../../loaders/get-session-archive";
 import { SessionArchiveList } from "./session-archive-list";
 
@@ -20,16 +20,16 @@ export function SessionArchiveLayout({ items }: SessionArchiveLayoutProps) {
           <Breadcrumb
             items={[
               { label: "TOP", href: routes.home() },
-              { label: "議会ごとのまとめ" },
+              { label: SESSION_ARCHIVE_LABEL },
             ]}
           />
 
           <header className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold leading-[1.4] text-mirai-text">
-              議会ごとのまとめ
+              {SESSION_ARCHIVE_LABEL}
             </h1>
             <p className="text-sm font-medium text-mirai-text-muted">
-              田川市議会の全ての会期を新しい順に一覧できます。会期を選ぶと、その会期に提出された議案の集計・ハイライトのまとめを見ることができます。
+              笠間市議会の全ての会期を新しい順に一覧できます。会期を選ぶと、その会期に提出された議案の集計・ハイライトのまとめを見ることができます。
             </p>
           </header>
 

@@ -1,54 +1,33 @@
 import type { Route } from "next";
 import Link from "next/link";
-import { EXTERNAL_LINKS } from "@/config/external-links";
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
+import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
 
 type FooterLinkItem = {
   label: string;
   href: string;
-  external?: boolean;
 };
 
 const links: FooterLinkItem[] = [
   {
     label: "議案を検索",
     href: routes.search(),
-    external: false,
   },
   {
-    label: "議会ごとのまとめ",
+    label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
-    external: false,
-  },
-  {
-    label: "議員・提出者から見る",
-    href: routes.memberArchive(),
-    external: false,
   },
   {
     label: "過去の会期",
     href: routes.archive(),
-    external: false,
   },
   {
     label: "利用規約",
     href: routes.terms(),
-    external: false,
   },
   {
     label: "プライバシーポリシー",
     href: routes.privacy(),
-    external: false,
-  },
-  {
-    label: "よくあるご質問",
-    href: EXTERNAL_LINKS.FAQ,
-    external: true,
-  },
-  {
-    label: "自主制作ガイドライン",
-    href: EXTERNAL_LINKS.FORK_GUIDELINES_NOTE,
-    external: true,
   },
 ];
 
@@ -62,8 +41,6 @@ export function DesktopMenuLinks() {
         <Link
           key={link.label}
           href={link.href as Route}
-          target={link.external ? "_blank" : undefined}
-          rel={link.external ? "noreferrer" : undefined}
           className="whitespace-nowrap font-medium text-xs transition-opacity hover:opacity-70"
           style={{
             lineHeight: "1.48em",
@@ -78,7 +55,7 @@ export function DesktopMenuLinks() {
           lineHeight: "1.48em",
         }}
       >
-        © 2026 田川市政ラボ
+        {`© 2026 ${OPERATOR_NAME}`}
       </p>
     </div>
   );

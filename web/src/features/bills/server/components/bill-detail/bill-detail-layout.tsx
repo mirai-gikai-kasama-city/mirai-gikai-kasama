@@ -5,6 +5,7 @@ import { getDietSessionById } from "@/features/diet-sessions/server/loaders/get-
 import { GlossarySection } from "@/features/glossary/server/components/glossary-section";
 import { pickGlossaryTerms } from "@/features/glossary/shared/data/glossary";
 import { InterviewLandingSection } from "@/features/interview-config/client/components/interview-landing-section";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
 import { getInterviewConfig } from "@/features/interview-config/server/loaders/get-interview-config";
 import { getPublicReportsByBillId } from "@/features/interview-report/server/loaders/get-public-reports-by-bill-id";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
@@ -14,7 +15,6 @@ import { getPublicTopicAnalysis } from "@/features/user-topic-analysis/server/lo
 import { BillDetailClient } from "../../../client/components/bill-detail/bill-detail-client";
 import { BillDisclaimer } from "../../../client/components/bill-detail/bill-disclaimer";
 import { BillStatusProgress } from "../../../client/components/bill-detail/bill-status-progress";
-import { MiraiStanceCard } from "../../../client/components/bill-detail/mirai-stance-card";
 import type { BillWithContent } from "../../../shared/types";
 import { buildBillBreadcrumbItems } from "../../../shared/utils/bill-breadcrumb";
 import { buildBillSourceRefs } from "../../../shared/utils/bill-sources";
@@ -39,7 +39,6 @@ export async function BillDetailLayout({
   bill,
   currentDifficulty,
 }: BillDetailLayoutProps) {
-  const showMiraiStance = bill.status === "preparing" || bill.mirai_stance;
   // 本文に出てくるむずかしいことば。本文中の印（初出だけ）より広く、
   // 熟語の一部として出てくる語も一覧に載せる
   const glossaryEntries = pickGlossaryTerms([
@@ -56,9 +55,9 @@ export async function BillDetailLayout({
     adjacentBills,
     memberNameSet,
   ] = await Promise.all([
-    getInterviewConfig(bill.id),
+    AI_FEATURES_ENABLED ? getInterviewConfig(bill.id) : null,
     getPublicReportsByBillId(bill.id),
-    getPublicTopicAnalysis(bill.id),
+    AI_FEATURES_ENABLED ? getPublicTopicAnalysis(bill.id) : null,
     bill.diet_session_id
       ? getDietSessionById(bill.diet_session_id)
       : Promise.resolve(null),
@@ -170,25 +169,19 @@ export async function BillDetailLayout({
         <ExplanationMaterialsSection bill={bill} />
 
         {/* 議案のトピック一覧（AIインタビュー意見の整理） */}
-        <div className="my-8">
-          <BillTopicsPreviewSection
-            billId={bill.id}
-            topics={topicAnalysis?.topics ?? []}
-            publicReportCount={publicReportsResult.totalCount}
-          />
-        </div>
+        {AI_FEATURES_ENABLED && (
+          <div className="my-8">
+            <BillTopicsPreviewSection
+              billId={bill.id}
+              topics={topicAnalysis?.topics ?? []}
+              publicReportCount={publicReportsResult.totalCount}
+            />
+          </div>
+        )}
 
         {interviewConfig != null && (
           <div className="my-8">
             <InterviewLandingSection billId={bill.id} />
-          </div>
-        )}
-        {showMiraiStance && (
-          <div className="my-8">
-            <MiraiStanceCard
-              stance={bill.mirai_stance}
-              billStatus={bill.status}
-            />
           </div>
         )}
         {/* シェアボタン */}

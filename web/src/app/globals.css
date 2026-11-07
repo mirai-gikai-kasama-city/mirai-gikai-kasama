@@ -66,7 +66,7 @@
   --color-gray-900: #231f1c;
 
   /* --- Mirai Design System Color Tokens ---
-     炭坑レンガの赤茶をキーカラーにした暖色のテーマ。文字サイズ・余白・
+     緑をキーカラーにしたテーマ。文字サイズ・余白・
      コントラストの考え方はデジタル庁デザインシステム（DADS、
      https://design.digital.go.jp/ ）を踏襲している。
      文字・面・罫線は少し赤みのある暖かい灰色。賛否・出典などの意味を持つ色
@@ -96,11 +96,11 @@
   --color-mirai-surface-tag: #f1ece6;
   --color-mirai-surface-warm: #f3ece2;
   --color-mirai-surface-gray: #f6f2ed;
-  /* キーカラーの薄い面（レンガ色を薄めた #fbeee7 / #fdf6f1）。ヒーロー・タイトルバンド・
+  /* キーカラーの薄い面（緑を薄めた #f1fadf / #f8fcef）。ヒーロー・タイトルバンド・
      選択中チップ・ユーザー発言バブル等の「面」専用。区切り線には mirai-border、
-     この面の上の文字には primary-accent を使う（#fbeee7 の上で7.1:1） */
-  --color-mirai-surface-key: #fbeee7;
-  --color-mirai-surface-key-subtle: #fdf6f1;
+     この面の上の文字には primary-accent を使う（#f1fadf の上で6.8:1） */
+  --color-mirai-surface-key: #f1fadf;
+  --color-mirai-surface-key-subtle: #f8fcef;
 
   /* Border（暖かい灰色。borderは標準、border-mutedは薄い区切り） */
   --color-mirai-border: #d6cec5;
@@ -131,7 +131,7 @@
 
   /* 出典バッジ（情報のもとの3区分）。面は DADS の 50 番台、枠は 200 番台。
      公式=青、中継の文字起こし=黄（聞き取りの誤りに注意）、情報開示請求=紫。
-     公式の青はキーカラー（赤茶）とは別の「意味の色」なので暖色にそろえず、
+     公式の青はキーカラー（緑）とは別の「意味の色」なのでキーカラーにそろえず、
      DADS の値のまま残している。色だけに頼らず、必ずアイコンと文字を添える */
   --color-source-official: #e8f1fe;
   --color-source-official-border: #c5d7fb;
@@ -145,16 +145,16 @@
   --color-mirai-progress-fill: #9bd4b5;
 
   /* グラフの積み上げ棒で、注目する部分（bg-primary）の残りを塗る明るい段
-     （キーカラーを明るくした #d98b74）。白地に対して約2.7:1。値は必ず文字でも並べる */
-  --color-mirai-chart-remainder: #d98b74;
+     （キーカラーを明るくした #7fc247）。白地に対して約2.2:1。値は必ず文字でも並べる */
+  --color-mirai-chart-remainder: #7fc247;
 
   /* BillCover背景（議案カード用の動的カバー）: カテゴリ系統 × 濃淡3段階。
-     テラコッタ（キーカラーの薄め）を中心に、彩度を抑えた暖色寄りの薄い色面（フラット）。
+     キーカラーを薄めた緑（トークン名は terracotta のまま）を含む、彩度を抑えた薄い色面（フラット）。
      OG画像（api/og/bills/[billId]/cover-colors.ts の COVER_COLORS）と同じ値に保つこと
      （cover-colors.test.ts が一致を検査する） */
-  --color-cover-terracotta-1: #f8e4d8;
-  --color-cover-terracotta-2: #f3d3c1;
-  --color-cover-terracotta-3: #ecc0a8;
+  --color-cover-terracotta-1: #eef7d8;
+  --color-cover-terracotta-2: #e1f0bd;
+  --color-cover-terracotta-3: #d2e6a3;
   --color-cover-slate-1: #e6ebee;
   --color-cover-slate-2: #d7dfe4;
   --color-cover-slate-3: #c6d1d8;
@@ -174,7 +174,7 @@
   /* Topic analysis（意見を述べた人の4区分の色。affected=DADS orange-800 / expert=DADS
      purple-800 / industry=青 は区分を見分ける意味の色なのでそのまま。
      面・文字・市民の灰色は暖かい灰色） */
-  --color-topic-info-bg: #fbeee7;
+  --color-topic-info-bg: #f1fadf;
   --color-topic-chip-bg: #f1ece6;
   --color-topic-count: #675f59;
   --color-topic-label: #776e67;
@@ -188,8 +188,8 @@
 }
 
 :root {
-  /* 角丸は8px基調（DADSを踏襲）、背景は白、キーカラーは炭坑レンガの赤茶
-     （primary は白地で5.5:1、primary-accent は8.1:1） */
+  /* 角丸は8px基調（DADSを踏襲）、背景は白、キーカラーは緑
+     （primary は白地で4.8:1、primary-accent は7.4:1） */
   --radius: 0.5rem;
   --background: #ffffff;
   --foreground: #231f1c;
@@ -197,8 +197,10 @@
   --card-foreground: #231f1c;
   --popover: oklch(1 0 0);
   --popover-foreground: #231f1c;
-  --primary: #b5432a;
-  --primary-accent: #8f2f1c;
+  --primary: #4a7f1c;
+  --primary-accent: #356012;
+  --mirai-gradient-start: #96d958;
+  --mirai-gradient-end: #e1f7b7;
   --primary-foreground: oklch(0.985 0 0);
   --secondary: #f6f2ed;
   --secondary-foreground: #2e2925;

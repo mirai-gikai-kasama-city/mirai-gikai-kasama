@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 
 /** サイト名（共有時の siteName や、ページの題名の後ろに付ける名前） */
-export const SITE_NAME = "みらい議会＠田川市";
+export const SITE_NAME = "かさま議会ノート";
 
 /** サイト共通の題名と説明（ページ固有の題名を持たないページの共有にも使う） */
 export const SITE_TITLE = `${SITE_NAME}｜議案をやさしく解説`;
 export const SITE_DESCRIPTION =
-  "田川市議会に提出された議案・予算・条例・決議・意見書を、AIを活用してやさしい言葉で解説する市民向けプラットフォームです。";
+  "笠間市議会に提出された議案・予算・条例などを、AIがやさしい言葉で解説します。";
 
 /** 共有時の言語・地域（og:locale） */
 export const SITE_LOCALE = "ja_JP";

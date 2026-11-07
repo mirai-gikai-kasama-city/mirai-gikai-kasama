@@ -20,7 +20,7 @@ export function DietSessionBillList({ session, bills }: Props) {
       <div className="flex flex-col gap-1.5">
         <SectionHeading as="h1">過去の議会アーカイブ</SectionHeading>
         <p className="text-sm text-mirai-text-muted">
-          過去の田川市議会に提出された議案
+          過去の笠間市議会に提出された議案
         </p>
       </div>
 
@@ -54,7 +54,7 @@ export function DietSessionBillList({ session, bills }: Props) {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1"
           >
-            田川市議会議案情報へ
+            笠間市議会議案情報へ
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>

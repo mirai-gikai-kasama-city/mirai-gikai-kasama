@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ClipboardList,
   History,
   Home,
   Info,
@@ -9,11 +8,7 @@ import {
   type LucideIcon,
   Menu,
   MessageSquareText,
-  ScrollText,
   Search,
-  UserCheck,
-  Users,
-  Vote,
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -24,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { routes } from "@/lib/routes";
+import { routes, SESSION_ARCHIVE_LABEL } from "@/lib/routes";
 import { RubyToggle } from "@/lib/rubyful";
 
 type NavLinkItem = {
@@ -37,31 +32,18 @@ const NAV_LINKS: NavLinkItem[] = [
   { label: "ホーム", href: routes.home(), icon: Home },
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
-    label: "議会ごとのまとめ",
+    label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
     icon: Landmark,
-  },
-  {
-    label: "議員・提出者から見る",
-    href: routes.memberArchive(),
-    icon: Users,
   },
   {
     label: "過去の会期から議案を見る",
     href: routes.archive(),
     icon: History,
   },
-  {
-    label: "委員会の記録",
-    href: routes.committees(),
-    icon: ClipboardList,
-  },
   { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
-  { label: "請願・陳情", href: routes.petitions(), icon: ScrollText },
-  { label: "新市長の動き", href: routes.mayor(), icon: UserCheck },
-  { label: "選挙の投票率", href: routes.elections(), icon: Vote },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
-  { label: "みらい議会とは", href: `${routes.home()}#about`, icon: Info },
+  { label: "かさま議会ノートとは", href: `${routes.home()}#about`, icon: Info },
 ];
 
 type InfoLinkItem = {

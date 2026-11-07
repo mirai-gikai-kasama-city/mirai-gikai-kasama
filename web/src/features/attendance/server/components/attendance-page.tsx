@@ -24,7 +24,7 @@ import {
 const SERIES: readonly ChartSeries[] = [
   { label: "傍聴者（延べ）", kind: "focus" },
 ];
-const COUNCIL_SITE = SOURCE_ORIGINS.official[0];
+const COUNCIL_SITE = SOURCE_ORIGINS[0];
 const formatPeople = (n: number) => `${n}人`;
 
 /** 会期名から年と回次を除いた短い名前（例: 3月定例会） */

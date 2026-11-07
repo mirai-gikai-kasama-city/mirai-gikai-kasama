@@ -189,9 +189,9 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
     ...dayori(68, "page014169", "1677226663", R4_6_MEMBERS),
     bills: R4_4_TEIREI_BILLS,
   }),
-  // 令和4年第1回臨時会〜令和5年第2回定例会は、議会だより第68〜70号の PDF の文字が図形で
-  // 読み取れないため、議員別の賛否を持たない（web の vote-disclosure の
-  // SESSIONS_WITHOUT_MEMBER_VOTES にも載せ、全会一致と表示しない）
+  // 令和4年12月の一般選挙の後。議会だより第68〜70号の PDF は文字が図形なので、賛否一覧は
+  // ページを画像にしたものと運営者が読み取った表から転記した（列は R6_MEMBERS の順）。
+  // 令和4年第1回・令和5年第1回の臨時会は賛否が分かれた議案が無いので、列順を持たない
   toSession(R4_1_RINJI_SESSION, {
     ...dayori(68, "page014169", "1677226651", []),
     bills: R4_1_RINJI_BILLS,
@@ -201,15 +201,15 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
     bills: R5_1_RINJI_BILLS,
   }),
   toSession(R5_1_TEIREI_SESSION, {
-    ...dayori(69, "page014396", "1684715423", []),
+    ...dayori(69, "page014396", "1684715423", R6_MEMBERS),
     bills: R5_1_TEIREI_BILLS,
   }),
   toSession(R5_2_RINJI_SESSION, {
-    ...dayori(70, "page014629", "1692234925", []),
+    ...dayori(70, "page014629", "1692234925", R6_MEMBERS),
     bills: R5_2_RINJI_BILLS,
   }),
   toSession(R5_2_TEIREI_SESSION, {
-    ...dayori(70, "page014629", "1692234910", []),
+    ...dayori(70, "page014629", "1692234910", R6_MEMBERS),
     bills: R5_2_TEIREI_BILLS,
   }),
   // 令和5年第3回〜令和6年第4回は、賛否一覧の列順が同じ（議長 大関久義が最後の列）

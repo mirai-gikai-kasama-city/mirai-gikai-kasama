@@ -38,19 +38,13 @@ describe("resolveVoteDisclosure", () => {
     }
   });
 
-  it("議員別の賛否を読み取れない笠間市の会期は、可決系でも全会一致にしない", () => {
-    for (const sessionSlug of [
-      "kasama-r4-1-rinji",
-      "kasama-r5-1-rinji",
-      "kasama-r5-1-teirei",
-      "kasama-r5-2-rinji",
-      "kasama-r5-2-teirei",
-    ]) {
-      expect(resolveVoteDisclosure(input({ sessionSlug }))).toBe("unknown");
-    }
-    // 賛否一覧を読める会期は、これまでどおり全会一致と判定する
+  it("議決結果ページの無い田川市の会期は、可決系でも全会一致にしない", () => {
+    expect(resolveVoteDisclosure(input({ sessionSlug: "r1-5-teirei" }))).toBe(
+      "unknown"
+    );
+    // 笠間市の会期は、賛否一覧を取り込んだので全会一致と判定する
     expect(
-      resolveVoteDisclosure(input({ sessionSlug: "kasama-r5-3-teirei" }))
+      resolveVoteDisclosure(input({ sessionSlug: "kasama-r5-1-teirei" }))
     ).toBe("unanimous");
   });
 

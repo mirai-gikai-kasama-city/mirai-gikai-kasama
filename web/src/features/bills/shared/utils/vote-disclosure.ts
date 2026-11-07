@@ -53,16 +53,9 @@ const SECRET_BALLOT_BILL_KEYS: ReadonlySet<string> = new Set([
 /**
  * 議員別の賛否を確かめられない会期。賛否表の有無から全会一致とは言えないので unknown にする。
  * - 田川市 r1-5-teirei: 議決結果ページが存在しない（議決結果は会議録から補完している）
- * - 笠間市 令和4年第1回臨時会〜令和5年第2回定例会: 議会だより第68〜70号の PDF が
- *   文字を図形にしたもので賛否一覧を読み取れず、会議録には票数しか無い
  */
 const SESSIONS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
   "r1-5-teirei",
-  "kasama-r4-1-rinji",
-  "kasama-r5-1-rinji",
-  "kasama-r5-1-teirei",
-  "kasama-r5-2-rinji",
-  "kasama-r5-2-teirei",
 ]);
 
 /**

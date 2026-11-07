@@ -29,8 +29,9 @@ describe("全会期の賛否データ", () => {
         bill.vote && !bill.vote.marks ? [bill.vote.minutes] : []
       )
     );
-    // 令和3年第1回定例会の3件。0件になったらデータの書き方が変わったことに気づけるようにする
-    expect(unlisted).toHaveLength(3);
+    // 令和3年第1回定例会の3件と、令和5年第1回定例会の委員会提出議案第1号。
+    // 0件になったらデータの書き方が変わったことに気づけるようにする
+    expect(unlisted).toHaveLength(4);
     for (const minutes of unlisted) {
       expect(minutes.for).toBeGreaterThan(0);
       expect(minutes.against).toBeGreaterThan(0);

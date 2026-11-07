@@ -2,12 +2,12 @@
  * 令和5年第2回笠間市議会臨時会（5月2日）の議案データ
  *
  * 事実（番号・件名・結果・議決日・票数）は 第2回臨時会 会議録 から転記している。
- * かさま市議会だより 第70号 P18 にも審議結果があるが、PDF の文字が図形で読み取れず、
- * 議員別の賛否は分からない（会議録にあるのは票数だけ）。
+ * 議員ごとの賛否は かさま市議会だより 第70号 P18（賛否一覧）による。PDF の文字が図形なので、
+ * ページを画像にして読み取り、会議録の票数と突き合わせた。
  *
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  */
-import { type KasamaBill, SENKETSU_NOTE } from "./types";
+import { type KasamaBill, marks, SENKETSU_NOTE } from "./types";
 
 export const R5_2_RINJI_SESSION = {
   key: "r5-2-rinji",
@@ -18,8 +18,6 @@ export const R5_2_RINJI_SESSION = {
 
 const DAY = "2023-05-02";
 
-const NO_MEMBER_VOTES =
-  "議員ごとの賛否は、議会だより第70号の PDF から読み取れないため載せていません。";
 
 export const R5_2_RINJI_BILLS: readonly KasamaBill[] = [
   {
@@ -43,6 +41,11 @@ export const R5_2_RINJI_BILLS: readonly KasamaBill[] = [
   },
   {
     billNumberLabel: "報告第3号",
+    // 石井栄議員が反対（列は R6_MEMBERS の順）
+    vote: {
+      minutes: { total: 21, for: 20, against: 1 },
+      marks: marks("○○○○○○○○○○○○○●○○○○○○○－"),
+    },
     title:
       "専決処分の承認を求めることについて（令和４年度笠間市一般会計補正予算（第１３号））",
     resultLabel: "原案承認",
@@ -62,10 +65,15 @@ export const R5_2_RINJI_BILLS: readonly KasamaBill[] = [
 反対の討論が1件ありました。討論者は、マイナポイントの申請支援の人材派遣の費用が含まれていること、マイナンバーカードの取得は任意なのに国がポイントで取得を進めるのは差別的であり、プライバシーの侵害のおそれがあることを主張しました。
 
 ## 審議の経過
-5月2日に採決システムで採決され、投票総数21、賛成20、反対1で承認されました。${NO_MEMBER_VOTES}`,
+5月2日に採決システムで採決され、投票総数21、賛成20、反対1で承認されました。`,
   },
   {
     billNumberLabel: "報告第4号",
+    // 林田美代子・石井栄の両議員が反対
+    vote: {
+      minutes: { total: 21, for: 19, against: 2 },
+      marks: marks("○○○○○○○○○○●○○●○○○○○○○－"),
+    },
     title:
       "専決処分の承認を求めることについて（令和５年度笠間市一般会計補正予算（第１号））",
     resultLabel: "原案承認",
@@ -85,7 +93,7 @@ export const R5_2_RINJI_BILLS: readonly KasamaBill[] = [
 反対の討論が1件ありました。討論者は、ワクチン接種と会議録の作成の予算には賛成としつつ、マイナポイントの申請支援の経費が含まれていることに反対し、国がマイナンバーカードの普及率で自治体への交付金に差をつけようとしていることなどを挙げました。
 
 ## 審議の経過
-5月2日に採決システムで採決され、投票総数21、賛成19、反対2で承認されました。${NO_MEMBER_VOTES}`,
+5月2日に採決システムで採決され、投票総数21、賛成19、反対2で承認されました。`,
   },
   {
     billNumberLabel: "議案第46号",

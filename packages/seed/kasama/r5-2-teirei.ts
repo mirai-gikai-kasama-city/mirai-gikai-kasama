@@ -2,13 +2,13 @@
  * 令和5年第2回笠間市議会定例会（5月31日〜6月15日）の議案データ
  *
  * 事実（番号・件名・結果・議決日・票数）は 第2回定例会 会議録（第1号・第6号）から転記している。
- * かさま市議会だより 第70号 にも審議結果と賛否一覧があるが、PDF の文字が図形で読み取れず、
- * 議員別の賛否は分からない（会議録にあるのは票数だけ）。
+ * 議員ごとの賛否は かさま市議会だより 第70号（賛否一覧）による。PDF の文字が図形なので、
+ * 運営者が読み取った表を、会議録の票数と突き合わせた。
  *
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  * 6月2日の議案質疑（会議録 第2号）はまだ読んでいないので、「議会での質疑」は書いていない。
  */
-import type { KasamaBill } from "./types";
+import { type KasamaBill, marks } from "./types";
 
 export const R5_2_TEIREI_SESSION = {
   key: "r5-2-teirei",
@@ -20,8 +20,11 @@ export const R5_2_TEIREI_SESSION = {
 const FIRST_DAY = "2023-05-31";
 const LAST_DAY = "2023-06-15";
 
-const NO_MEMBER_VOTES =
-  "議員ごとの賛否は、議会だより第70号の PDF から読み取れないため載せていません。";
+/** 議案第51号・第53号は、林田美代子・石井栄の両議員が反対（列は R6_MEMBERS の順） */
+const AGAINST_2 = {
+  minutes: { total: 21, for: 19, against: 2 },
+  marks: marks("○○○○○○○○○○●○○●○○○○○○○－"),
+};
 
 /** 委員会で異議なく可決すべきとされ、6月15日に異議なく可決された議案 */
 function routine(input: {
@@ -112,6 +115,7 @@ export const R5_2_TEIREI_BILLS: readonly KasamaBill[] = [
   }),
   {
     billNumberLabel: "議案第51号",
+    vote: AGAINST_2,
     title: "笠間市国民健康保険税条例の一部を改正する条例について",
     resultLabel: "原案可決",
     decidedOn: LAST_DAY,
@@ -131,7 +135,7 @@ export const R5_2_TEIREI_BILLS: readonly KasamaBill[] = [
 反対の討論が1件ありました。討論者は、軽減の対象が広がる点は低所得者への支援だと認めつつ、上限額が昨年度に続いて引き上げられ、子育て世帯などの負担が増えること、国保は加入者の所得が低いのに保険料が高い構造があり、公費を入れて引き下げるべきことなどを主張しました。
 
 ## 審議の経過
-6月15日に採決システムで採決され、投票総数21、賛成19、反対2で可決されました。${NO_MEMBER_VOTES}`,
+6月15日に採決システムで採決され、投票総数21、賛成19、反対2で可決されました。`,
   },
   routine({
     number: 52,
@@ -149,6 +153,7 @@ export const R5_2_TEIREI_BILLS: readonly KasamaBill[] = [
   }),
   {
     billNumberLabel: "議案第53号",
+    vote: AGAINST_2,
     title: "笠間芸術の森公園スケートパーク管理条例の一部を改正する条例について",
     resultLabel: "原案可決",
     decidedOn: LAST_DAY,
@@ -165,7 +170,7 @@ export const R5_2_TEIREI_BILLS: readonly KasamaBill[] = [
 建設土木委員会は、全会一致で可決すべきものとしました。
 
 ## 審議の経過
-6月15日の本会議では異議があったため採決システムで採決され、投票総数21、賛成19、反対2で可決されました。討論はありませんでした。${NO_MEMBER_VOTES}`,
+6月15日の本会議では異議があったため採決システムで採決され、投票総数21、賛成19、反対2で可決されました。討論はありませんでした。`,
   },
   routine({
     number: 54,
@@ -189,6 +194,11 @@ export const R5_2_TEIREI_BILLS: readonly KasamaBill[] = [
   }),
   {
     billNumberLabel: "議案第56号",
+    // 林田美代子・石井栄・西山猛の各議員が反対
+    vote: {
+      minutes: { total: 21, for: 18, against: 3 },
+      marks: marks("○○○○○○○○○○●○○●○○●○○○○－"),
+    },
     title: "令和５年度笠間市一般会計補正予算（第３号）",
     resultLabel: "原案可決",
     decidedOn: LAST_DAY,
@@ -218,7 +228,7 @@ export const R5_2_TEIREI_BILLS: readonly KasamaBill[] = [
 賛成の討論者は、福田地区の補助金は基金条例の目的である地域振興に合っており、球団が人材として地域活動を担うこと、マイナンバーカードは問題はあるものの行政のデジタル化に向けて普及を止める選択はないことを主張しました。
 
 ## 審議の経過
-6月15日に採決システムで採決され、投票総数21、賛成18、反対3で可決されました。${NO_MEMBER_VOTES}`,
+6月15日に採決システムで採決され、投票総数21、賛成18、反対3で可決されました。`,
   },
   routine({
     number: 57,

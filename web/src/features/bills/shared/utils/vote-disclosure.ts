@@ -66,17 +66,6 @@ const SESSIONS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
 ]);
 
 /**
- * 賛否は分かれたが、議員別の賛否が公表されていない議案（キーは SECRET_BALLOT_BILL_KEYS と同じ形）。
- * 笠間市 令和3年第1回定例会の3月3日の3件は、採決システムの票数は会議録にあるが、
- * 議会だより第61号の賛否一覧に載っていない
- */
-const BILLS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
-  "kasama-r3-1-teirei:議案第29号　令和２年度笠間市一般会計補正予算（第１２号）",
-  "kasama-r3-1-teirei:議案第30号　令和２年度笠間市国民健康保険特別会計補正予算（第４号）",
-  "kasama-r3-1-teirei:議案第32号　令和２年度笠間市介護保険特別会計補正予算（第３号）",
-]);
-
-/**
  * 「全会一致」と判定してよい議決結果。可決系と、笠間市の諮問への答申
  * （議案と同じく異議の有無で決め、賛否が分かれれば賛否一覧に載る）を対象とし、
  * 否決系・修正議決・懲罰・選挙（当選）などの特殊な結果は unknown 扱いにする
@@ -98,6 +87,12 @@ const UNANIMOUS_ELIGIBLE_RESULTS: ReadonlySet<string> = new Set([
 export function resolveVoteDisclosure(input: {
   /** member_votes（parseMemberVotes済みでなくてよい。null/undefined = データ無し） */
   hasMemberVotes: boolean;
+  /**
+   * bills.member_votes が入っているか（議員別の表が空でも true）。
+   * 笠間市には、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案があり、
+   * seed は entries が空の member_votes を入れる。この場合は全会一致と言えない
+   */
+  hasRecordedVote: boolean;
   /** 議案名（bills.name） */
   billName: string;
   /** 所属会期のslug。不明な場合はnull */
@@ -109,7 +104,7 @@ export function resolveVoteDisclosure(input: {
     return "published";
   }
 
-  if (input.sessionSlug === null) {
+  if (input.hasRecordedVote || input.sessionSlug === null) {
     return "unknown";
   }
 
@@ -117,10 +112,7 @@ export function resolveVoteDisclosure(input: {
     return "secret_ballot";
   }
 
-  if (
-    SESSIONS_WITHOUT_MEMBER_VOTES.has(input.sessionSlug) ||
-    BILLS_WITHOUT_MEMBER_VOTES.has(`${input.sessionSlug}:${input.billName}`)
-  ) {
+  if (SESSIONS_WITHOUT_MEMBER_VOTES.has(input.sessionSlug)) {
     return "unknown";
   }
 

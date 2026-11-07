@@ -6,20 +6,34 @@ import type { BillDescriptionSource } from "@mirai-gikai/shared/council/bill-sou
 /** ○賛成 ●反対 欠欠席 －議長（採決に加わらない） */
 export type VoteMark = "○" | "●" | "欠" | "－";
 
-export interface RecordedVote {
-  /**
-   * 会議録に記録された本会議の採決結果。
-   * 起立による採決（令和2年第2回定例会ごろまで）は人数が記録されていないので省く
-   */
-  minutes?: { total: number; for: number; against: number };
-  /** 議会だよりの賛否一覧。その会期の議員名簿（KasamaSession.members）と同じ順 */
-  marks: readonly VoteMark[];
-  /**
-   * 賛否一覧の人数が会議録の票数と合わないときの説明。どちらかに寄せて直さず、
-   * 両方をそのまま載せ、解説の本文にも食い違いを書く
-   */
-  mismatchNote?: string;
+/** 会議録に記録された本会議の採決結果（採決システムの票数） */
+export interface VoteMinutes {
+  total: number;
+  for: number;
+  against: number;
 }
+
+export type RecordedVote =
+  | {
+      /** 起立による採決（令和2年第2回定例会ごろまで）は人数が記録されていないので省く */
+      minutes?: VoteMinutes;
+      /** 議会だよりの賛否一覧。その会期の議員名簿（KasamaSession.members）と同じ順 */
+      marks: readonly VoteMark[];
+      /**
+       * 賛否一覧の人数が会議録の票数と合わないときの説明。どちらかに寄せて直さず、
+       * 両方をそのまま載せ、解説の本文にも食い違いを書く
+       */
+      mismatchNote?: string;
+    }
+  | {
+      /**
+       * 賛否は分かれたが、議会だよりの賛否一覧に載っていない議案（会議録の票数だけがある）。
+       * 議員別の賛否は空のまま bills.member_votes に入り、web では「全会一致」と表示しない
+       */
+      minutes: VoteMinutes;
+      marks?: undefined;
+      mismatchNote?: undefined;
+    };
 
 /** 議会だよりの審議結果欄の言葉 */
 export type KasamaResultLabel =

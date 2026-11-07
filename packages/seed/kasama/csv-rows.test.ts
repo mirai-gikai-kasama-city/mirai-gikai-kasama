@@ -76,12 +76,21 @@ describe("buildMemberVotes", () => {
   });
 
   it("賛否の数が議員数と違えばエラーにする", () => {
-    if (!bill37?.vote) throw new Error("議案第37号がありません");
+    if (!bill37?.vote?.marks) throw new Error("議案第37号がありません");
     const broken = {
       ...bill37,
       vote: { ...bill37.vote, marks: bill37.vote.marks.slice(1) },
     };
     expect(() => buildMemberVotes(session, broken)).toThrow();
+  });
+
+  it("賛否一覧に載っていない採決は、議員別の表を空にして入れる", () => {
+    if (!bill37) throw new Error("議案第37号がありません");
+    const unlisted = {
+      ...bill37,
+      vote: { minutes: { total: 20, for: 17, against: 3 } },
+    };
+    expect(buildMemberVotes(session, unlisted)?.entries).toEqual([]);
   });
 });
 

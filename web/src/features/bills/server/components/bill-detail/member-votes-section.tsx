@@ -82,6 +82,7 @@ export function MemberVotesSection({
   if (memberVotes === null) {
     const disclosure = resolveVoteDisclosure({
       hasMemberVotes: false,
+      hasRecordedVote: bill.member_votes != null,
       billName: bill.name,
       sessionSlug,
       statusNote: bill.status_note,

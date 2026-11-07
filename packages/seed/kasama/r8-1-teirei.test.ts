@@ -5,7 +5,7 @@ import { R8_1_MEMBERS, R8_1_TEIREI_BILLS } from "./r8-1-teirei";
 /** ●の議員名を返す */
 const opponents = (label: string) => {
   const bill = R8_1_TEIREI_BILLS.find((b) => b.billNumberLabel === label);
-  return R8_1_MEMBERS.filter((_, index) => bill?.vote?.marks[index] === "●");
+  return R8_1_MEMBERS.filter((_, index) => bill?.vote?.marks?.[index] === "●");
 };
 
 describe("令和8年第1回定例会の賛否データ", () => {

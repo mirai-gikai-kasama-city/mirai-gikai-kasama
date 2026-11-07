@@ -6,6 +6,7 @@ function input(
 ) {
   return {
     hasMemberVotes: false,
+    hasRecordedVote: false,
     billName: "議案第1号　田川市一般会計補正予算",
     sessionSlug: "r7-6-teirei",
     statusNote: "原案可決",
@@ -53,23 +54,15 @@ describe("resolveVoteDisclosure", () => {
     ).toBe("unanimous");
   });
 
-  it("賛否一覧に載っていない笠間市の議案は、同じ会期のほかの議案と違い全会一致にしない", () => {
+  it("member_votesはあるが議員別の表が空の議案は、全会一致にしない", () => {
+    // 笠間市で、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案
     expect(
       resolveVoteDisclosure(
-        input({
-          sessionSlug: "kasama-r3-1-teirei",
-          billName: "議案第29号　令和２年度笠間市一般会計補正予算（第１２号）",
-        })
+        input({ sessionSlug: "kasama-r3-1-teirei", hasRecordedVote: true })
       )
     ).toBe("unknown");
     expect(
-      resolveVoteDisclosure(
-        input({
-          sessionSlug: "kasama-r3-1-teirei",
-          billName:
-            "議案第31号　令和２年度笠間市後期高齢者医療特別会計補正予算（第３号）",
-        })
-      )
+      resolveVoteDisclosure(input({ sessionSlug: "kasama-r3-1-teirei" }))
     ).toBe("unanimous");
   });
 

@@ -190,6 +190,7 @@ function supplementaryBill(input: {
     resultLabel: "原案可決",
     decidedOn: SUPPLEMENTARY_DAY,
     source: "minutes",
+    ...(input.minutes ? { vote: { minutes: input.minutes } } : {}),
     summary: `${input.summary}${input.minutes ? `賛成${input.minutes.for}、反対${input.minutes.against}で可決。` : "全会一致で可決。"}`,
     body: `## ポイント解説
 ${input.points}

@@ -56,6 +56,15 @@ const VOTE_VALUE: Record<VoteMark, "yes" | "no" | "absent" | "not_voting"> = {
 export function buildMemberVotes(session: KasamaSession, bill: KasamaBill) {
   if (!bill.vote) return null;
   const { marks } = bill.vote;
+  if (!marks) {
+    // 賛否が分かれたことだけを残す。entries が空なので web は議員別の表を出さない
+    return {
+      imageUrl: session.voteSourceUrl,
+      sourceUrl: session.voteSourceUrl,
+      notes: ["議会だよりの賛否一覧に載っていません"],
+      entries: [],
+    };
+  }
   if (marks.length !== session.members.length) {
     throw new Error(`${bill.billNumberLabel}: 賛否の数が議員数と違います`);
   }

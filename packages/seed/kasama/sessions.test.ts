@@ -1,25 +1,38 @@
 import { describe, expect, it } from "vitest";
 import { KASAMA_SESSIONS } from "./sessions";
 
-/** 議案ごとの賛否データ。全会期を同じ基準で確かめる */
+/** 議案ごとの賛否データのうち、議会だよりの賛否一覧があるもの。全会期を同じ基準で確かめる */
 const votedBills = KASAMA_SESSIONS.flatMap((session) =>
-  session.bills.flatMap((bill) =>
-    bill.vote
+  session.bills.flatMap((bill) => {
+    const marks = bill.vote?.marks;
+    return bill.vote && marks
       ? [
           {
             session,
             bill,
             label: `${session.name} ${bill.billNumberLabel}`,
-            vote: bill.vote,
+            vote: { ...bill.vote, marks },
           },
         ]
-      : []
-  )
+      : [];
+  })
 );
 
 describe("全会期の賛否データ", () => {
   it.each(votedBills)("$label の賛否一覧は全議員分ある", ({ session, vote }) => {
     expect(vote.marks).toHaveLength(session.members.length);
+  });
+
+  it("賛否一覧の無い採決は、会議録の票数で賛否が分かれている", () => {
+    const unlisted = KASAMA_SESSIONS.flatMap((session) =>
+      session.bills.flatMap((bill) =>
+        bill.vote && !bill.vote.marks ? [bill.vote.minutes] : []
+      )
+    );
+    for (const minutes of unlisted) {
+      expect(minutes.for).toBeGreaterThan(0);
+      expect(minutes.against).toBeGreaterThan(0);
+    }
   });
 
   // 起立による採決は会議録に人数が無いので、照らし合わせられない

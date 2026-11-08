@@ -3,6 +3,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   ChevronDown,
+  FileText,
   Landmark,
   MessageSquareText,
   Search,
@@ -41,7 +42,7 @@ export type HeaderSessionLink = { id: string; name: string };
 // lg以上（デスクトップ）: ロゴ右側に主要ページへのテキストリンクを並べる
 // 主要ページへのリンク。PC（ロゴ右側のテキストリンク）とスマホ（2段目の横スクロール）で同じ並び
 const MAIN_NAV_LINKS: NavLinkItem[] = [
-  { label: "議案を検索", href: routes.search(), icon: Search },
+  { label: "議案を検索", href: routes.search(), icon: FileText },
   {
     label: "一般質問を検索",
     href: routes.questions(),

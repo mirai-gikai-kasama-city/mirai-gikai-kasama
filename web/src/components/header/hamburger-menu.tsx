@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  FileText,
   History,
   Home,
   Info,
@@ -8,7 +9,6 @@ import {
   type LucideIcon,
   Menu,
   MessageSquareText,
-  Search,
   UsersRound,
 } from "lucide-react";
 import type { Route } from "next";
@@ -31,7 +31,7 @@ type NavLinkItem = {
 
 const NAV_LINKS: NavLinkItem[] = [
   { label: "ホーム", href: routes.home(), icon: Home },
-  { label: "議案を検索", href: routes.search(), icon: Search },
+  { label: "議案を検索", href: routes.search(), icon: FileText },
   {
     label: "一般質問を検索",
     href: routes.questions(),

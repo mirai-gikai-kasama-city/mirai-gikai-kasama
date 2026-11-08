@@ -57,15 +57,26 @@ export function MemberListPage() {
             <dt className="text-xs text-mirai-text-muted">現職の議員</dt>
             <dd className="text-lg font-bold text-mirai-text">
               {memberCount}人
-              <span className="ml-1 text-xs font-normal text-mirai-text-muted">
+              <span className="ml-1 inline-block text-xs font-normal text-mirai-text-muted">
                 （定数{COUNCIL_SEATS}・欠員{VACANT_SEATS.length}）
               </span>
             </dd>
           </div>
-          <div className="rounded-md bg-white px-4 py-3">
+          <div className="col-span-2 rounded-md bg-white px-4 py-3">
             <dt className="text-xs text-mirai-text-muted">党派・会派</dt>
             <dd className="text-lg font-bold text-mirai-text">
               {factionCount}つ
+              <span className="mt-0.5 block text-xs font-normal leading-[1.7] text-mirai-text-secondary">
+                {groups
+                  .filter((group) => group.label !== NO_FACTION_LABEL)
+                  .map((group, index, list) => (
+                    // 名前と人数の途中で改行しないよう、1つずつまとめる（改行は区切りの後だけ）
+                    <span key={group.label} className="inline-block">
+                      {group.label}
+                      {group.members.length}人{index < list.length - 1 && "、"}
+                    </span>
+                  ))}
+              </span>
             </dd>
           </div>
         </dl>

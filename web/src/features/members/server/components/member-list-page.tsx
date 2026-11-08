@@ -1,201 +1,45 @@
-import { ChevronRight } from "lucide-react";
-import type { Route } from "next";
-import Link from "next/link";
-import { Container } from "@/components/layouts/container";
-import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { Card } from "@/components/ui/card";
-import { TextLink } from "@/components/ui/text-link";
 import { getAllGeneralQuestions } from "@/features/general-questions/server/loaders/get-general-questions";
 import {
-  COUNCIL_TERMS,
-  groupQuestionsByTerm,
-} from "@/features/general-questions/shared/utils/council-terms";
-import { selectQuestionsByMember } from "@/features/general-questions/shared/utils/group-questions";
-import { SourceBadge } from "@/features/sources/shared/components/source-badge";
-import { routes } from "@/lib/routes";
-import {
   COUNCIL_SEATS,
-  familyNameOf,
   MEMBER_PROFILES,
-  ROSTER_AS_OF,
-  ROSTER_SOURCES,
   VACANT_SEATS,
 } from "../../shared/data/member-profiles";
-import {
-  groupMembersByFaction,
-  NO_FACTION_LABEL,
-} from "../../shared/utils/group-members";
+import { listMembersBySeat } from "../../shared/utils/group-members";
+import { MemberCard } from "./member-card";
+import { MemberListShell } from "./member-list-shell";
 
 /**
  * 議員一覧ページ
  *
- * 笠間市議会の現職議員を、公式名簿の党派・会派ごとに並べる。
- * 各議員の党派・会派・役職・所属委員会と、一般質問の回数（任期ごと）を載せる
+ * 笠間市議会の現職議員を議席番号の順に並べる。
+ * 党派・会派ごと、所属委員会ごとの見せ方は別ページ（MemberListShell の切り替えから開く）
  */
 export function MemberListPage() {
   const questions = getAllGeneralQuestions();
-  const groups = groupMembersByFaction(MEMBER_PROFILES);
-  const memberCount = Object.keys(MEMBER_PROFILES).length;
-  const factionCount = groups.filter(
-    (group) => group.label !== NO_FACTION_LABEL
-  ).length;
+  const members = listMembersBySeat(MEMBER_PROFILES);
 
   return (
-    <div className="bg-mirai-surface-muted" data-wide-column>
-      <Container className="py-8">
-        <div className="flex flex-col gap-1.5 pb-6">
-          <h1 className="text-[22px] font-bold text-black leading-[1.48]">
-            議員一覧
-          </h1>
-          <p className="text-xs text-mirai-text-secondary">
-            笠間市議会の現職の議員の党派・会派・役職・所属委員会と、賛否が分かれた議案での賛否、一般質問をまとめています。名前を選ぶと議員ごとのページを開きます。
-          </p>
-        </div>
-
-        <dl className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="rounded-md bg-white px-4 py-3">
-            <dt className="text-xs text-mirai-text-muted">現職の議員</dt>
-            <dd className="text-lg font-bold text-mirai-text">
-              {memberCount}人
-              <span className="ml-1 inline-block text-xs font-normal text-mirai-text-muted">
-                （定数{COUNCIL_SEATS}・欠員{VACANT_SEATS.length}）
-              </span>
-            </dd>
-          </div>
-          <div className="col-span-2 rounded-md bg-white px-4 py-3">
-            <dt className="text-xs text-mirai-text-muted">党派・会派</dt>
-            <dd className="text-lg font-bold text-mirai-text">
-              {factionCount}つ
-              <span className="mt-0.5 block text-xs font-normal leading-[1.7] text-mirai-text-secondary">
-                {groups
-                  .filter((group) => group.label !== NO_FACTION_LABEL)
-                  .map((group, index, list) => (
-                    // 名前と人数の途中で改行しないよう、1つずつまとめる（改行は区切りの後だけ）
-                    <span key={group.label} className="inline-block">
-                      {group.label}
-                      {group.members.length}人{index < list.length - 1 && "、"}
-                    </span>
-                  ))}
-              </span>
-            </dd>
-          </div>
-        </dl>
-
-        <div className="flex flex-col gap-8">
-          {groups.map((group) => (
-            <section key={group.label} className="flex flex-col gap-3">
-              <h2 className="text-lg font-bold text-mirai-text">
-                {group.label}
-                <span className="ml-2 text-sm font-medium text-mirai-text-muted">
-                  {group.members.length}人
-                </span>
-              </h2>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {group.members.map(({ key, profile }) => {
-                  const questionTerms = groupQuestionsByTerm(
-                    selectQuestionsByMember(questions, {
-                      familyName: familyNameOf(profile),
-                      fullName: profile.fullName,
-                    })
-                  );
-                  return (
-                    <Link key={key} href={routes.memberDetail(key) as Route}>
-                      <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex flex-col">
-                            <span className="text-xs text-mirai-text-muted">
-                              {profile.reading}
-                            </span>
-                            <span className="flex flex-wrap items-center gap-x-2 font-bold text-mirai-text">
-                              {profile.fullName}
-                              {profile.role && (
-                                <span className="rounded bg-mirai-surface-key px-1.5 py-0.5 text-xs font-medium">
-                                  {profile.role}
-                                </span>
-                              )}
-                            </span>
-                          </div>
-                          <ChevronRight className="mt-4 h-4 w-4 shrink-0 text-mirai-text-muted" />
-                        </div>
-                        {/* 会派でまとめた議員に党派も書かれていれば添える */}
-                        {profile.faction && profile.party && (
-                          <p className="text-xs text-mirai-text-secondary">
-                            党派：{profile.party}
-                          </p>
-                        )}
-                        {profile.committees.length > 0 && (
-                          <p className="text-xs leading-[1.7] text-mirai-text-secondary">
-                            {profile.committees.join("・")}
-                          </p>
-                        )}
-                        <p className="text-xs leading-[1.7] text-mirai-text-muted">
-                          一般質問：
-                          {/* 今の任期は0回でも出す（前の任期の回数だけが並ぶと読み違えやすい） */}
-                          {COUNCIL_TERMS.filter(
-                            (term, index) =>
-                              index === 0 ||
-                              questionTerms.some((group) => group.term === term)
-                          )
-                            .map((term) => {
-                              const count =
-                                questionTerms.find(
-                                  (group) => group.term === term
-                                )?.records.length ?? 0;
-                              return `${term.shortLabel} ${count}回`;
-                            })
-                            .join("・")}
-                        </p>
-                      </Card>
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          ))}
-        </div>
-
-        <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
-          <SourceBadge
-            kind="official"
-            detail="議員名簿・議会だより・会議録"
-            className="mb-1"
+    <MemberListShell
+      view="seat"
+      title="議員一覧"
+      lead="笠間市議会の現職の議員を議席番号の順に並べ、党派・会派・役職・所属委員会と一般質問の回数を載せています。名前を選ぶと、賛否が分かれた議案での賛否と一般質問をまとめた議員ごとのページを開きます。"
+    >
+      <p className="mb-3 text-sm text-mirai-text-secondary">
+        現職 {members.length}人
+        <span className="ml-1 inline-block text-xs text-mirai-text-muted">
+          （定数{COUNCIL_SEATS}・欠員{VACANT_SEATS.length}）
+        </span>
+      </p>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {members.map(({ key, profile }) => (
+          <MemberCard
+            key={key}
+            memberKey={key}
+            profile={profile}
+            questions={questions}
           />
-          <p>
-            ※現職の議員だけを載せています（{ROSTER_AS_OF}
-            現在の公式名簿より）。前の任期の議員や、任期の途中で辞職した議員は載せていません。議席
-            {VACANT_SEATS.join("番・")}番は欠員です。
-          </p>
-          <p>
-            ※氏名・ふりがな・党派・会派・役職・所属委員会は公式名簿のとおりです。名簿の「党派「所属会派」」の欄をもとに、会派に入っている議員は会派ごとに、会派に入っていない議員は党派ごとにまとめています。この欄が空欄の議員は「
-            {NO_FACTION_LABEL}」としています。
-          </p>
-          <p>
-            ※一般質問の回数は、市の一般質問一覧に載る平成26年9月からの分を、議員の任期ごとに数えています（任期は12月の一般選挙で変わります）。回数は議員の評価を示すものではありません。賛否が分かれた議案での賛否は、議員ごとのページで確認できます。
-          </p>
-          <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
-            {ROSTER_SOURCES.map((source) => (
-              <a
-                key={source.url}
-                href={source.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary-accent underline underline-offset-[3px] hover:opacity-70"
-              >
-                {source.label}（笠間市公式サイト）
-              </a>
-            ))}
-          </div>
-          <TextLink href={routes.sources()} className="mt-1 text-xs">
-            出典の種類と読み方について
-          </TextLink>
-        </div>
-      </Container>
-
-      <Container className="py-8">
-        <Breadcrumb
-          items={[{ label: "TOP", href: routes.home() }, { label: "議員一覧" }]}
-        />
-      </Container>
-    </div>
+        ))}
+      </div>
+    </MemberListShell>
   );
 }

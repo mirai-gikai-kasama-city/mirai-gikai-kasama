@@ -269,6 +269,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    // 議員一覧の別の見せ方（中身は同じ名簿なので一覧より少し低くする）
+    ...[routes.memberByFaction(), routes.memberByCommittee()].map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: latestBillUpdatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
     {
       url: `${baseUrl}${routes.archive()}`,
       lastModified: latestOf([latestBillUpdatedAt, latestSessionUpdatedAt]),

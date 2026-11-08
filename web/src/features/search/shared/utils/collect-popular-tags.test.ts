@@ -41,6 +41,15 @@ describe("collectPopularTags", () => {
     expect(collectPopularTags(items, 10)).toEqual(["決算", "決議"]);
   });
 
+  it("「その他」は件数が多くても最後に回す", () => {
+    const items = [
+      makeItem(["その他"]),
+      makeItem(["その他"]),
+      makeItem(["決算"]),
+    ];
+    expect(collectPopularTags(items, 10)).toEqual(["決算", "その他"]);
+  });
+
   it("タグがない場合は空配列を返す", () => {
     expect(collectPopularTags([makeItem([])], 5)).toEqual([]);
   });

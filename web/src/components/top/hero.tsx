@@ -29,9 +29,6 @@ export function Hero() {
               <br />
               <span className="inline-block">を整理して説明します</span>
             </h1>
-            <p className="max-w-[420px] text-sm leading-relaxed text-mirai-text-secondary md:text-base">
-              議案の要点をAIが整理してお届けします。議案の検索や、会期ごとのまとめもご覧いただけます。
-            </p>
           </div>
         </Container>
       </div>

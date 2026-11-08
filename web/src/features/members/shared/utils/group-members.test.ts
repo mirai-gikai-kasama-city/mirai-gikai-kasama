@@ -5,13 +5,15 @@ import { groupMembersByFaction, NO_FACTION_LABEL } from "./group-members";
 function profile(
   seat: number,
   fullName: string,
-  faction: string | null
+  faction: string | null,
+  party: string | null = null
 ): MemberProfile {
   return {
     seat,
     fullName,
     reading: "よみ がな",
     faction,
+    party,
     role: null,
     committees: [],
   };
@@ -40,7 +42,21 @@ describe("groupMembersByFaction", () => {
     ]);
   });
 
-  it("会派の欄が空の議員は「会派の記載なし」として最後にまとめる", () => {
+  it("会派に入っていない議員は党派でまとめ、会派と党派の両方がある議員は会派に入れる", () => {
+    const groups = groupMembersByFaction({
+      ...PROFILES,
+      己野六郎: profile(6, "己野 六郎", null, "C党"),
+      庚田七郎: profile(7, "庚田 七郎", "B会", "C党"),
+    });
+    expect(groups.map((g) => [g.label, g.members.length])).toEqual([
+      ["A会", 3],
+      ["B会", 2],
+      ["C党", 1],
+      [NO_FACTION_LABEL, 1],
+    ]);
+  });
+
+  it("党派・会派の欄が空の議員は「党派・会派の記載なし」として最後にまとめる", () => {
     const groups = groupMembersByFaction(PROFILES);
     const last = groups[groups.length - 1];
     expect(last.label).toBe(NO_FACTION_LABEL);

@@ -175,7 +175,7 @@ export function describeMember({
   faction,
 }: {
   displayName: string;
-  /** 名簿の会派。欄が空なら null */
+  /** 名簿の党派・会派の欄（例: 「公明党」「会派「政研会」」）。欄が空なら null */
   faction: string | null;
 }): string {
   const factionText = faction ? `（${faction}）` : "";

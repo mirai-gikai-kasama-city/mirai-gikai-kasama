@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { MemberDetailPage } from "@/features/members/server/components/member-detail-page";
-import { getMemberProfile } from "@/features/members/shared/data/member-profiles";
+import {
+  affiliationOf,
+  getMemberProfile,
+} from "@/features/members/shared/data/member-profiles";
 import { routes } from "@/lib/routes";
 import { describeMember } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
@@ -31,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${profile.fullName} 議員（笠間市議会）の党派・会派・賛否・一般質問`;
   const description = describeMember({
     displayName: profile.fullName,
-    faction: profile.faction,
+    faction: affiliationOf(profile),
   });
 
   return {

@@ -21,6 +21,7 @@ import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
 import {
+  affiliationOf,
   familyNameOf,
   getMemberProfile,
   ROSTER_AS_OF,
@@ -71,8 +72,10 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
     name: profile.fullName,
     url: new URL(routes.memberDetail(memberKey), env.webUrl).toString(),
     jobTitle: "笠間市議会議員",
-    ...(profile.faction && {
-      affiliation: { "@type": "Organization", name: profile.faction },
+    ...((profile.party || profile.faction) && {
+      affiliation: [profile.party, profile.faction]
+        .filter((name) => name !== null)
+        .map((name) => ({ "@type": "Organization", name })),
     }),
     memberOf: {
       "@type": "GovernmentOrganization",
@@ -99,7 +102,7 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
           <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
             <dt className="text-mirai-text-muted">党派・会派</dt>
             <dd className="text-mirai-text">
-              {profile.faction ?? NO_FACTION_LABEL}
+              {affiliationOf(profile) ?? NO_FACTION_LABEL}
             </dd>
             {profile.role && (
               <>

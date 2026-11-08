@@ -29,8 +29,8 @@ import {
 /**
  * 議員一覧ページ
  *
- * 笠間市議会の現職議員を、公式名簿の会派ごとに並べる。
- * 各議員の会派・役職・所属委員会と、一般質問の回数（任期ごと）を載せる
+ * 笠間市議会の現職議員を、公式名簿の党派・会派ごとに並べる。
+ * 各議員の党派・会派・役職・所属委員会と、一般質問の回数（任期ごと）を載せる
  */
 export function MemberListPage() {
   const questions = getAllGeneralQuestions();
@@ -106,6 +106,12 @@ export function MemberListPage() {
                           </div>
                           <ChevronRight className="mt-4 h-4 w-4 shrink-0 text-mirai-text-muted" />
                         </div>
+                        {/* 会派でまとめた議員に党派も書かれていれば添える */}
+                        {profile.faction && profile.party && (
+                          <p className="text-xs text-mirai-text-secondary">
+                            党派：{profile.party}
+                          </p>
+                        )}
                         {profile.committees.length > 0 && (
                           <p className="text-xs leading-[1.7] text-mirai-text-secondary">
                             {profile.committees.join("・")}
@@ -149,8 +155,8 @@ export function MemberListPage() {
             {VACANT_SEATS.join("番・")}番は欠員です。
           </p>
           <p>
-            ※氏名・ふりがな・党派・会派・役職・所属委員会は公式名簿のとおりです（党派・会派は名簿の「所属会派」の欄）。この欄が空欄の議員は「
-            {NO_FACTION_LABEL}」にまとめています。
+            ※氏名・ふりがな・党派・会派・役職・所属委員会は公式名簿のとおりです。名簿の「党派「所属会派」」の欄をもとに、会派に入っている議員は会派ごとに、会派に入っていない議員は党派ごとにまとめています。この欄が空欄の議員は「
+            {NO_FACTION_LABEL}」としています。
           </p>
           <p>
             ※一般質問の回数は、市の一般質問一覧に載る平成26年9月からの分を、議員の任期ごとに数えています（任期は12月の一般選挙で変わります）。回数は議員の評価を示すものではありません。賛否が分かれた議案での賛否は、議員ごとのページで確認できます。

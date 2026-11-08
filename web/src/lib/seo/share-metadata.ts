@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const SITE_NAME = "かさま議会ノート";
 
 /** サイト共通の題名と説明（ページ固有の題名を持たないページの共有にも使う） */
-export const SITE_TITLE = `${SITE_NAME}｜議案をやさしく解説`;
+export const SITE_TITLE = `${SITE_NAME}｜笠間市議会のことを説明`;
 export const SITE_DESCRIPTION =
   "笠間市議会に提出された議案・予算・条例などを、AIがやさしい言葉で解説します。";
 

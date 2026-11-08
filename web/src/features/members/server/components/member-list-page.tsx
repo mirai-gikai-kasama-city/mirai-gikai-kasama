@@ -1,239 +1,163 @@
-import { Building2, ChevronRight, UserRound, UsersRound } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { TextLink } from "@/components/ui/text-link";
+import { getAllGeneralQuestions } from "@/features/general-questions/server/loaders/get-general-questions";
+import { selectQuestionsByMember } from "@/features/general-questions/shared/utils/group-questions";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { routes } from "@/lib/routes";
 import {
+  COUNCIL_SEATS,
+  familyNameOf,
   MEMBER_PROFILES,
   ROSTER_AS_OF,
+  ROSTER_SOURCES,
+  VACANT_SEATS,
 } from "../../shared/data/member-profiles";
 import { aggregateMemberSummaries } from "../../shared/utils/aggregate-members";
-import { formatYearMonth } from "../../shared/utils/format-year-month";
-import { groupMembersForList } from "../../shared/utils/group-members";
 import {
-  PROPOSER_DESCRIPTIONS,
-  PROPOSER_LABELS,
-  PROPOSER_TYPES,
-  type ProposerType,
-} from "../../shared/utils/proposer";
-import {
-  resolveMemberDisplayName,
-  resolveMemberProfile,
-} from "../../shared/utils/resolve-member-display";
-import {
-  collectSponsorNames,
-  extractFamilyName,
-} from "../../shared/utils/sponsors";
-import {
-  countBillsByProposer,
-  getBillsWithMemberVotes,
-  getBillsWithSponsors,
-} from "../loaders/get-member-vote-data";
-
-const PROPOSER_ICONS: Record<
-  ProposerType,
-  typeof Building2 | typeof UserRound | typeof UsersRound
-> = {
-  mayor: Building2,
-  member: UserRound,
-  committee: UsersRound,
-};
+  groupMembersByFaction,
+  NO_FACTION_LABEL,
+} from "../../shared/utils/group-members";
+import { getBillsWithMemberVotes } from "../loaders/get-member-vote-data";
 
 /**
- * 議員・提出者から見るページ
+ * 議員一覧ページ
  *
- * 田川市議会が公開している「賛否が分かれた案件」の議員別賛否データを
- * 議員ごとに集計した一覧と、提出者区分（市長/議員/委員会）別の議案一覧への
- * 入口をまとめたページ
+ * 笠間市議会の現職議員を、公式名簿の会派ごとに並べる。
+ * 各議員の会派・役職・所属委員会と、賛否が分かれた議案での賛否の記録数、一般質問の回数を載せる
  */
 export async function MemberListPage() {
-  const [items, proposerCounts, sponsoredBills] = await Promise.all([
-    getBillsWithMemberVotes(),
-    countBillsByProposer(),
-    getBillsWithSponsors(),
-  ]);
-  const members = aggregateMemberSummaries(items);
-  const factionGroups = groupMembersForList(members, MEMBER_PROFILES);
-
-  // sponsorsデータ中のフルネーム一覧（MEMBER_PROFILESに無い姓のフォールバック用）
-  const allSponsorNames = collectSponsorNames(
-    sponsoredBills.map(({ sponsors }) => sponsors)
+  const items = await getBillsWithMemberVotes();
+  const voteCountByKey = new Map(
+    aggregateMemberSummaries(items).map((member) => [
+      member.name,
+      member.billCount,
+    ])
   );
-
-  // 議員（姓）ごとの提出議案数（同じ議案に複数回登場しても1件として数える）
-  const proposalCounts = new Map<string, number>();
-  for (const { sponsors } of sponsoredBills) {
-    const familyNames = new Set(
-      sponsors.proposers.map((person) => extractFamilyName(person.name))
-    );
-    for (const familyName of familyNames) {
-      proposalCounts.set(familyName, (proposalCounts.get(familyName) ?? 0) + 1);
-    }
-  }
-
-  // 集計対象期間（賛否データが紐づく議案の議決日の範囲）
-  const dates = items
-    .map((item) => item.bill.submitted_date)
-    .filter((date): date is string => date !== null)
-    .sort();
-  const coverage =
-    dates.length > 0
-      ? `${formatYearMonth(dates[0])}〜${formatYearMonth(dates[dates.length - 1])}議決分・${items.length}議案`
-      : null;
+  const questions = getAllGeneralQuestions();
+  const groups = groupMembersByFaction(MEMBER_PROFILES);
+  const memberCount = Object.keys(MEMBER_PROFILES).length;
+  const factionCount = groups.filter(
+    (group) => group.label !== NO_FACTION_LABEL
+  ).length;
 
   return (
     <div className="bg-mirai-surface-muted" data-wide-column>
       <Container className="py-8">
-        <div className="flex flex-col gap-1.5 pb-8">
+        <div className="flex flex-col gap-1.5 pb-6">
           <h1 className="text-[22px] font-bold text-black leading-[1.48]">
-            議員・提出者から見る
+            議員一覧
           </h1>
           <p className="text-xs text-mirai-text-secondary">
-            誰が提出し、誰が賛成・反対したのか。田川市議会の公開データから、議案を「人」の視点でたどれます。
+            笠間市議会の現職の議員の会派・役職・所属委員会と、賛否が分かれた議案での賛否、一般質問をまとめています。名前を選ぶと議員ごとのページを開きます。
           </p>
         </div>
 
-        {/* 提出者区分別の議案一覧への入口 */}
-        <section className="flex flex-col gap-3 pb-10">
-          <h2 className="text-lg font-bold text-mirai-text">
-            提出者から議案をさがす
-          </h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {PROPOSER_TYPES.map((type) => {
-              const Icon = PROPOSER_ICONS[type];
-              return (
-                <Link key={type} href={routes.proposerBills(type) as Route}>
-                  <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5 font-bold text-mirai-text">
-                        <Icon className="h-4 w-4 shrink-0 text-primary-accent" />
-                        {PROPOSER_LABELS[type]}
-                      </span>
-                      <span className="flex items-center text-xs font-medium text-mirai-text-muted">
-                        {proposerCounts[type]}件
-                        <ChevronRight className="h-4 w-4" />
-                      </span>
-                    </div>
-                    <p className="text-xs leading-[1.6] text-mirai-text-secondary">
-                      {PROPOSER_DESCRIPTIONS[type]}
-                    </p>
-                  </Card>
-                </Link>
-              );
-            })}
+        <dl className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div className="rounded-md bg-white px-4 py-3">
+            <dt className="text-xs text-mirai-text-muted">現職の議員</dt>
+            <dd className="text-lg font-bold text-mirai-text">
+              {memberCount}人
+              <span className="ml-1 text-xs font-normal text-mirai-text-muted">
+                （定数{COUNCIL_SEATS}・欠員{VACANT_SEATS.length}）
+              </span>
+            </dd>
           </div>
-        </section>
-
-        {/* 議員別の賛否サマリー */}
-        <section className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-mirai-text">
-              議員ごとの賛否
-            </h2>
-            <p className="text-xs text-mirai-text-secondary">
-              賛否が分かれた案件{coverage ? `（${coverage}）` : ""}
-              での各議員の投票を集計しています。名前を選ぶと議案ごとの賛否を確認できます。
-            </p>
+          <div className="rounded-md bg-white px-4 py-3">
+            <dt className="text-xs text-mirai-text-muted">会派</dt>
+            <dd className="text-lg font-bold text-mirai-text">
+              {factionCount}会派
+            </dd>
           </div>
+        </dl>
 
-          {factionGroups.map((group) => (
-            <div key={group.label} className="flex flex-col gap-2 pt-2">
-              <h3 className="text-sm font-bold text-mirai-text-secondary">
-                {group.label}（
-                {group.members.length + group.membersWithoutVotes.length}人）
-              </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {group.members.map((member) => {
-                  const proposalCount = proposalCounts.get(member.name);
-                  const profile = resolveMemberProfile(member.name);
-                  const displayName = resolveMemberDisplayName(
-                    member.name,
-                    allSponsorNames
-                  );
-                  const role =
-                    profile?.isIncumbent && profile.role ? profile.role : null;
+        <div className="flex flex-col gap-8">
+          {groups.map((group) => (
+            <section key={group.label} className="flex flex-col gap-3">
+              <h2 className="text-lg font-bold text-mirai-text">
+                {group.label}
+                <span className="ml-2 text-sm font-medium text-mirai-text-muted">
+                  {group.members.length}人
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {group.members.map(({ key, profile }) => {
+                  const voteCount = voteCountByKey.get(key) ?? 0;
+                  const questionCount = selectQuestionsByMember(questions, {
+                    familyName: familyNameOf(profile),
+                    fullName: profile.fullName,
+                  }).length;
                   return (
-                    <Link
-                      key={member.name}
-                      href={routes.memberDetail(member.name) as Route}
-                    >
+                    <Link key={key} href={routes.memberDetail(key) as Route}>
                       <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                        <span className="flex items-center justify-between gap-2 font-bold text-mirai-text">
-                          <span className="flex flex-col">
-                            {displayName}
-                            {role && (
-                              <span className="text-xs font-normal text-mirai-text-muted">
-                                {role}
-                              </span>
-                            )}
-                          </span>
-                          <ChevronRight className="h-4 w-4 shrink-0 text-mirai-text-muted" />
-                        </span>
-                        {/* スマホの2カラムでは1行に収まらないため、項目ごとに縦に積む */}
-                        <p className="flex flex-col gap-0.5 text-xs text-mirai-text-muted">
-                          <span className="whitespace-nowrap">
-                            投票記録 {member.billCount}議案
-                          </span>
-                          {proposalCount ? (
-                            <span className="whitespace-nowrap">
-                              提出 {proposalCount}件
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex flex-col">
+                            <span className="text-xs text-mirai-text-muted">
+                              {profile.reading}
                             </span>
-                          ) : (
-                            ""
-                          )}
+                            <span className="flex flex-wrap items-center gap-x-2 font-bold text-mirai-text">
+                              {profile.fullName}
+                              {profile.role && (
+                                <span className="rounded bg-mirai-surface-key px-1.5 py-0.5 text-xs font-medium">
+                                  {profile.role}
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                          <ChevronRight className="mt-4 h-4 w-4 shrink-0 text-mirai-text-muted" />
+                        </div>
+                        {profile.committees.length > 0 && (
+                          <p className="text-xs leading-[1.7] text-mirai-text-secondary">
+                            {profile.committees.join("・")}
+                          </p>
+                        )}
+                        <p className="text-xs text-mirai-text-muted">
+                          賛否の記録 {voteCount}議案・一般質問 {questionCount}回
                         </p>
                       </Card>
                     </Link>
                   );
                 })}
-                {group.membersWithoutVotes.map((name) => {
-                  const profile = resolveMemberProfile(name);
-                  return (
-                    <Card
-                      key={name}
-                      className="flex h-full flex-col gap-2 border-mirai-border p-4"
-                    >
-                      <span className="flex flex-col font-bold text-mirai-text">
-                        {profile?.fullName ?? name}
-                        {profile?.role && (
-                          <span className="text-xs font-normal text-mirai-text-muted">
-                            {profile.role}
-                          </span>
-                        )}
-                      </span>
-                      <p className="text-xs leading-relaxed text-mirai-text-muted">
-                        賛否が分かれた案件の記録はまだありません
-                      </p>
-                    </Card>
-                  );
-                })}
               </div>
-            </div>
+            </section>
           ))}
-        </section>
+        </div>
 
-        {/* データの範囲についての注記 */}
         <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
           <SourceBadge
             kind="official"
-            detail="議員名簿と議決結果のページ"
+            detail="議員名簿・議会だより・会議録"
             className="mb-1"
           />
           <p>
-            ※田川市議会は「賛否が分かれた案件」についてのみ議員別の賛否を公開しており、このページはその公開分を集計したものです。全会一致で議決された議案は含まれません。
-          </p>
-          <p>※姓が同じ表記の議員は同一人物として集計しています。</p>
-          <p>
-            ※提出議案は市長・議員・委員会の区分単位で掲載しています。議案説明資料PDFに提出者・賛成者（連署議員）の氏名が記載されている議案では、議案ページで個人名も確認できます。
+            ※現職の議員だけを載せています（{ROSTER_AS_OF}
+            現在の公式名簿より）。前の任期の議員や、任期の途中で辞職した議員は載せていません。議席
+            {VACANT_SEATS.join("番・")}番は欠員です。
           </p>
           <p>
-            ※氏名・会派・役職は田川市議会公式サイトの議員名簿（{ROSTER_AS_OF}
-            時点）より。会派の見出しは名簿時点の所属で、採決当時の会派は各議員のページで確認できます。
+            ※氏名・ふりがな・会派・役職・所属委員会は公式名簿のとおりです。名簿の会派の欄が空欄の議員は「
+            {NO_FACTION_LABEL}」にまとめています。
           </p>
+          <p>
+            ※賛否の記録は、議会だよりの賛否一覧などに載る「賛否が分かれた議案」の数です（平成30年12月からの記録。全会一致の議案は含みません）。賛否の数は議員の評価を示すものではありません。
+          </p>
+          <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+            {ROSTER_SOURCES.map((source) => (
+              <a
+                key={source.url}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-accent underline underline-offset-[3px] hover:opacity-70"
+              >
+                {source.label}（笠間市公式サイト）
+              </a>
+            ))}
+          </div>
           <TextLink href={routes.sources()} className="mt-1 text-xs">
             出典の種類と読み方について
           </TextLink>
@@ -242,10 +166,7 @@ export async function MemberListPage() {
 
       <Container className="py-8">
         <Breadcrumb
-          items={[
-            { label: "TOP", href: routes.home() },
-            { label: "議員・提出者から見る" },
-          ]}
+          items={[{ label: "TOP", href: routes.home() }, { label: "議員一覧" }]}
         />
       </Container>
     </div>

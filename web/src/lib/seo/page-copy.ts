@@ -36,9 +36,9 @@ export const PAGE_COPY = {
       "笠間市議会の全ての会期（定例会・臨時会）を、年ごとに一覧で確認できます。会期を選ぶと、その会期に提出された議案の一覧と、議案ごとの解説・議決結果を見ることができます。",
   },
   members: {
-    title: "田川市議会の議員一覧｜賛否・提出議案",
+    title: "笠間市議会の議員一覧｜会派・委員会・賛否",
     description:
-      "田川市議会の議員ごとの賛否（賛成・反対・欠席）と、市長・議員・委員会など提出者別の議案一覧。誰が提出し、誰が賛成・反対したのかを、市の公開データから確認できます。",
+      "笠間市議会の現職の議員の会派・役職・所属委員会を、公式名簿のとおり一覧にしています。議員ごとのページでは、賛否が分かれた議案での賛否と、一般質問で取り上げたことを確認できます。",
   },
   committees: {
     title: "田川市議会 委員会の記録",
@@ -172,14 +172,15 @@ export function describeProposerBills({
 /** 議員ページ（/members/[name]）の説明。賛否の数は評価ではない旨を添える */
 export function describeMember({
   displayName,
-  voteCount,
+  faction,
 }: {
   displayName: string;
-  voteCount: number;
+  /** 名簿の会派。欄が空なら null */
+  faction: string | null;
 }): string {
-  const votes = voteCount > 0 ? `（${voteCount}議案）` : "";
+  const factionText = faction ? `（${faction}）` : "";
   return fitDescription(
-    `田川市議会 ${displayName} 議員の、市が公表した賛否（賛成・反対・欠席）の記録${votes}と、提出者・賛成者として連署した議案の一覧です。賛否の数は議員の評価を示すものではありません。`
+    `笠間市議会 ${displayName} 議員${factionText}の、公式名簿による会派・役職・所属委員会と、賛否が分かれた議案での賛否、一般質問の一覧です。賛否の数は議員の評価を示すものではありません。`
   );
 }
 

@@ -14,9 +14,11 @@ import {
   getBillsWithMemberVotes,
   getBillsWithSponsors,
 } from "@/features/members/server/loaders/get-member-vote-data";
-import { aggregateMemberSummaries } from "@/features/members/shared/utils/aggregate-members";
+import {
+  MEMBER_PROFILES,
+  toMemberKey,
+} from "@/features/members/shared/data/member-profiles";
 import { PROPOSER_TYPES } from "@/features/members/shared/utils/proposer";
-import { extractFamilyName } from "@/features/members/shared/utils/sponsors";
 import { getPublishedTopicPages } from "@/features/user-topic-analysis/server/loaders/get-published-topic-pages";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
@@ -99,7 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     billsWithSponsors,
     ({ sponsors }) =>
       [...sponsors.proposers, ...sponsors.supporters].map((person) =>
-        extractFamilyName(person.name)
+        toMemberKey(person.name)
       ),
     ({ bill }) => bill.updated_at
   );
@@ -144,17 +146,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const memberUrls = aggregateMemberSummaries(billsWithMemberVotes).map(
-    (member) => ({
-      url: `${baseUrl}${routes.memberDetail(member.name)}`,
-      lastModified: latestOf([
-        latestBillByMemberVote.get(member.name),
-        latestBillByMemberSponsor.get(member.name),
-      ]),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    })
-  );
+  // 議員ページは名簿に載る現職だけ
+  const memberUrls = Object.keys(MEMBER_PROFILES).map((key) => ({
+    url: `${baseUrl}${routes.memberDetail(key)}`,
+    lastModified: latestOf([
+      latestBillByMemberVote.get(key),
+      latestBillByMemberSponsor.get(key),
+    ]),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
 
   // 会期別議案一覧（/archive/{slug}/bills）。slug未設定の会期は除外
   const archiveSessionUrls = sessions

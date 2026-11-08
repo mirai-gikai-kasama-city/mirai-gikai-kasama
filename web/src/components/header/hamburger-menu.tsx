@@ -9,6 +9,7 @@ import {
   Menu,
   MessageSquareText,
   Search,
+  UsersRound,
 } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -42,6 +43,7 @@ const NAV_LINKS: NavLinkItem[] = [
     icon: History,
   },
   { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
+  { label: "議員一覧", href: routes.memberArchive(), icon: UsersRound },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "かさま議会ノートとは", href: `${routes.home()}#about`, icon: Info },
 ];

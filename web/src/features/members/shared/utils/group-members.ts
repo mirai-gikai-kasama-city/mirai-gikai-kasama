@@ -1,73 +1,49 @@
 import type { MemberProfile } from "../data/member-profiles";
-import type { MemberSummary } from "./aggregate-members";
 
-/** 議員一覧の1グループ（現在の会派、または元議員） */
-export interface MemberListGroup {
-  label: string;
-  /** 賛否の記録がある議員 */
-  members: MemberSummary[];
-  /** 現職だが賛否の記録がまだ無い議員の姓（補欠選挙で当選した議員など） */
-  membersWithoutVotes: string[];
+/** 議員一覧の1人分（議員ページのキーと名簿の情報） */
+export interface MemberListEntry {
+  key: string;
+  profile: MemberProfile;
 }
 
-export const FORMER_MEMBERS_LABEL = "元議員";
-
-/** 現職で会派の記載が無い場合のグループ名 */
-const NO_FACTION_LABEL = "会派なし";
+/** 議員一覧の1グループ（会派） */
+export interface MemberListGroup {
+  label: string;
+  members: MemberListEntry[];
+}
 
 /**
- * 議員一覧を、公式名簿（MEMBER_PROFILES）の現在の会派ごとにまとめる。
- * 採決当時の会派（member_votes）で分けると会派の再編前の所属が出てしまうため、名簿の会派を使う。
- * 現職で賛否の記録がまだ無い議員も会派の中に加え、元議員（名簿に無い姓を含む）は最後に1つにまとめる。
- * 会派は人数の多い順、同数なら名前順
+ * 名簿の会派の欄が空の議員のグループ名。
+ * 空欄を「無所属」とは言い切れないので、名簿のとおり「記載なし」と書く
  */
-export function groupMembersForList(
-  members: readonly MemberSummary[],
+export const NO_FACTION_LABEL = "会派の記載なし";
+
+/**
+ * 現職議員を名簿の会派ごとにまとめる。
+ * 会派は人数の多い順（同数なら名前順）で、「会派の記載なし」は最後。会派の中は議席番号の順
+ */
+export function groupMembersByFaction(
   profiles: Readonly<Record<string, MemberProfile>>
 ): MemberListGroup[] {
-  const current = new Map<string, MemberListGroup>();
-  const groupFor = (label: string): MemberListGroup => {
-    const existing = current.get(label);
-    if (existing) return existing;
-    const created: MemberListGroup = {
-      label,
-      members: [],
-      membersWithoutVotes: [],
-    };
-    current.set(label, created);
-    return created;
-  };
-
-  const former: MemberSummary[] = [];
-  for (const member of members) {
-    const profile = profiles[member.name];
-    if (profile?.isIncumbent) {
-      groupFor(profile.faction ?? NO_FACTION_LABEL).members.push(member);
-    } else {
-      former.push(member);
-    }
+  const byLabel = new Map<string, MemberListEntry[]>();
+  for (const [key, profile] of Object.entries(profiles)) {
+    const label = profile.faction ?? NO_FACTION_LABEL;
+    const members = byLabel.get(label) ?? [];
+    members.push({ key, profile });
+    byLabel.set(label, members);
   }
 
-  const namesWithVotes = new Set(members.map((member) => member.name));
-  for (const [name, profile] of Object.entries(profiles)) {
-    if (profile.isIncumbent && !namesWithVotes.has(name)) {
-      groupFor(profile.faction ?? NO_FACTION_LABEL).membersWithoutVotes.push(
-        name
-      );
-    }
-  }
+  const groups = [...byLabel.entries()].map(([label, members]) => ({
+    label,
+    members: members.sort((a, b) => a.profile.seat - b.profile.seat),
+  }));
 
-  const size = (group: MemberListGroup) =>
-    group.members.length + group.membersWithoutVotes.length;
-  const groups = [...current.values()].sort(
-    (a, b) => size(b) - size(a) || a.label.localeCompare(b.label, "ja")
-  );
-  if (former.length > 0) {
-    groups.push({
-      label: FORMER_MEMBERS_LABEL,
-      members: former,
-      membersWithoutVotes: [],
-    });
-  }
-  return groups;
+  return groups.sort((a, b) => {
+    if (a.label === NO_FACTION_LABEL) return 1;
+    if (b.label === NO_FACTION_LABEL) return -1;
+    return (
+      b.members.length - a.members.length ||
+      a.label.localeCompare(b.label, "ja")
+    );
+  });
 }

@@ -9,7 +9,6 @@ const HIDDEN_SECTION_PREFIXES = [
   "/attendance",
   "/committees",
   "/petitions",
-  "/members",
   "/proposers",
 ] as const;
 

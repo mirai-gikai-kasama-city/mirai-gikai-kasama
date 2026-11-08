@@ -41,10 +41,7 @@ export function QuestionCard({
   headingBySession = false,
 }: QuestionCardProps) {
   const Heading = headingLevel;
-  const memberKey = resolveMemberPageKey(
-    { familyName: record.familyName, name: record.memberName },
-    context
-  );
+  const memberKey = resolveMemberPageKey({ name: record.memberName }, context);
   const answerRecordId = record.questionDate
     ? context.answerRecordIdByDate.get(record.questionDate)
     : undefined;

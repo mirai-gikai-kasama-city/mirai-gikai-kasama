@@ -10,8 +10,6 @@ describe("isHiddenSectionPath", () => {
     "/committees/group/abc",
     "/committees/abc",
     "/petitions",
-    "/members",
-    "/members/%E7%94%B0%E6%9D%91",
     "/proposers/mayor",
   ])("%s は公開しない", (pathname) => {
     expect(isHiddenSectionPath(pathname)).toBe(true);
@@ -27,6 +25,8 @@ describe("isHiddenSectionPath", () => {
     "/tags/abc",
     "/questions",
     "/questions/kasama-r8-3-teirei",
+    "/members",
+    "/members/%E7%94%B0%E6%9D%91%E5%B9%B8%E5%AD%90",
     "/sources",
     "/terms",
     "/privacy",

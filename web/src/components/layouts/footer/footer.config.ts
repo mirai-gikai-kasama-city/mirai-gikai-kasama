@@ -27,6 +27,10 @@ export const primaryLinks: FooterLink[] = [
     href: routes.questions(),
   },
   {
+    label: "議員一覧",
+    href: routes.memberArchive(),
+  },
+  {
     label: "情報のもと（出典）",
     href: routes.sources(),
   },

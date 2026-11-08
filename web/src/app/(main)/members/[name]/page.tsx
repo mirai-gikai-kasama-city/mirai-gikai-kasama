@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import { MemberDetailPage } from "@/features/members/server/components/member-detail-page";
-import {
-  getBillsWithMemberVotes,
-  getBillsWithSponsors,
-} from "@/features/members/server/loaders/get-member-vote-data";
-import { aggregateMemberSummaries } from "@/features/members/shared/utils/aggregate-members";
-import { resolveMemberDisplayName } from "@/features/members/shared/utils/resolve-member-display";
-import { collectSponsorNames } from "@/features/members/shared/utils/sponsors";
+import { getMemberProfile } from "@/features/members/shared/data/member-profiles";
 import { routes } from "@/lib/routes";
 import { describeMember } from "@/lib/seo/page-copy";
 import { buildPageShareMetadata } from "@/lib/seo/share-metadata";
@@ -27,43 +21,35 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name } = await params;
-  const decodedName = decodeURIComponent(name);
+  const memberKey = decodeURIComponent(name);
+  const profile = getMemberProfile(memberKey);
+  // 名簿に無い（現職でない）議員のページは無い。中身は notFound() になる
+  if (!profile) {
+    return {};
+  }
 
-  // 表示名はMEMBER_PROFILES（公式名簿）を優先し、無ければsponsorsデータ中で
-  // フルネームが1つだけ見つかればそれを使う（member-detail-page.tsxのヘッダー
-  // 表示と同じロジック）
-  const [sponsoredBills, billsWithMemberVotes] = await Promise.all([
-    getBillsWithSponsors(),
-    getBillsWithMemberVotes(),
-  ]);
-  const allSponsorNames = collectSponsorNames(
-    sponsoredBills.map(({ sponsors }) => sponsors)
-  );
-  const displayName = resolveMemberDisplayName(decodedName, allSponsorNames);
-  const voteCount =
-    aggregateMemberSummaries(billsWithMemberVotes).find(
-      (member) => member.name === decodedName
-    )?.billCount ?? 0;
-
-  const title = `${displayName} 議員（田川市議会）の賛否・提出議案`;
-  const description = describeMember({ displayName, voteCount });
+  const title = `${profile.fullName} 議員（笠間市議会）の会派・賛否・一般質問`;
+  const description = describeMember({
+    displayName: profile.fullName,
+    faction: profile.faction,
+  });
 
   return {
     title,
     description,
     alternates: {
-      canonical: routes.memberDetail(decodedName),
+      canonical: routes.memberDetail(memberKey),
     },
     // SNSで共有したときの題名・説明は議員ごと、画像はサイト共通
     ...buildPageShareMetadata({
       title,
       description,
-      path: routes.memberDetail(decodedName),
+      path: routes.memberDetail(memberKey),
     }),
   };
 }
 
 export default async function MemberPage({ params }: Props) {
   const { name } = await params;
-  return <MemberDetailPage name={decodeURIComponent(name)} />;
+  return <MemberDetailPage memberKey={decodeURIComponent(name)} />;
 }

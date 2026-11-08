@@ -5,7 +5,6 @@ import { cache } from "react";
 import { getCommitteeMeetingListItems } from "@/features/committees/server/loaders/get-committee-meeting-list-items";
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
-import { MEMBER_PROFILES } from "@/features/members/shared/data/member-profiles";
 import { GENERAL_QUESTIONS } from "../../shared/data/general-questions-data";
 import {
   groupQuestionsBySession,
@@ -48,14 +47,6 @@ export function countQuestionsForSession(sessionKey: string | null): number {
   return selectQuestionsForSession(GENERAL_QUESTIONS, sessionKey).length;
 }
 
-/** 公式名簿の姓 → フルネーム（同姓の別人にリンクしないための照合用） */
-export const PROFILE_FULL_NAME_BY_FAMILY: ReadonlyMap<string, string> = new Map(
-  Object.entries(MEMBER_PROFILES).map(([family, profile]) => [
-    family,
-    profile.fullName,
-  ])
-);
-
 /**
  * リンク解決表を作る。元データはどれもキャッシュ済みだが、1ページ内で
  * 複数のセクションが呼ぶため React cache() でリクエスト内の重複を省く
@@ -74,7 +65,6 @@ export const getQuestionLinkContext = cache(
         )
       ),
       memberNames,
-      profileFullNameByFamily: PROFILE_FULL_NAME_BY_FAMILY,
       answerRecordIdByDate: new Map(
         meetings
           .filter(

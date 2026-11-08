@@ -1,8 +1,8 @@
 import { ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { toMemberKey } from "@/features/members/shared/data/member-profiles";
 import {
-  extractFamilyName,
   parseBillSponsors,
   type SponsorPerson,
 } from "@/features/members/shared/utils/sponsors";
@@ -11,8 +11,8 @@ import type { Bill } from "../../../shared/types";
 
 interface SponsorsSectionProps {
   bill: Bill;
-  /** 議員名簿（議員別賛否データに登場する姓の集合）。歴代議員等、名簿に
-   * 無い人物はチップをリンクにしない */
+  /** 議員ページがある議員（現職）のキー（空白なしのフルネーム）の集合。
+   * 名簿に無い人物はチップをリンクにしない */
   memberNameSet: Set<string>;
 }
 
@@ -27,12 +27,12 @@ function SponsorChip({
   memberNameSet: Set<string>;
 }) {
   const label = person.title ? `${person.title} ${person.name}` : person.name;
-  const familyName = extractFamilyName(person.name);
+  const memberKey = toMemberKey(person.name);
 
-  if (memberNameSet.has(familyName)) {
+  if (memberNameSet.has(memberKey)) {
     return (
       <Link
-        href={routes.memberDetail(familyName) as Route}
+        href={routes.memberDetail(memberKey) as Route}
         className={`${CHIP_CLASS} underline decoration-dotted underline-offset-[3px] transition-opacity hover:opacity-70`}
       >
         {label}

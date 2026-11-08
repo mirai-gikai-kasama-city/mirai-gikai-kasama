@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { SearchItem } from "../types";
-import { searchBills } from "./search-bills";
+import {
+  countBillsByTheme,
+  searchBills,
+  selectBillsByTheme,
+} from "./search-bills";
 
 function item(overrides: Partial<SearchItem>): SearchItem {
   return {
@@ -12,6 +16,7 @@ function item(overrides: Partial<SearchItem>): SearchItem {
     status: "enacted",
     statusNote: null,
     tags: [],
+    themes: [],
     ...overrides,
   };
 }
@@ -105,5 +110,32 @@ describe("searchBills", () => {
     );
 
     expect(searchBills(items, "")).toHaveLength(100);
+  });
+});
+
+describe("selectBillsByTheme / countBillsByTheme", () => {
+  const items = [
+    item({ id: "old", themes: ["kids"], submittedDate: "2020-03-01" }),
+    item({
+      id: "new",
+      themes: ["kids", "welfare"],
+      submittedDate: "2025-03-01",
+    }),
+    item({ id: "none", themes: [], submittedDate: "2024-03-01" }),
+  ];
+
+  it("テーマに入る議案を新しい順に返す", () => {
+    expect(selectBillsByTheme(items, "kids").map((i) => i.id)).toEqual([
+      "new",
+      "old",
+    ]);
+    expect(selectBillsByTheme(items, "safety")).toEqual([]);
+  });
+
+  it("テーマごとの件数を数える", () => {
+    expect(Object.fromEntries(countBillsByTheme(items))).toEqual({
+      kids: 2,
+      welfare: 1,
+    });
   });
 });

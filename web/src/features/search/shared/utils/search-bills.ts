@@ -45,13 +45,36 @@ export function searchBills(items: SearchItem[], query: string): SearchItem[] {
           return terms.every((term) => searchableText.includes(term));
         });
 
-  return matched
-    .slice()
-    .sort((a, b) => {
-      if (a.submittedDate === b.submittedDate) return 0;
-      if (a.submittedDate === null) return 1;
-      if (b.submittedDate === null) return -1;
-      return b.submittedDate.localeCompare(a.submittedDate);
-    })
-    .slice(0, MAX_RESULTS);
+  return sortByDateDesc(matched).slice(0, MAX_RESULTS);
+}
+
+/** 議決日の新しい順（日付の無いものは末尾）に並べたコピーを返す */
+function sortByDateDesc(items: readonly SearchItem[]): SearchItem[] {
+  return [...items].sort((a, b) => {
+    if (a.submittedDate === b.submittedDate) return 0;
+    if (a.submittedDate === null) return 1;
+    if (b.submittedDate === null) return -1;
+    return b.submittedDate.localeCompare(a.submittedDate);
+  });
+}
+
+/** テーマに入る議案を新しい順に返す（件数の上限なし。表示側で段階表示する） */
+export function selectBillsByTheme(
+  items: readonly SearchItem[],
+  themeId: string
+): SearchItem[] {
+  return sortByDateDesc(items.filter((item) => item.themes.includes(themeId)));
+}
+
+/** テーマごとの議案数（themeId → 件数） */
+export function countBillsByTheme(
+  items: readonly SearchItem[]
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const item of items) {
+    for (const id of item.themes) {
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+  }
+  return counts;
 }

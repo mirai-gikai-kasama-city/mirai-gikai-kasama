@@ -12,6 +12,7 @@ function makeItem(tags: string[]): SearchItem {
     status: "enacted",
     statusNote: null,
     tags,
+    themes: [],
   };
 }
 

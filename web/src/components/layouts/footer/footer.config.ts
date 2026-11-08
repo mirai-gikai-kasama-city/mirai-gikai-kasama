@@ -15,20 +15,20 @@ export const primaryLinks: FooterLink[] = [
     href: routes.search(),
   },
   {
+    label: "一般質問を検索",
+    href: routes.questions(),
+  },
+  {
+    label: "議員一覧",
+    href: routes.memberArchive(),
+  },
+  {
     label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
   },
   {
     label: "過去の会期",
     href: routes.archive(),
-  },
-  {
-    label: "一般質問",
-    href: routes.questions(),
-  },
-  {
-    label: "議員一覧",
-    href: routes.memberArchive(),
   },
   {
     label: "情報のもと（出典）",

@@ -39,30 +39,28 @@ type NavLinkItem = {
 export type HeaderSessionLink = { id: string; name: string };
 
 // lg以上（デスクトップ）: ロゴ右側に主要ページへのテキストリンクを並べる
-const DESKTOP_NAV_LINKS: NavLinkItem[] = [
+// 主要ページへのリンク。PC（ロゴ右側のテキストリンク）とスマホ（2段目の横スクロール）で同じ並び
+const MAIN_NAV_LINKS: NavLinkItem[] = [
   { label: "議案を検索", href: routes.search(), icon: Search },
+  {
+    label: "一般質問を検索",
+    href: routes.questions(),
+    icon: MessageSquareText,
+  },
+  { label: "議員一覧", href: routes.memberArchive(), icon: UsersRound },
   {
     label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
     icon: Landmark,
     withSessionMenu: true,
   },
-  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
-  { label: "議員一覧", href: routes.memberArchive(), icon: UsersRound },
 ];
 
-// lg未満（モバイル）: ヘッダー2段目の横スクロールクイックナビ
-const MOBILE_QUICK_LINKS: NavLinkItem[] = [
-  {
-    label: SESSION_ARCHIVE_LABEL,
-    href: routes.sessionArchive(),
-    icon: Landmark,
-    withSessionMenu: true,
-  },
-  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
-  { label: "議員一覧", href: routes.memberArchive(), icon: UsersRound },
-  { label: "議案を検索", href: routes.search(), icon: Search },
-];
+// lg以上（デスクトップ）
+const DESKTOP_NAV_LINKS = MAIN_NAV_LINKS;
+
+// lg未満（モバイル）
+const MOBILE_QUICK_LINKS = MAIN_NAV_LINKS;
 
 const DESKTOP_LINK_CLASS =
   "flex items-center gap-1.5 whitespace-nowrap rounded-md px-2 py-2 text-[13px] font-medium text-mirai-text transition-colors hover:bg-muted/50 xl:px-3 xl:text-sm";

@@ -33,6 +33,12 @@ const NAV_LINKS: NavLinkItem[] = [
   { label: "ホーム", href: routes.home(), icon: Home },
   { label: "議案を検索", href: routes.search(), icon: Search },
   {
+    label: "一般質問を検索",
+    href: routes.questions(),
+    icon: MessageSquareText,
+  },
+  { label: "議員一覧", href: routes.memberArchive(), icon: UsersRound },
+  {
     label: SESSION_ARCHIVE_LABEL,
     href: routes.sessionArchive(),
     icon: Landmark,
@@ -42,8 +48,6 @@ const NAV_LINKS: NavLinkItem[] = [
     href: routes.archive(),
     icon: History,
   },
-  { label: "一般質問", href: routes.questions(), icon: MessageSquareText },
-  { label: "議員一覧", href: routes.memberArchive(), icon: UsersRound },
   // トップページのAboutセクション（id="about"）へのアンカーリンク
   { label: "かさま議会ノートとは", href: `${routes.home()}#about`, icon: Info },
 ];

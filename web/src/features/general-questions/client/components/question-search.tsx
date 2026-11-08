@@ -199,7 +199,7 @@ export function QuestionSearch({
                 議員で探す
               </h2>
               <p className="text-xs text-mirai-text-secondary">
-                現職の議員を議席番号の順に並べています。前の任期の議員は、キーワードに名前を入れると探せます。
+                現職の議員を議席番号の順に並べています。数字は平成26年9月からの一般質問の回数です。前の任期の議員は、キーワードに名前を入れると探せます。
               </p>
             </div>
             <div className="flex flex-wrap gap-2 rounded-lg bg-white p-5">

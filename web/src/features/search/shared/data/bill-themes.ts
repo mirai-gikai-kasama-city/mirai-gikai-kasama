@@ -268,8 +268,8 @@ export const BILL_THEMES: readonly BillTheme[] = [
   {
     id: OTHER_THEME_ID,
     label: "その他",
-    description:
-      "監査委員などの人事・審査請求の諮問など、ほかのテーマに入らない議案",
+    // 議案と一般質問の両方で使うので、どちらにも当てはまる書き方にする
+    description: "ほかのどのテーマにも当てはまらないもの",
     // 言葉では判定せず、ほかのどのテーマにも入らなかった議案をここに入れる
     keywords: [],
   },

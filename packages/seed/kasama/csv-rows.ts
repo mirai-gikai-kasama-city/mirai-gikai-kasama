@@ -18,22 +18,41 @@ export function seedId(name: string): string {
   return uuidv5(KASAMA_SEED_NAMESPACE, name);
 }
 
-export type KasamaCategory = "予算" | "条例" | "人事" | "契約・工事" | "その他";
+export type KasamaCategory =
+  | "予算"
+  | "決算"
+  | "条例"
+  | "人事"
+  | "指定管理者"
+  | "契約・工事"
+  | "請願・陳情"
+  | "意見書・決議"
+  | "その他";
 
+/** 件名に含まれる言葉で議案を1つのタグに振り分ける（上から順に判定） */
 export function categorizeBill(title: string): KasamaCategory {
+  // 陳情・請願・意見書は件名に「条例」「予算」を含むことがある（例: 〇〇条例の制定を求める陳情）ので先に判定する
+  if (/陳情|請願/.test(title)) return "請願・陳情";
+  if (/意見書|決議/.test(title)) return "意見書・決議";
   if (title.includes("予算")) return "予算";
+  if (title.includes("決算")) return "決算";
   // 「選挙」は条例名にも出てくるので、条例を先に判定する
   if (title.includes("条例")) return "条例";
   if (/選任|任命|推薦|選挙/.test(title)) return "人事";
+  if (title.includes("指定管理者")) return "指定管理者";
   if (/契約|工事/.test(title)) return "契約・工事";
   return "その他";
 }
 
 const CATEGORY_THUMBNAIL: Record<KasamaCategory, string> = {
   予算: "/img/bill-thumbnails/budget.webp",
+  決算: "/img/bill-thumbnails/settlement.webp",
   条例: "/img/bill-thumbnails/ordinance.webp",
   人事: "/img/bill-thumbnails/personnel.webp",
+  指定管理者: "/img/bill-thumbnails/property.webp",
   "契約・工事": "/img/bill-thumbnails/contract.webp",
+  "請願・陳情": "/img/bill-thumbnails/petition.webp",
+  "意見書・決議": "/img/bill-thumbnails/opinion.webp",
   その他: "/img/bill-thumbnails/other.webp",
 };
 

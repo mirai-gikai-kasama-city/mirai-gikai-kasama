@@ -3,7 +3,8 @@
  *
  * タグ（予算・条例…）は議案の種類で、市民が知りたい「何の話か」とは一致しない。
  * テーマは議案名と概要に含まれる言葉で決める（1つの議案が複数のテーマに入ることもある）。
- * 言葉で機械的に振り分けるので、テーマに入らない議案や、関係の薄いテーマに入る議案もある。
+ * 言葉で機械的に振り分けるので、関係の薄いテーマに入る議案もある。
+ * どのテーマの言葉も無い議案は「その他」に入れる（どの議案も必ずどれかのテーマに入る）。
  *
  * id は URL（/search?theme=...）に使う。ラベルを変えても id は変えないこと
  */
@@ -16,6 +17,9 @@ export interface BillTheme {
   /** 議案名・概要にこのどれかが含まれていればテーマに入れる */
   keywords: readonly string[];
 }
+
+/** ほかのどのテーマにも入らない議案の受け皿 */
+const OTHER_THEME_ID = "other";
 
 export const BILL_THEMES: readonly BillTheme[] = [
   {
@@ -261,6 +265,14 @@ export const BILL_THEMES: readonly BillTheme[] = [
       "議会個人情報保護条例",
     ],
   },
+  {
+    id: OTHER_THEME_ID,
+    label: "その他",
+    description:
+      "監査委員などの人事・審査請求の諮問など、ほかのテーマに入らない議案",
+    // 言葉では判定せず、ほかのどのテーマにも入らなかった議案をここに入れる
+    keywords: [],
+  },
 ];
 
 const THEME_MAP = new Map(BILL_THEMES.map((theme) => [theme.id, theme]));
@@ -270,9 +282,13 @@ export function findBillTheme(id: string | null): BillTheme | null {
   return id === null ? null : (THEME_MAP.get(id) ?? null);
 }
 
-/** 議案名・概要からテーマの id を判定する（BILL_THEMES の順） */
+/**
+ * 議案名・概要からテーマの id を判定する（BILL_THEMES の順）。
+ * どのテーマの言葉も無ければ「その他」に入れるので、空にはならない
+ */
 export function detectBillThemes(text: string): string[] {
-  return BILL_THEMES.filter((theme) =>
+  const ids = BILL_THEMES.filter((theme) =>
     theme.keywords.some((keyword) => text.includes(keyword))
   ).map((theme) => theme.id);
+  return ids.length > 0 ? ids : [OTHER_THEME_ID];
 }

@@ -148,7 +148,7 @@ export function SearchClient({ items }: SearchClientProps) {
                 テーマで探す
               </h2>
               <p className="text-xs leading-[1.7] text-mirai-text-secondary">
-                議案名と概要に含まれる言葉で、暮らしのテーマごとにまとめています。1つの議案が複数のテーマに入ることや、どのテーマにも入らない議案もあります。
+                議案名と概要に含まれる言葉で、暮らしのテーマごとにまとめています。1つの議案が複数のテーマに入ることもあります。どのテーマにも当てはまらない議案は「その他」にまとめています。
               </p>
             </div>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">

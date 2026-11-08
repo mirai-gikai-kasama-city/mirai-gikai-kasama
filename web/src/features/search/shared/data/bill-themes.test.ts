@@ -28,10 +28,10 @@ describe("detectBillThemes", () => {
     ).not.toContain("assembly");
   });
 
-  it("どのテーマの言葉も無ければ空", () => {
+  it("どのテーマの言葉も無ければ「その他」に入れる", () => {
     expect(
       detectBillThemes("笠間市監査委員の選任に同意を求めることについて")
-    ).toEqual([]);
+    ).toEqual(["other"]);
   });
 });
 

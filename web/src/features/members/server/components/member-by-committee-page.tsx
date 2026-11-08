@@ -58,7 +58,7 @@ export function MemberByCommitteePage() {
                   {group.label}
                 </h2>
                 <p className="text-xs text-mirai-text-secondary">
-                  議長のため、委員会には所属していません（公式名簿でも所属委員会の欄は空です）。
+                  議長は委員会には所属していません。
                 </p>
               </div>
             ) : (

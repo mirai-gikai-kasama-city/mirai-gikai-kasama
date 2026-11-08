@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {};
   }
 
-  const title = `${profile.fullName} 議員（笠間市議会）の会派・賛否・一般質問`;
+  const title = `${profile.fullName} 議員（笠間市議会）の党派・会派・賛否・一般質問`;
   const description = describeMember({
     displayName: profile.fullName,
     faction: profile.faction,

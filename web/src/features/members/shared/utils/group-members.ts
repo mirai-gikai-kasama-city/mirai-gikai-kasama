@@ -16,7 +16,7 @@ export interface MemberListGroup {
  * 名簿の会派の欄が空の議員のグループ名。
  * 空欄を「無所属」とは言い切れないので、名簿のとおり「記載なし」と書く
  */
-export const NO_FACTION_LABEL = "会派の記載なし";
+export const NO_FACTION_LABEL = "党派・会派の記載なし";
 
 /**
  * 現職議員を名簿の会派ごとにまとめる。

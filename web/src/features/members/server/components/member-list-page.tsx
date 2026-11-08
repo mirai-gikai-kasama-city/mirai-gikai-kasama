@@ -48,7 +48,7 @@ export function MemberListPage() {
             議員一覧
           </h1>
           <p className="text-xs text-mirai-text-secondary">
-            笠間市議会の現職の議員の会派・役職・所属委員会と、賛否が分かれた議案での賛否、一般質問をまとめています。名前を選ぶと議員ごとのページを開きます。
+            笠間市議会の現職の議員の党派・会派・役職・所属委員会と、賛否が分かれた議案での賛否、一般質問をまとめています。名前を選ぶと議員ごとのページを開きます。
           </p>
         </div>
 
@@ -63,9 +63,9 @@ export function MemberListPage() {
             </dd>
           </div>
           <div className="rounded-md bg-white px-4 py-3">
-            <dt className="text-xs text-mirai-text-muted">会派</dt>
+            <dt className="text-xs text-mirai-text-muted">党派・会派</dt>
             <dd className="text-lg font-bold text-mirai-text">
-              {factionCount}会派
+              {factionCount}つ
             </dd>
           </div>
         </dl>
@@ -149,7 +149,7 @@ export function MemberListPage() {
             {VACANT_SEATS.join("番・")}番は欠員です。
           </p>
           <p>
-            ※氏名・ふりがな・会派・役職・所属委員会は公式名簿のとおりです。名簿の会派の欄が空欄の議員は「
+            ※氏名・ふりがな・党派・会派・役職・所属委員会は公式名簿のとおりです（党派・会派は名簿の「所属会派」の欄）。この欄が空欄の議員は「
             {NO_FACTION_LABEL}」にまとめています。
           </p>
           <p>

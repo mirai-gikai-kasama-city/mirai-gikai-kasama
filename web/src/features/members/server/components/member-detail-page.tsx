@@ -97,7 +97,7 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
             この議員について
           </h2>
           <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-            <dt className="text-mirai-text-muted">会派</dt>
+            <dt className="text-mirai-text-muted">党派・会派</dt>
             <dd className="text-mirai-text">
               {profile.faction ?? NO_FACTION_LABEL}
             </dd>

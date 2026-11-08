@@ -1,26 +1,16 @@
 import type { SearchItem } from "../types";
+import {
+  includesAllTerms,
+  normalizeSearchText,
+  splitSearchTerms,
+} from "./search-text";
 
 /** 検索結果の最大表示件数 */
 const MAX_RESULTS = 100;
 
-/** クエリ分割用: 半角・全角スペースを区切り文字とする */
-const QUERY_SPLIT_PATTERN = /[\s　]+/;
-
-/** カタカナ（ァ〜ヶ）をひらがなに変換する */
-function katakanaToHiragana(text: string): string {
-  return text.replace(/[ァ-ヶ]/g, (char) =>
-    String.fromCharCode(char.charCodeAt(0) - 0x60)
-  );
-}
-
-/** 検索用に文字列を正規化する: NFKC → 小文字化 → カタカナをひらがなに変換 */
-function normalize(text: string): string {
-  return katakanaToHiragana(text.normalize("NFKC").toLowerCase());
-}
-
 /** SearchItemを検索対象として連結した正規化済み文字列を返す */
 function buildSearchableText(item: SearchItem): string {
-  return normalize(
+  return normalizeSearchText(
     [item.title, item.name, item.summary, ...item.tags].join(" ")
   );
 }
@@ -33,17 +23,14 @@ function buildSearchableText(item: SearchItem): string {
  * 最大100件にスライスする。
  */
 export function searchBills(items: SearchItem[], query: string): SearchItem[] {
-  const terms = normalize(query)
-    .split(QUERY_SPLIT_PATTERN)
-    .filter((term) => term.length > 0);
+  const terms = splitSearchTerms(query);
 
   const matched =
     terms.length === 0
       ? items
-      : items.filter((item) => {
-          const searchableText = buildSearchableText(item);
-          return terms.every((term) => searchableText.includes(term));
-        });
+      : items.filter((item) =>
+          includesAllTerms(buildSearchableText(item), terms)
+        );
 
   return sortByDateDesc(matched).slice(0, MAX_RESULTS);
 }
@@ -64,17 +51,4 @@ export function selectBillsByTheme(
   themeId: string
 ): SearchItem[] {
   return sortByDateDesc(items.filter((item) => item.themes.includes(themeId)));
-}
-
-/** テーマごとの議案数（themeId → 件数） */
-export function countBillsByTheme(
-  items: readonly SearchItem[]
-): Map<string, number> {
-  const counts = new Map<string, number>();
-  for (const item of items) {
-    for (const id of item.themes) {
-      counts.set(id, (counts.get(id) ?? 0) + 1);
-    }
-  }
-  return counts;
 }

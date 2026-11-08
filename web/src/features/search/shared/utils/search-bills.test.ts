@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { countByTheme } from "../data/bill-themes";
 import type { SearchItem } from "../types";
-import {
-  countBillsByTheme,
-  searchBills,
-  selectBillsByTheme,
-} from "./search-bills";
+import { searchBills, selectBillsByTheme } from "./search-bills";
 
 function item(overrides: Partial<SearchItem>): SearchItem {
   return {
@@ -113,7 +110,7 @@ describe("searchBills", () => {
   });
 });
 
-describe("selectBillsByTheme / countBillsByTheme", () => {
+describe("selectBillsByTheme / countByTheme", () => {
   const items = [
     item({ id: "old", themes: ["kids"], submittedDate: "2020-03-01" }),
     item({
@@ -133,7 +130,7 @@ describe("selectBillsByTheme / countBillsByTheme", () => {
   });
 
   it("テーマごとの件数を数える", () => {
-    expect(Object.fromEntries(countBillsByTheme(items))).toEqual({
+    expect(Object.fromEntries(countByTheme(items))).toEqual({
       kids: 2,
       welfare: 1,
     });

@@ -12,6 +12,10 @@ import {
   selectQuestionsForSession,
 } from "../../shared/utils/group-questions";
 import type { MemberLinkContext } from "../../shared/utils/question-links";
+import {
+  buildQuestionSearchItems,
+  type QuestionSearchItem,
+} from "../../shared/utils/question-search";
 
 /** 本会議の一般質問を日ごとに1件で記録している委員会記録の委員会名 */
 export const QUESTION_DAY_RECORD_NAME = "本会議（一般質問）";
@@ -36,6 +40,14 @@ export function getAllGeneralQuestions(): readonly GeneralQuestionRecord[] {
 /** 静的データは変わらないので、会期ごとのまとまりはモジュール読み込み時に一度だけ作る */
 const QUESTION_SESSION_GROUPS: readonly QuestionSessionGroup[] =
   groupQuestionsBySession(GENERAL_QUESTIONS);
+
+/** 一般質問の検索用データ（静的データなので一度だけ作る。新しい順） */
+const QUESTION_SEARCH_ITEMS: readonly QuestionSearchItem[] =
+  buildQuestionSearchItems(GENERAL_QUESTIONS);
+
+export function getQuestionSearchItems(): readonly QuestionSearchItem[] {
+  return QUESTION_SEARCH_ITEMS;
+}
 
 /** 会期ごとの一般質問（新しい会期が先頭） */
 export function getQuestionSessionGroups(): readonly QuestionSessionGroup[] {

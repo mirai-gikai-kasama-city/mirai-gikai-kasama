@@ -277,6 +277,19 @@ export const BILL_THEMES: readonly BillTheme[] = [
 
 const THEME_MAP = new Map(BILL_THEMES.map((theme) => [theme.id, theme]));
 
+/** テーマごとの件数（themeId → 件数）。議案・一般質問の両方で使う */
+export function countByTheme(
+  items: readonly { themes: readonly string[] }[]
+): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const item of items) {
+    for (const id of item.themes) {
+      counts.set(id, (counts.get(id) ?? 0) + 1);
+    }
+  }
+  return counts;
+}
+
 /** URL の値からテーマを引く。未定義なら null */
 export function findBillTheme(id: string | null): BillTheme | null {
   return id === null ? null : (THEME_MAP.get(id) ?? null);

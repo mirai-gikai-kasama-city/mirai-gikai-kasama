@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -13,27 +13,21 @@ import { BillStatusBadge } from "@/features/bills/client/components/bill-list/bi
 import { getBillDateLabel } from "@/features/bills/shared/utils/bill-status";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
-import { BILL_THEMES, findBillTheme } from "../../shared/data/bill-themes";
+import { countByTheme, findBillTheme } from "../../shared/data/bill-themes";
 import type { SearchItem } from "../../shared/types";
 import { collectPopularTags } from "../../shared/utils/collect-popular-tags";
 import {
-  countBillsByTheme,
   searchBills,
   selectBillsByTheme,
 } from "../../shared/utils/search-bills";
+import {
+  replaceSearchParams,
+  ThemeGrid,
+  ThemeResultHeader,
+} from "./theme-grid";
 
 /** 初期状態で表示するタグ数 */
 const POPULAR_TAG_LIMIT = 12;
-
-/** URL（/search?q=...&theme=...）を、ページを読み直さずに今の状態へ合わせる */
-function replaceSearchParams(params: { q?: string; theme?: string }) {
-  const url = new URL(window.location.href);
-  url.searchParams.delete("q");
-  url.searchParams.delete("theme");
-  if (params.q) url.searchParams.set("q", params.q);
-  if (params.theme) url.searchParams.set("theme", params.theme);
-  window.history.replaceState(null, "", url);
-}
 
 interface SearchClientProps {
   items: SearchItem[];
@@ -63,7 +57,7 @@ export function SearchClient({ items }: SearchClientProps) {
     () => (themeId ? selectBillsByTheme(items, themeId) : []),
     [items, themeId]
   );
-  const themeCounts = useMemo(() => countBillsByTheme(items), [items]);
+  const themeCounts = useMemo(() => countByTheme(items), [items]);
   const popularTags = useMemo(
     () => collectPopularTags(items, POPULAR_TAG_LIMIT),
     [items]
@@ -72,12 +66,12 @@ export function SearchClient({ items }: SearchClientProps) {
   const changeQuery = (value: string) => {
     setQuery(value);
     setThemeId(null);
-    replaceSearchParams({ q: value.trim() });
+    replaceSearchParams({ q: value.trim(), theme: null });
   };
   const chooseTheme = (id: string | null) => {
     setThemeId(id);
     setQuery("");
-    replaceSearchParams({ theme: id ?? undefined });
+    replaceSearchParams({ q: null, theme: id });
     window.scrollTo({ top: 0 });
   };
 
@@ -115,25 +109,12 @@ export function SearchClient({ items }: SearchClientProps) {
         />
       ) : theme ? (
         <section className="flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={() => chooseTheme(null)}
-            className="inline-flex w-fit items-center gap-1 text-xs text-primary-accent underline-offset-[3px] hover:underline"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-            テーマの一覧にもどる
-          </button>
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-bold text-mirai-text">
-              テーマ：{theme.label}
-              <span className="ml-2 text-sm font-medium text-mirai-text-muted">
-                {themeResults.length}件
-              </span>
-            </h2>
-            <p className="text-xs text-mirai-text-secondary">
-              {theme.description}
-            </p>
-          </div>
+          <ThemeResultHeader
+            theme={theme}
+            count={themeResults.length}
+            unit="件"
+            onBack={() => chooseTheme(null)}
+          />
           <BillResults
             items={themeResults}
             emptyMessage="このテーマに入る議案はまだありません。"
@@ -151,30 +132,7 @@ export function SearchClient({ items }: SearchClientProps) {
                 議案名と概要に含まれる言葉で、暮らしのテーマごとにまとめています。1つの議案が複数のテーマに入ることもあります。どのテーマにも当てはまらない議案は「その他」にまとめています。
               </p>
             </div>
-            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {BILL_THEMES.map((item) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => chooseTheme(item.id)}
-                    className="flex h-full w-full items-center gap-3 rounded-lg border border-mirai-border bg-white p-4 text-left transition-colors hover:bg-muted/50"
-                  >
-                    <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <span className="text-[15px] font-bold text-mirai-text">
-                        {item.label}
-                        <span className="ml-2 text-xs font-medium text-mirai-text-muted">
-                          {themeCounts.get(item.id) ?? 0}件
-                        </span>
-                      </span>
-                      <span className="text-xs leading-[1.7] text-mirai-text-secondary">
-                        {item.description}
-                      </span>
-                    </span>
-                    <ChevronRight className="h-4 w-4 shrink-0 text-mirai-text-muted" />
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <ThemeGrid counts={themeCounts} onSelect={chooseTheme} unit="件" />
           </section>
 
           {popularTags.length > 0 && (

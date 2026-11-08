@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { MemberProfile } from "../data/member-profiles";
 import {
+  CHAIR_LABEL,
   groupMembersByCommittee,
   groupMembersByFaction,
   listMembersBySeat,
@@ -125,5 +126,16 @@ describe("groupMembersByCommittee", () => {
       ["甲野一郎", null],
     ]);
     expect(groups[2].members.map((m) => m.key)).toEqual(["丁田四郎"]);
+  });
+
+  it("委員会に所属しない議長は「記載なし」ではなく議長として先頭に出す", () => {
+    const groups = groupMembersByCommittee({
+      甲野一郎: withCommittees(1, "甲野 一郎", ["総務企画委員会"]),
+      乙山二郎: { ...withCommittees(2, "乙山 二郎", []), role: "議長" },
+    });
+    expect(groups.map((g) => [g.label, g.members.map((m) => m.key)])).toEqual([
+      [CHAIR_LABEL, ["乙山二郎"]],
+      ["総務企画委員会", ["甲野一郎"]],
+    ]);
   });
 });

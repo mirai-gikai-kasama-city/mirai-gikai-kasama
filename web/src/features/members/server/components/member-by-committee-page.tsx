@@ -7,6 +7,7 @@ import {
   MEMBER_PROFILES,
 } from "../../shared/data/member-profiles";
 import {
+  CHAIR_LABEL,
   groupMembersByCommittee,
   NO_FACTION_LABEL,
 } from "../../shared/utils/group-members";
@@ -35,7 +36,9 @@ export function MemberByCommitteePage() {
                 href={`#committee-${index}`}
                 className="text-primary-accent underline underline-offset-[3px] hover:opacity-70"
               >
-                {group.label}（{group.members.length}人）
+                {group.label === CHAIR_LABEL
+                  ? group.label
+                  : `${group.label}（${group.members.length}人）`}
               </a>
             </li>
           ))}
@@ -49,12 +52,23 @@ export function MemberByCommitteePage() {
             id={`committee-${index}`}
             className="flex scroll-mt-24 flex-col gap-3"
           >
-            <h2 className="text-lg font-bold text-mirai-text">
-              {group.label}
-              <span className="ml-2 text-sm font-medium text-mirai-text-muted">
-                {group.members.length}人
-              </span>
-            </h2>
+            {group.label === CHAIR_LABEL ? (
+              <div className="flex flex-col gap-1">
+                <h2 className="text-lg font-bold text-mirai-text">
+                  {group.label}
+                </h2>
+                <p className="text-xs text-mirai-text-secondary">
+                  議長のため、委員会には所属していません（公式名簿でも所属委員会の欄は空です）。
+                </p>
+              </div>
+            ) : (
+              <h2 className="text-lg font-bold text-mirai-text">
+                {group.label}
+                <span className="ml-2 text-sm font-medium text-mirai-text-muted">
+                  {group.members.length}人
+                </span>
+              </h2>
+            )}
             {/* 同じ議員が何度も出るので、カードではなく1人1行で並べる */}
             <ul className="grid grid-cols-1 gap-x-3 overflow-hidden rounded-md border border-mirai-border bg-white sm:grid-cols-2">
               {group.members.map(({ key, profile, position }) => (

@@ -58,7 +58,13 @@ export function groupMembersByFaction(
   });
 }
 
-/** 名簿に所属委員会が書かれていない議員（議長など）のグループ名 */
+/**
+ * 議長のグループ名。議長は委員会に所属しない（名簿でも所属委員会の欄が空）ので、
+ * 「記載なし」ではなく議長として各委員会より先に出す
+ */
+export const CHAIR_LABEL = "議長";
+
+/** 議長以外で、名簿に所属委員会が書かれていない議員のグループ名 */
 export const NO_COMMITTEE_LABEL = "所属委員会の記載なし";
 
 /** 委員会を並べる順（常任委員会、議会運営委員会、予算決算の委員会、広報委員会）。無いものは末尾に名前順 */
@@ -103,17 +109,24 @@ const POSITION_RANK: Record<CommitteePosition, number> = {
 
 /**
  * 現職議員を所属委員会ごとにまとめる（1人が複数の委員会に入る）。
- * 委員会の中は委員長・副委員長・議席番号の順。所属委員会の無い議員は最後にまとめる
+ * 委員会の中は委員長・副委員長・議席番号の順。
+ * 委員会に所属しない議長は先頭に、それ以外で所属委員会の無い議員は最後にまとめる
  */
 export function groupMembersByCommittee(
   profiles: Readonly<Record<string, MemberProfile>>
 ): CommitteeGroup[] {
   const byName = new Map<string, CommitteeMemberEntry[]>();
   for (const entry of listMembersBySeat(profiles)) {
+    const { committees: names, role } = entry.profile;
     const committees =
-      entry.profile.committees.length > 0
-        ? entry.profile.committees.map(parseCommittee)
-        : [{ name: NO_COMMITTEE_LABEL, position: null }];
+      names.length > 0
+        ? names.map(parseCommittee)
+        : [
+            {
+              name: role === CHAIR_LABEL ? CHAIR_LABEL : NO_COMMITTEE_LABEL,
+              position: null,
+            },
+          ];
     for (const { name, position } of committees) {
       const members = byName.get(name) ?? [];
       members.push({ ...entry, position });
@@ -122,6 +135,7 @@ export function groupMembersByCommittee(
   }
 
   const rank = (name: string) => {
+    if (name === CHAIR_LABEL) return -1;
     if (name === NO_COMMITTEE_LABEL) return Number.MAX_SAFE_INTEGER;
     const index = COMMITTEE_ORDER.indexOf(name);
     return index === -1 ? COMMITTEE_ORDER.length : index;

@@ -12,6 +12,10 @@ import {
   VOTE_LABEL,
 } from "@/features/bills/shared/utils/member-vote-display";
 import { MemberQuestionsSection } from "@/features/general-questions/server/components/member-questions-section";
+import {
+  groupByTerm,
+  termForDate,
+} from "@/features/general-questions/shared/utils/council-terms";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
@@ -45,10 +49,20 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
 
   const items = await getBillsWithMemberVotes();
   const records = collectMemberVoteRecords(items, memberKey);
-  const counts = { yes: 0, no: 0, absent: 0, not_voting: 0 };
-  for (const record of records) {
-    counts[record.vote] += 1;
-  }
+  const termOf = (record: (typeof records)[number]) =>
+    record.bill.submitted_date ? termForDate(record.bill.submitted_date) : null;
+  // 議決日が分からず任期を決められない記録（通常は無い）は末尾にまとめる
+  const undated = records.filter((record) => termOf(record) === null);
+  const voteGroups = [
+    ...groupByTerm(records, termOf).map(({ term, records }) => ({
+      key: String(term.endYear),
+      label: term.label,
+      records,
+    })),
+    ...(undated.length > 0
+      ? [{ key: "unknown", label: "任期を確認中", records: undated }]
+      : []),
+  ];
 
   // 議員個人の構造化データ（Person）。検索エンジンが人物ページとして理解できるようにする
   const personJsonLd = {
@@ -141,48 +155,67 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
             <h2 className="text-lg font-bold text-mirai-text">
               賛否が分かれた議案での賛否（新しい順）
             </h2>
-            {records.length > 0 ? (
-              <p className="text-xs text-mirai-text-secondary">
-                賛成{counts.yes}・反対{counts.no}
-                {counts.absent > 0 && `・欠席${counts.absent}`}
-                {counts.not_voting > 0 &&
-                  `・採決に加わらず${counts.not_voting}`}
-                （{records.length}議案）
-              </p>
-            ) : (
+            {records.length === 0 && (
               <p className="text-xs text-mirai-text-secondary">
                 賛否が分かれた議案の記録はまだありません。
               </p>
             )}
           </div>
-          <ShowMoreList
-            initialCount={10}
-            step={50}
-            className="flex flex-col gap-3"
-          >
-            {records.map(({ bill, vote }) => (
-              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
-                      {bill.bill_content?.title || bill.name}
-                    </h3>
-                    <span
-                      className={`inline-flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
-                    >
-                      {VOTE_ARIA_LABEL[vote]}
-                      <span aria-hidden="true">{VOTE_LABEL[vote]}</span>
+          {voteGroups.map((group) => {
+            const counts = { yes: 0, no: 0, absent: 0, not_voting: 0 };
+            for (const record of group.records) {
+              counts[record.vote] += 1;
+            }
+            return (
+              <div key={group.key} className="flex flex-col gap-3">
+                <div className="flex flex-col gap-0.5">
+                  <h3 className="text-sm font-bold text-mirai-text-secondary">
+                    {group.label}
+                    <span className="ml-2 font-medium text-mirai-text-muted">
+                      {group.records.length}議案
                     </span>
-                  </div>
-                  {bill.submitted_date && (
-                    <p className="text-xs text-mirai-text-muted">
-                      {formatDateWithDots(bill.submitted_date)} 議決
-                    </p>
-                  )}
-                </Card>
-              </Link>
-            ))}
-          </ShowMoreList>
+                  </h3>
+                  <p className="text-xs text-mirai-text-secondary">
+                    賛成{counts.yes}・反対{counts.no}
+                    {counts.absent > 0 && `・欠席${counts.absent}`}
+                    {counts.not_voting > 0 &&
+                      `・採決に加わらず${counts.not_voting}`}
+                  </p>
+                </div>
+                <ShowMoreList
+                  initialCount={5}
+                  step={50}
+                  className="flex flex-col gap-3"
+                >
+                  {group.records.map(({ bill, vote }) => (
+                    <Link
+                      key={bill.id}
+                      href={routes.billDetail(bill.id) as Route}
+                    >
+                      <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
+                        <div className="flex items-start justify-between gap-3">
+                          <h4 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
+                            {bill.bill_content?.title || bill.name}
+                          </h4>
+                          <span
+                            className={`inline-flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
+                          >
+                            {VOTE_ARIA_LABEL[vote]}
+                            <span aria-hidden="true">{VOTE_LABEL[vote]}</span>
+                          </span>
+                        </div>
+                        {bill.submitted_date && (
+                          <p className="text-xs text-mirai-text-muted">
+                            {formatDateWithDots(bill.submitted_date)} 議決
+                          </p>
+                        )}
+                      </Card>
+                    </Link>
+                  ))}
+                </ShowMoreList>
+              </div>
+            );
+          })}
         </section>
 
         <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">

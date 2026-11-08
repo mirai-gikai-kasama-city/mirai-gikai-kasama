@@ -1,8 +1,10 @@
 import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
 import { describe, expect, it } from "vitest";
 import {
+  groupByTerm,
   groupQuestionsByTerm,
   sessionKeyYear,
+  termForDate,
   termForSessionKey,
 } from "./council-terms";
 
@@ -25,6 +27,33 @@ describe("termForSessionKey", () => {
 
   it("表に無い年は null", () => {
     expect(termForSessionKey("kasama-h20-1-teirei")).toBeNull();
+  });
+});
+
+describe("termForDate", () => {
+  it("12月24日からは次の任期に入る", () => {
+    expect(termForDate("2022-12-23")?.endYear).toBe(2022);
+    expect(termForDate("2022-12-24")?.endYear).toBe(2026);
+    expect(termForDate("2019-03-15")?.endYear).toBe(2022);
+    expect(termForDate("2018-12-20")?.endYear).toBe(2018);
+  });
+
+  it("表に無い日付や読めない文字列は null", () => {
+    expect(termForDate("2008-06-01")).toBeNull();
+    expect(termForDate("不明")).toBeNull();
+  });
+});
+
+describe("groupByTerm", () => {
+  it("任期の分からない記録は入れない", () => {
+    const groups = groupByTerm(
+      ["2023-03-01", "2008-01-01", "2021-06-01"],
+      (d) => termForDate(d)
+    );
+    expect(groups.map((g) => [g.term.endYear, g.records])).toEqual([
+      [2026, ["2023-03-01"]],
+      [2022, ["2021-06-01"]],
+    ]);
   });
 });
 

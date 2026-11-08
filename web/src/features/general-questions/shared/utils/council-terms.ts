@@ -49,34 +49,63 @@ export function sessionKeyYear(sessionKey: string): number | null {
   return m[1] === "r" ? 2018 + year : 1988 + year;
 }
 
+/** その年の1月1日〜12月23日が入る任期。表に無ければ null */
+function termForYear(year: number): CouncilTerm | null {
+  return (
+    COUNCIL_TERMS.find(
+      (term) => term.endYear >= year && year > term.endYear - 4
+    ) ?? null
+  );
+}
+
 /** 会期のキーが入る任期。表に無い年なら null */
 export function termForSessionKey(sessionKey: string): CouncilTerm | null {
   const year = sessionKeyYear(sessionKey);
-  if (year === null) return null;
-  // 新しい順に並んでいるので、終わる年がその年以上の任期のうち最も古いものを選ぶ
-  let found: CouncilTerm | null = null;
-  for (const term of COUNCIL_TERMS) {
-    if (term.endYear >= year && year > term.endYear - 4) found = term;
-  }
-  return found;
-}
-
-export interface QuestionTermGroup {
-  term: CouncilTerm;
-  records: GeneralQuestionRecord[];
+  return year === null ? null : termForYear(year);
 }
 
 /**
- * 一般質問の記録を任期ごとに分ける（新しい任期が先頭）。記録の無い任期は返さない。
- * 任期の中の並び順は入力のまま
+ * 日付（YYYY-MM-DD）が入る任期。12月24日以降は次の任期になる。表に無ければ null
  */
+export function termForDate(date: string): CouncilTerm | null {
+  const year = Number(date.slice(0, 4));
+  if (!Number.isFinite(year)) return null;
+  return termForYear(date.slice(5) >= "12-24" ? year + 1 : year);
+}
+
+export interface TermGroup<T> {
+  term: CouncilTerm;
+  records: T[];
+}
+
+/**
+ * 記録を任期ごとに分ける（新しい任期が先頭）。記録の無い任期は返さない。
+ * 任期の分からない記録は入らない。任期の中の並び順は入力のまま
+ */
+export function groupByTerm<T>(
+  records: readonly T[],
+  termOf: (record: T) => CouncilTerm | null
+): TermGroup<T>[] {
+  const byTerm = new Map<CouncilTerm, T[]>();
+  for (const record of records) {
+    const term = termOf(record);
+    if (!term) continue;
+    const list = byTerm.get(term);
+    if (list) {
+      list.push(record);
+    } else {
+      byTerm.set(term, [record]);
+    }
+  }
+  return COUNCIL_TERMS.flatMap((term) => {
+    const list = byTerm.get(term);
+    return list ? [{ term, records: list }] : [];
+  });
+}
+
+/** 一般質問の記録を任期ごとに分ける（会期のキーで決める） */
 export function groupQuestionsByTerm(
   records: readonly GeneralQuestionRecord[]
-): QuestionTermGroup[] {
-  return COUNCIL_TERMS.map((term) => ({
-    term,
-    records: records.filter(
-      (record) => termForSessionKey(record.sessionKey) === term
-    ),
-  })).filter((group) => group.records.length > 0);
+): TermGroup<GeneralQuestionRecord>[] {
+  return groupByTerm(records, (record) => termForSessionKey(record.sessionKey));
 }

@@ -16,8 +16,22 @@ describe("detectBillThemes", () => {
     ).toEqual(["welfare", "cityhall"]);
   });
 
+  it("議会の運営は、議長の選挙や会議規則などに絞り、意見書の「議長あて」は拾わない", () => {
+    expect(detectBillThemes("副議長の選挙について")).toEqual(["assembly"]);
+    expect(
+      detectBillThemes("笠間市議会会議規則の一部を改正する規則について")
+    ).toEqual(["assembly"]);
+    expect(
+      detectBillThemes(
+        "核兵器禁止条約への参加を求める意見書について 衆議院議長あてに提出する"
+      )
+    ).not.toContain("assembly");
+  });
+
   it("どのテーマの言葉も無ければ空", () => {
-    expect(detectBillThemes("議長の選挙について")).toEqual([]);
+    expect(
+      detectBillThemes("笠間市監査委員の選任に同意を求めることについて")
+    ).toEqual([]);
   });
 });
 

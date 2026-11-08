@@ -153,6 +153,18 @@ describe("compareSessionKeysDesc", () => {
       )
     ).toEqual(["r10-1-teirei", "r9-1-teirei", "h31-1-teirei"]);
   });
+
+  it("笠間市の kasama- 付きのキーも数値で比べる", () => {
+    expect(
+      ["kasama-r9-1-teirei", "kasama-r10-1-teirei", "kasama-h31-1-teirei"].sort(
+        compareSessionKeysDesc
+      )
+    ).toEqual([
+      "kasama-r10-1-teirei",
+      "kasama-r9-1-teirei",
+      "kasama-h31-1-teirei",
+    ]);
+  });
 });
 
 describe("selectQuestionsForSession / selectQuestionsByMember", () => {

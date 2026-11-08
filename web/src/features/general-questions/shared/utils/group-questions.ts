@@ -25,12 +25,12 @@ function sortByOrder(records: readonly GeneralQuestionRecord[]) {
 }
 
 /**
- * 会期キー（r8-6-teirei / h29-1-teirei）を「新しい順」に比べる。
+ * 会期キー（r8-6-teirei / h29-1-teirei、笠間市は kasama-r8-3-teirei）を「新しい順」に比べる。
  * 文字列比較だと r10 が r9 より前に来るため、元号・年・回を数値で比べる
  */
 export function compareSessionKeysDesc(a: string, b: string): number {
   const parse = (key: string) => {
-    const m = key.match(/^([hr])(\d+)-(\d+)/);
+    const m = key.match(/^(?:kasama-)?([hr])(\d+)-(\d+)/);
     if (!m) return [0, 0, 0];
     return [m[1] === "r" ? 1 : 0, Number(m[2]), Number(m[3])];
   };

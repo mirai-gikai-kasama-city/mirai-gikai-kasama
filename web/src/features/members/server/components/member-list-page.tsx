@@ -6,6 +6,10 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
 import { TextLink } from "@/components/ui/text-link";
 import { getAllGeneralQuestions } from "@/features/general-questions/server/loaders/get-general-questions";
+import {
+  COUNCIL_TERMS,
+  groupQuestionsByTerm,
+} from "@/features/general-questions/shared/utils/council-terms";
 import { selectQuestionsByMember } from "@/features/general-questions/shared/utils/group-questions";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { routes } from "@/lib/routes";
@@ -17,27 +21,18 @@ import {
   ROSTER_SOURCES,
   VACANT_SEATS,
 } from "../../shared/data/member-profiles";
-import { aggregateMemberSummaries } from "../../shared/utils/aggregate-members";
 import {
   groupMembersByFaction,
   NO_FACTION_LABEL,
 } from "../../shared/utils/group-members";
-import { getBillsWithMemberVotes } from "../loaders/get-member-vote-data";
 
 /**
  * 議員一覧ページ
  *
  * 笠間市議会の現職議員を、公式名簿の会派ごとに並べる。
- * 各議員の会派・役職・所属委員会と、賛否が分かれた議案での賛否の記録数、一般質問の回数を載せる
+ * 各議員の会派・役職・所属委員会と、一般質問の回数（任期ごと）を載せる
  */
-export async function MemberListPage() {
-  const items = await getBillsWithMemberVotes();
-  const voteCountByKey = new Map(
-    aggregateMemberSummaries(items).map((member) => [
-      member.name,
-      member.billCount,
-    ])
-  );
+export function MemberListPage() {
   const questions = getAllGeneralQuestions();
   const groups = groupMembersByFaction(MEMBER_PROFILES);
   const memberCount = Object.keys(MEMBER_PROFILES).length;
@@ -86,11 +81,12 @@ export async function MemberListPage() {
               </h2>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {group.members.map(({ key, profile }) => {
-                  const voteCount = voteCountByKey.get(key) ?? 0;
-                  const questionCount = selectQuestionsByMember(questions, {
-                    familyName: familyNameOf(profile),
-                    fullName: profile.fullName,
-                  }).length;
+                  const questionTerms = groupQuestionsByTerm(
+                    selectQuestionsByMember(questions, {
+                      familyName: familyNameOf(profile),
+                      fullName: profile.fullName,
+                    })
+                  );
                   return (
                     <Link key={key} href={routes.memberDetail(key) as Route}>
                       <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
@@ -115,8 +111,22 @@ export async function MemberListPage() {
                             {profile.committees.join("・")}
                           </p>
                         )}
-                        <p className="text-xs text-mirai-text-muted">
-                          賛否の記録 {voteCount}議案・一般質問 {questionCount}回
+                        <p className="text-xs leading-[1.7] text-mirai-text-muted">
+                          一般質問：
+                          {/* 今の任期は0回でも出す（前の任期の回数だけが並ぶと読み違えやすい） */}
+                          {COUNCIL_TERMS.filter(
+                            (term, index) =>
+                              index === 0 ||
+                              questionTerms.some((group) => group.term === term)
+                          )
+                            .map((term) => {
+                              const count =
+                                questionTerms.find(
+                                  (group) => group.term === term
+                                )?.records.length ?? 0;
+                              return `${term.shortLabel} ${count}回`;
+                            })
+                            .join("・")}
                         </p>
                       </Card>
                     </Link>
@@ -143,7 +153,7 @@ export async function MemberListPage() {
             {NO_FACTION_LABEL}」にまとめています。
           </p>
           <p>
-            ※賛否の記録は、議会だよりの賛否一覧などに載る「賛否が分かれた議案」の数です（平成30年12月からの記録。全会一致の議案は含みません）。賛否の数は議員の評価を示すものではありません。
+            ※一般質問の回数は、市の一般質問一覧に載る平成26年9月からの分を、議員の任期ごとに数えています（任期は12月の一般選挙で変わります）。回数は議員の評価を示すものではありません。賛否が分かれた議案での賛否は、議員ごとのページで確認できます。
           </p>
           <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
             {ROSTER_SOURCES.map((source) => (

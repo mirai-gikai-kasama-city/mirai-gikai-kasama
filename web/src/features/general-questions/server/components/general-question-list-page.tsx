@@ -1,4 +1,4 @@
-import { CalendarDays, Users } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
@@ -50,11 +50,6 @@ export function GeneralQuestionListPage({
   );
   const latest = groups.slice(0, FULL_SESSION_COUNT);
   const past = groups.slice(FULL_SESSION_COUNT);
-  const totalRecords = groups.reduce((sum, g) => sum + g.records.length, 0);
-  const videoCount = groups.reduce(
-    (sum, g) => sum + g.records.filter((r) => r.videoUrl).length,
-    0
-  );
 
   return (
     <div data-wide-column>
@@ -65,18 +60,6 @@ export function GeneralQuestionListPage({
           </h1>
           <div className="mt-2">
             <QuestionIntro />
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-md bg-white px-3 py-1.5 font-bold text-mirai-text">
-              {groups.length}回の議会
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
-              <Users aria-hidden className="size-3.5" />
-              のべ{totalRecords}人の質問
-            </span>
-            <span className="rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
-              録画あり {videoCount}人分
-            </span>
           </div>
         </Container>
       </div>

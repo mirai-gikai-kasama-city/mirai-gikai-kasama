@@ -24,9 +24,12 @@ describe("全会期の賛否データ", () => {
   });
 
   it("賛否一覧の無い採決は、会議録の票数で賛否が分かれている", () => {
+    // 議員ごとの賛否が公開されていない時期（unpublished）は、票数も無いので除く
     const unlisted = KASAMA_SESSIONS.flatMap((session) =>
       session.bills.flatMap((bill) =>
-        bill.vote && !bill.vote.marks ? [bill.vote.minutes] : []
+        bill.vote && !bill.vote.marks && !bill.vote.unpublished
+          ? [bill.vote.minutes]
+          : []
       )
     );
     // 今は0件（賛否一覧に無かった採決も、録画配信の採決画面で確かめて marks を入れた）。
@@ -65,10 +68,16 @@ describe("全会期の賛否データ", () => {
     expect(bill.body).toContain(vote.mismatchNote);
   });
 
-  it.each(votedBills)("$label で議長は採決に加わらない", ({ vote }) => {
+  it.each(votedBills)("$label で議長は採決に加わらない", ({ bill, vote }) => {
     // 議長は任期の途中で替わる（大関久義→畑岡洋二）が、賛否一覧ではどの会期も最後の列にいる。
-    // 「－」が最後の列にちょうど1つあることで、列のずれも見つける
-    expect(vote.marks.filter((item) => item === "－")).toHaveLength(1);
+    // 「－」が最後の列にちょうど1つあることで、列のずれも見つける。
+    // ただし議長が欠席して副議長が議長の職務を代行した日は、2人とも採決に加わらない（平成30年第3回）
+    const notVoting = vote.marks.filter((item) => item === "－").length;
+    if (notVoting === 2) {
+      expect(bill.body).toContain("代行");
+    } else {
+      expect(notVoting).toBe(1);
+    }
     expect(vote.marks.at(-1)).toBe("－");
   });
 });

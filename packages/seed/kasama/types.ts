@@ -33,6 +33,22 @@ export type RecordedVote =
       minutes: VoteMinutes;
       marks?: undefined;
       mismatchNote?: undefined;
+      unpublished?: undefined;
+    }
+  | {
+      /**
+       * 賛否は分かれた（起立多数・起立少数など）が、議員ごとの賛否の記録が無い採決。
+       * 議会だよりに賛否一覧が載るのは第44号（平成28年第1回臨時会・第4回定例会）からで、
+       * それより前は起立による採決のため会議録にも人数が無い（第35〜43号は全ページを確かめた）。
+       * 第44号以降でも、賛否一覧に載らなかった起立採決にはこれを使う。
+       * 議員別の賛否は空のまま bills.member_votes に入り、web では「全会一致」と表示しない
+       */
+      unpublished: true;
+      /** サイトに出す注記を、既定の文（記録が無い）から差し替えるとき（無記名投票など） */
+      note?: string;
+      minutes?: undefined;
+      marks?: undefined;
+      mismatchNote?: undefined;
     };
 
 /** 議会だよりの審議結果欄の言葉 */

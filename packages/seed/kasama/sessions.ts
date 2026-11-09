@@ -1,3 +1,32 @@
+import { H26_1_RINJI_BILLS, H26_1_RINJI_SESSION } from "./h26-1-rinji";
+import { H26_3_TEIREI_BILLS, H26_3_TEIREI_SESSION } from "./h26-3-teirei";
+import { H26_4_TEIREI_BILLS, H26_4_TEIREI_SESSION } from "./h26-4-teirei";
+import { H27_1_TEIREI_BILLS, H27_1_TEIREI_SESSION } from "./h27-1-teirei";
+import { H27_2_TEIREI_BILLS, H27_2_TEIREI_SESSION } from "./h27-2-teirei";
+import { H27_3_TEIREI_BILLS, H27_3_TEIREI_SESSION } from "./h27-3-teirei";
+import { H27_4_TEIREI_BILLS, H27_4_TEIREI_SESSION } from "./h27-4-teirei";
+import { H28_1_RINJI_BILLS, H28_1_RINJI_SESSION } from "./h28-1-rinji";
+import { H28_1_TEIREI_BILLS, H28_1_TEIREI_SESSION } from "./h28-1-teirei";
+import { H28_2_TEIREI_BILLS, H28_2_TEIREI_SESSION } from "./h28-2-teirei";
+import { H28_3_TEIREI_BILLS, H28_3_TEIREI_SESSION } from "./h28-3-teirei";
+import {
+  H28_4_TEIREI_BILLS,
+  H28_4_TEIREI_MEMBERS,
+  H28_4_TEIREI_SESSION,
+} from "./h28-4-teirei";
+import { H29_1_RINJI_BILLS, H29_1_RINJI_SESSION } from "./h29-1-rinji";
+import {
+  H29_1_TEIREI_BILLS,
+  H29_1_TEIREI_MEMBERS,
+  H29_1_TEIREI_SESSION,
+} from "./h29-1-teirei";
+import { H29_2_TEIREI_BILLS, H29_2_TEIREI_SESSION } from "./h29-2-teirei";
+import { H29_3_TEIREI_BILLS, H29_3_TEIREI_SESSION } from "./h29-3-teirei";
+import { H29_4_TEIREI_BILLS, H29_4_TEIREI_SESSION } from "./h29-4-teirei";
+import { H30_1_TEIREI_BILLS, H30_1_TEIREI_SESSION } from "./h30-1-teirei";
+import { H30_2_TEIREI_BILLS, H30_2_TEIREI_SESSION } from "./h30-2-teirei";
+import { H30_3_TEIREI_BILLS, H30_3_TEIREI_SESSION } from "./h30-3-teirei";
+import { H30_4_TEIREI_BILLS, H30_4_TEIREI_SESSION } from "./h30-4-teirei";
 import { R8_1_RINJI_BILLS, R8_1_RINJI_SESSION } from "./r8-1-rinji";
 import {
   R8_1_MEMBERS,
@@ -83,11 +112,13 @@ const dayori = (
   pdfDocId: string,
   members: readonly string[],
   /** 1つの文書IDに複数のPDFがある号（第60号・第61号など）の何番目か */
-  pdfIndex = 0
+  pdfIndex = 0,
+  /** PDFのURLの「_doc_56_」の部分の番号（第38・39号は 76） */
+  docNo = 56
 ) => ({
   sourceUrl: `https://www.city.kasama.lg.jp/page/${pageId}.html`,
   sourceTitle: `かさま市議会だより 第${issueNo}号（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
-  voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdfDocId}_doc_56_${pdfIndex}.pdf`,
+  voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdfDocId}_doc_${docNo}_${pdfIndex}.pdf`,
   members,
 });
 
@@ -105,6 +136,96 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
+  // 平成26年9月〜11月は平成22年12月からの任期の終わり。12月の一般選挙の後、平成26年第1回臨時会からが
+  // 平成30年11月までの任期。議会だよりに議員ごとの賛否一覧が載るのは第44号からで、それより前の
+  // 賛否が分かれた議案は vote.unpublished（議員ごとの記録なし）。第44号より前は members を持たない
+  toSession(H26_3_TEIREI_SESSION, {
+    ...dayori(35, "page005681", "1414475417", [], 2),
+    bills: H26_3_TEIREI_BILLS,
+  }),
+  toSession(H26_4_TEIREI_SESSION, {
+    ...dayori(36, "page006030", "1422855502", [], 5),
+    bills: H26_4_TEIREI_BILLS,
+  }),
+  toSession(H26_1_RINJI_SESSION, {
+    ...dayori(36, "page006030", "1422855502", [], 1),
+    bills: H26_1_RINJI_BILLS,
+  }),
+  toSession(H27_1_TEIREI_SESSION, {
+    ...dayori(37, "page006381", "1432718232", [], 2),
+    bills: H27_1_TEIREI_BILLS,
+  }),
+  toSession(H27_2_TEIREI_SESSION, {
+    ...dayori(38, "page006666", "1439947489", [], 2, 76),
+    bills: H27_2_TEIREI_BILLS,
+  }),
+  toSession(H27_3_TEIREI_SESSION, {
+    ...dayori(39, "page006950", "1447891377", [], 2, 76),
+    bills: H27_3_TEIREI_BILLS,
+  }),
+  toSession(H27_4_TEIREI_SESSION, {
+    ...dayori(40, "page007191", "1456127729", [], 3),
+    bills: H27_4_TEIREI_BILLS,
+  }),
+  toSession(H28_1_TEIREI_SESSION, {
+    ...dayori(41, "page007453", "1464067862", [], 2),
+    bills: H28_1_TEIREI_BILLS,
+  }),
+  toSession(H28_2_TEIREI_SESSION, {
+    ...dayori(42, "page007675", "1470378358", [], 3),
+    bills: H28_2_TEIREI_BILLS,
+  }),
+  toSession(H28_3_TEIREI_SESSION, {
+    ...dayori(43, "page008029", "1479177984", [], 6),
+    bills: H28_3_TEIREI_BILLS,
+  }),
+  toSession(H28_1_RINJI_SESSION, {
+    ...dayori(44, "page008269", "1486973020", [], 0),
+    bills: H28_1_RINJI_BILLS,
+  }),
+  // 平成28年第4回の採決は議長の交代（12月15日午後）の前で、議長 藤枝浩が最後の列
+  toSession(H28_4_TEIREI_SESSION, {
+    ...dayori(44, "page008269", "1486973020", H28_4_TEIREI_MEMBERS, 1),
+    bills: H28_4_TEIREI_BILLS,
+  }),
+  toSession(H29_1_RINJI_SESSION, {
+    ...dayori(45, "page008515", "1496037273", [], 4),
+    bills: H29_1_RINJI_BILLS,
+  }),
+  // 平成29年第1回〜平成30年第3回は、賛否一覧の列順が同じ（議長 海老澤勝が最後の列）
+  toSession(H29_1_TEIREI_SESSION, {
+    ...dayori(45, "page008515", "1496037273", H29_1_TEIREI_MEMBERS, 5),
+    bills: H29_1_TEIREI_BILLS,
+  }),
+  toSession(H29_2_TEIREI_SESSION, {
+    ...dayori(46, "page008711", "1503473430", H29_1_TEIREI_MEMBERS, 7),
+    bills: H29_2_TEIREI_BILLS,
+  }),
+  toSession(H29_3_TEIREI_SESSION, {
+    ...dayori(47, "page008918", "1510293364", H29_1_TEIREI_MEMBERS, 5),
+    bills: H29_3_TEIREI_BILLS,
+  }),
+  toSession(H29_4_TEIREI_SESSION, {
+    ...dayori(48, "page009123", "1517978188", H29_1_TEIREI_MEMBERS, 7),
+    bills: H29_4_TEIREI_BILLS,
+  }),
+  toSession(H30_1_TEIREI_SESSION, {
+    ...dayori(49, "page009385", "1527048631", H29_1_TEIREI_MEMBERS),
+    bills: H30_1_TEIREI_BILLS,
+  }),
+  // 第50号・第51号は審議結果と賛否一覧が別のPDF。出典の PDF は賛否一覧のほう
+  toSession(H30_2_TEIREI_SESSION, {
+    ...dayori(50, "page009581", "1534918588", H29_1_TEIREI_MEMBERS),
+    bills: H30_2_TEIREI_BILLS,
+  }),
+  toSession(H30_3_TEIREI_SESSION, {
+    ...dayori(51, "page009778", "1542259370", H29_1_TEIREI_MEMBERS),
+    bills: H30_3_TEIREI_BILLS,
+  }),
+  toSession(H30_4_TEIREI_SESSION, {
+    ...dayori(52, "page009956", "1550103555", []),
+    bills: H30_4_TEIREI_BILLS,
+  }),
   // 平成30年12月〜令和4年11月の任期。賛否一覧の列順は議席番号の順（議長 飯田正憲が最後の列）
   toSession(H30_1_RINJI_SESSION, {
     ...dayori(52, "page009956", "1550103505", []),

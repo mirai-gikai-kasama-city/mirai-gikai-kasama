@@ -81,7 +81,12 @@ export function buildMemberVotes(session: KasamaSession, bill: KasamaBill) {
     return {
       imageUrl: session.voteSourceUrl,
       sourceUrl: session.voteSourceUrl,
-      notes: ["議会だよりの賛否一覧に載っていません"],
+      notes: [
+        bill.vote.unpublished
+          ? (bill.vote.note ??
+            "議会だより・会議録に議員ごとの賛否の記録がありません（起立による採決）")
+          : "議会だよりの賛否一覧に載っていません",
+      ],
       entries: [],
     };
   }

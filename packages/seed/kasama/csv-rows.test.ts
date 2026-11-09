@@ -156,6 +156,7 @@ describe("buildCsvRows", () => {
 
   it("田川市の表記が混ざらない", () => {
     const text = JSON.stringify(rows);
-    expect(text).not.toMatch(/田川|tagawa|福岡/);
+    // 笠間市の川の名前「飯田川」は除く
+    expect(text).not.toMatch(/(?<!飯)田川|tagawa|福岡/);
   });
 });

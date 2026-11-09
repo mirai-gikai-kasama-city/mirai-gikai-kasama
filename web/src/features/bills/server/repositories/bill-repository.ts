@@ -3,6 +3,7 @@ import { fetchAllPages } from "@mirai-gikai/shared/supabase/fetch-all-pages";
 import { selectTagSectionBills } from "@mirai-gikai/shared/top-page/select-tag-section-bills";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { compareSessionBills } from "../../shared/utils/bill-number-order";
 import {
   computeBillInterestScore,
   sortByInterestKey,
@@ -317,7 +318,9 @@ export async function findPublishedBillsByDietSession(
     throw new Error(`Failed to fetch bills by diet session: ${error.message}`);
   }
 
-  return data ?? [];
+  // データベースの並びでは同じ日の議案が id 順になるので、番号順にそろえる
+  // （会期まとめページの全議案リストと、議案ページの前後ナビの両方がこの順を使う）
+  return [...(data ?? [])].sort(compareSessionBills);
 }
 
 /**

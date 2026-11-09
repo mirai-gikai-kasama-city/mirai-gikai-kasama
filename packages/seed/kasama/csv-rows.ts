@@ -106,6 +106,7 @@ export function buildMemberVotes(session: KasamaSession, bill: KasamaBill) {
 }
 
 export function buildBillContent(session: KasamaSession, bill: KasamaBill): string {
+  const pending = bill.resultLabel === null;
   return [
     "## 解説",
     "",
@@ -119,14 +120,15 @@ export function buildBillContent(session: KasamaSession, bill: KasamaBill): stri
       ? []
       : [`- **提出者**: ${bill.submitter ?? "市長提出"}`]),
     `- **会期**: ${session.name}（${session.startDate}〜${session.endDate}）`,
-    `- **議決結果**: ${bill.resultLabel}`,
-    `- **議決日**: ${bill.decidedOn}`,
+    `- **議決結果**: ${bill.resultLabel ?? "審議中（会期中）"}`,
+    `- **${pending ? "提出日" : "議決日"}**: ${bill.decidedOn}`,
     "",
     ...buildBillSourceSection({
       sessionName: session.name,
       sourceUrl: session.sourceUrl,
-      officialPageTitle: session.sourceTitle,
-      isOngoing: false,
+      // 審議中の議案は「〇〇の提出議案」という既定の題にする（web はこの語尾で「提出議案のページ」と見分ける）
+      officialPageTitle: pending ? undefined : session.sourceTitle,
+      isOngoing: pending,
       descriptionSource: bill.source,
     }),
   ].join("\n");
@@ -164,9 +166,13 @@ export function buildCsvRows(sessions: readonly KasamaSession[]) {
         id: billId,
         name: `${bill.billNumberLabel}　${bill.title}`,
         originating_house: "HR",
-        status: REJECTED_RESULT_LABELS.has(bill.resultLabel)
-          ? "rejected"
-          : "enacted",
+        // まだ議決されていない議案は「提出された」状態（サイトでは「笠間市議会審議中」と提出日）
+        status:
+          bill.resultLabel === null
+            ? "introduced"
+            : REJECTED_RESULT_LABELS.has(bill.resultLabel)
+              ? "rejected"
+              : "enacted",
         status_note: bill.resultLabel,
         submitted_date: bill.decidedOn,
         created_at: decidedAt,

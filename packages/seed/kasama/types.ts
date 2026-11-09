@@ -74,8 +74,9 @@ export const REJECTED_RESULT_LABELS: ReadonlySet<KasamaResultLabel> = new Set([
 export interface KasamaBill {
   billNumberLabel: string;
   title: string;
-  resultLabel: KasamaResultLabel;
-  /** YYYY-MM-DD */
+  /** 議決結果。会期中でまだ議決されていない議案は null（サイトでは「審議中」） */
+  resultLabel: KasamaResultLabel | null;
+  /** 議決日（YYYY-MM-DD）。まだ議決されていない議案（resultLabel が null）は提出日 */
   decidedOn: string;
   /** 省略時は市長提出。選挙のように提出者がいないものは null */
   submitter?: "議員提出" | "委員会提出" | "請願者" | null;

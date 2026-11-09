@@ -6,7 +6,7 @@ import { CACHE_TAGS } from "@/lib/cache-tags";
 import type { BillWithContentLite } from "../../shared/types";
 import {
   findBillIdsWithPublicInterview,
-  findPublishedBillsLiteWithContents,
+  findPublishedBillsLiteWithContentsRange,
   findTagsByBillIds,
 } from "../repositories/bill-repository";
 
@@ -18,6 +18,9 @@ import {
  * Supabaseから全件を引き直していた（クローラー巡回で月間Egress上限を超過）。
  * 本文が必要な画面は個別議案のローダー（getBillById等）を使うこと。
  *
+ * 本文を省いても議案が1,600件ほどになると全件で2MBを超えるため、
+ * LITE_CHUNK_SIZE 件ずつ別のキャッシュに分けて保存し、ここでつなげる。
+ *
  * React cache() でリクエスト内の呼び出しを重複排除する（unstable_cacheには
  * リクエスト内メモ化が無く、generateMetadataとページ本体・同一ページ内の
  * 複数ローダーが並行で呼ぶとData Cache読みとmiss時のDBアクセスが多重になる）
@@ -25,14 +28,31 @@ import {
 export const getBillsLite = cache(async (): Promise<BillWithContentLite[]> => {
   // キャッシュ外でcookiesにアクセス
   const difficultyLevel = await getDifficultyLevel();
-  return _getCachedBillsLite(difficultyLevel);
+  const bills: BillWithContentLite[] = [];
+  // 最後の塊は LITE_CHUNK_SIZE 件に満たない（ちょうど割り切れるときは空の塊で終わる）
+  for (let index = 0; ; index++) {
+    const chunk = await _getCachedBillsLiteChunk(difficultyLevel, index);
+    bills.push(...chunk);
+    if (chunk.length < LITE_CHUNK_SIZE) return bills;
+  }
 });
 
-const _getCachedBillsLite = unstable_cache(
+/**
+ * キャッシュ1件あたりの議案数。1件あたり約1.5KB（議員ごとの賛否を含む）なので、
+ * 2MBの上限に余裕を持たせる。PostgREST の1回の取得上限（1000）以下にする
+ */
+const LITE_CHUNK_SIZE = 800;
+
+const _getCachedBillsLiteChunk = unstable_cache(
   async (
-    difficultyLevel: DifficultyLevelEnum
+    difficultyLevel: DifficultyLevelEnum,
+    chunkIndex: number
   ): Promise<BillWithContentLite[]> => {
-    const data = await findPublishedBillsLiteWithContents(difficultyLevel);
+    const data = await findPublishedBillsLiteWithContentsRange(
+      difficultyLevel,
+      chunkIndex * LITE_CHUNK_SIZE,
+      LITE_CHUNK_SIZE
+    );
 
     // タグ情報とインタビュー状態を一括取得
     const billIds = data.map((item) => item.id);
@@ -55,7 +75,7 @@ const _getCachedBillsLite = unstable_cache(
 
     return bills;
   },
-  ["bills-list-lite"],
+  ["bills-list-lite-chunk"],
   {
     // データ更新はadmin操作時の/api/revalidate（revalidateTag）で即時反映される
     // ため、タイマーは保険。Egress削減のため短い間隔での引き直しはしない

@@ -1,4 +1,3 @@
-import { getAllGeneralQuestions } from "@/features/general-questions/server/loaders/get-general-questions";
 import { MEMBER_PROFILES } from "../../shared/data/member-profiles";
 import {
   groupMembersByFaction,
@@ -13,7 +12,6 @@ import { MemberListShell } from "./member-list-shell";
  * 会派に入っている議員は会派で、入っていない議員は党派でまとめる
  */
 export function MemberByFactionPage() {
-  const questions = getAllGeneralQuestions();
   const groups = groupMembersByFaction(MEMBER_PROFILES);
   const named = groups.filter((group) => group.label !== NO_FACTION_LABEL);
 
@@ -48,12 +46,7 @@ export function MemberByFactionPage() {
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {group.members.map(({ key, profile }) => (
-                <MemberCard
-                  key={key}
-                  memberKey={key}
-                  profile={profile}
-                  questions={questions}
-                />
+                <MemberCard key={key} memberKey={key} profile={profile} />
               ))}
             </div>
           </section>

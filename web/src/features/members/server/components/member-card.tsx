@@ -1,17 +1,10 @@
-import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
 import { ChevronRight } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import {
-  COUNCIL_TERMS,
-  groupQuestionsByTerm,
-} from "@/features/general-questions/shared/utils/council-terms";
-import { selectQuestionsByMember } from "@/features/general-questions/shared/utils/group-questions";
 import { routes } from "@/lib/routes";
 import {
   affiliationOf,
-  familyNameOf,
   type MemberProfile,
 } from "../../shared/data/member-profiles";
 import { NO_FACTION_LABEL } from "../../shared/utils/group-members";
@@ -19,30 +12,13 @@ import { NO_FACTION_LABEL } from "../../shared/utils/group-members";
 interface MemberCardProps {
   memberKey: string;
   profile: MemberProfile;
-  /** 一般質問の全記録（この議員の分を数える） */
-  questions: readonly GeneralQuestionRecord[];
 }
 
-/** 議員一覧のカード1枚。議員ページへのリンク */
-export function MemberCard({ memberKey, profile, questions }: MemberCardProps) {
-  const questionTerms = groupQuestionsByTerm(
-    selectQuestionsByMember(questions, {
-      familyName: familyNameOf(profile),
-      fullName: profile.fullName,
-    })
-  );
-  // 今の任期は0回でも出す（前の任期の回数だけが並ぶと読み違えやすい）
-  const questionText = COUNCIL_TERMS.filter(
-    (term, index) =>
-      index === 0 || questionTerms.some((group) => group.term === term)
-  )
-    .map((term) => {
-      const count =
-        questionTerms.find((group) => group.term === term)?.records.length ?? 0;
-      return `${term.shortLabel} ${count}回`;
-    })
-    .join("・");
-
+/**
+ * 議員一覧のカード1枚。議員ページへのリンク。
+ * 一般質問や賛否は議員ページで見せ、一覧には名簿の情報だけを載せる
+ */
+export function MemberCard({ memberKey, profile }: MemberCardProps) {
   return (
     <Link href={routes.memberDetail(memberKey) as Route}>
       <Card className="flex h-full flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
@@ -70,9 +46,6 @@ export function MemberCard({ memberKey, profile, questions }: MemberCardProps) {
             {profile.committees.join("・")}
           </p>
         )}
-        <p className="text-xs leading-[1.7] text-mirai-text-muted">
-          一般質問：{questionText}
-        </p>
       </Card>
     </Link>
   );

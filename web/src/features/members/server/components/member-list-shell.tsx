@@ -94,7 +94,7 @@ export function MemberListShell({
             {NO_FACTION_LABEL}」としています。
           </p>
           <p>
-            ※一般質問の回数は、市の一般質問一覧に載る平成26年9月からの分を、議員の任期ごとに数えています（任期は12月の一般選挙で変わります）。回数は議員の評価を示すものではありません。賛否が分かれた議案での賛否は、議員ごとのページで確認できます。
+            ※賛否が分かれた議案での賛否と一般質問は、議員ごとのページで確認できます。
           </p>
           <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
             {ROSTER_SOURCES.map((source) => (

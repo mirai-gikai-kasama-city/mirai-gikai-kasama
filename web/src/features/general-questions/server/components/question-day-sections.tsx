@@ -25,7 +25,11 @@ export function QuestionDaySections({
   return (
     <div className="flex flex-col gap-8">
       {days.map((day) => (
-        <section key={day.date ?? "unknown"} className="flex flex-col gap-3">
+        <section
+          // 日付が分からない会期は、何日目かで見分ける
+          key={day.date ?? `day-${day.dayIndex ?? "unknown"}`}
+          className="flex flex-col gap-3"
+        >
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <DayHeading className="text-sm font-bold text-mirai-text-secondary">
               {formatQuestionDayLabel(day)}

@@ -5,7 +5,10 @@ import {
   normalizeSearchText,
   splitSearchTerms,
 } from "@/features/search/shared/utils/search-text";
-import { compactMemberName } from "./group-questions";
+import {
+  compactMemberName,
+  compareQuestionRecordsDesc,
+} from "./group-questions";
 
 /** 一般質問の検索用の軽量データ（要旨の本文は含めない） */
 export interface QuestionSearchItem {
@@ -37,25 +40,19 @@ function outlineText(record: GeneralQuestionRecord): string {
 export function buildQuestionSearchItems(
   records: readonly GeneralQuestionRecord[]
 ): QuestionSearchItem[] {
-  return [...records]
-    .sort(
-      (a, b) =>
-        (b.questionDate ?? "").localeCompare(a.questionDate ?? "") ||
-        a.order - b.order
-    )
-    .map((record) => ({
-      id: record.id,
-      sessionKey: record.sessionKey,
-      sessionName: record.sessionName,
-      questionDate: record.questionDate,
-      order: record.order,
-      memberName: record.memberName,
-      memberKey: compactMemberName(record.memberName),
-      items: record.items,
-      themes: detectBillThemes(
-        `${record.items.join(" ")} ${outlineText(record)}`
-      ),
-    }));
+  return [...records].sort(compareQuestionRecordsDesc).map((record) => ({
+    id: record.id,
+    sessionKey: record.sessionKey,
+    sessionName: record.sessionName,
+    questionDate: record.questionDate,
+    order: record.order,
+    memberName: record.memberName,
+    memberKey: compactMemberName(record.memberName),
+    items: record.items,
+    themes: detectBillThemes(
+      `${record.items.join(" ")} ${outlineText(record)}`
+    ),
+  }));
 }
 
 /**

@@ -134,10 +134,34 @@ describe("groupQuestionsBySession", () => {
     ]);
   });
 
-  it("日付の無い会期は末尾に回る", () => {
+  it("日付の無い会期は会期の番号で並ぶ（古い会期なら後ろ）", () => {
     const groups = groupQuestionsBySession([undated, sep1]);
     expect(groups[1].firstDate).toBeNull();
     expect(groups[1].days[0].date).toBeNull();
+  });
+
+  it("日付が分からなくても、新しい会期は先頭に来て、何日目かでまとめる", () => {
+    const pending = (order: number, dayIndex: number) =>
+      record({
+        id: `kasama-r8-7-teirei-${order}`,
+        sessionKey: "kasama-r8-7-teirei",
+        order,
+        dayIndex,
+      });
+    const groups = groupQuestionsBySession([
+      sep1,
+      pending(6, 2),
+      pending(1, 1),
+      pending(2, 1),
+    ]);
+    expect(groups.map((g) => g.sessionKey)).toEqual([
+      "kasama-r8-7-teirei",
+      "r8-6-teirei",
+    ]);
+    expect(groups[0].days.map((d) => [d.dayIndex, d.records.length])).toEqual([
+      [1, 2],
+      [2, 1],
+    ]);
   });
 
   it("記録が無ければ空配列", () => {
@@ -211,6 +235,9 @@ describe("表示用の文字列", () => {
     );
     expect(formatQuestionDayLabel({ date: null, dayIndex: null })).toBe(
       "日程未確認"
+    );
+    expect(formatQuestionDayLabel({ date: null, dayIndex: 2 })).toBe(
+      "2日目（日付未確認）"
     );
   });
 

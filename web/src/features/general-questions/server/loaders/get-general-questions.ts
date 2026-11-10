@@ -6,6 +6,7 @@ import { getCommitteeMeetingListItems } from "@/features/committees/server/loade
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
 import { GENERAL_QUESTIONS } from "../../shared/data/general-questions-data";
+import { PENDING_GENERAL_QUESTIONS } from "../../shared/data/general-questions-pending";
 import {
   groupQuestionsBySession,
   type QuestionSessionGroup,
@@ -32,18 +33,32 @@ export interface QuestionLinkContext extends MemberLinkContext {
   answerRecordIdByDate: ReadonlyMap<string, string>;
 }
 
-/** 一般質問の全記録（公式サイトから生成した静的データ） */
+/**
+ * 一般質問の全記録。会議録検索システムから自動生成した記録に、まだそこに載っていない会期の
+ * 手で起こした記録（通告一覧の PDF から）を足す。同じ会期が自動生成のほうに入ったら、そちらを使う
+ */
+const SCRAPED_SESSION_KEYS = new Set(
+  GENERAL_QUESTIONS.map((r) => r.sessionKey)
+);
+const ALL_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...PENDING_GENERAL_QUESTIONS.filter(
+    (record) => !SCRAPED_SESSION_KEYS.has(record.sessionKey)
+  ),
+  ...GENERAL_QUESTIONS,
+];
+
+/** 一般質問の全記録（公式サイトから作った静的データ） */
 export function getAllGeneralQuestions(): readonly GeneralQuestionRecord[] {
-  return GENERAL_QUESTIONS;
+  return ALL_GENERAL_QUESTIONS;
 }
 
 /** 静的データは変わらないので、会期ごとのまとまりはモジュール読み込み時に一度だけ作る */
 const QUESTION_SESSION_GROUPS: readonly QuestionSessionGroup[] =
-  groupQuestionsBySession(GENERAL_QUESTIONS);
+  groupQuestionsBySession(ALL_GENERAL_QUESTIONS);
 
 /** 一般質問の検索用データ（静的データなので一度だけ作る。新しい順） */
 const QUESTION_SEARCH_ITEMS: readonly QuestionSearchItem[] =
-  buildQuestionSearchItems(GENERAL_QUESTIONS);
+  buildQuestionSearchItems(ALL_GENERAL_QUESTIONS);
 
 export function getQuestionSearchItems(): readonly QuestionSearchItem[] {
   return QUESTION_SEARCH_ITEMS;
@@ -56,7 +71,7 @@ export function getQuestionSessionGroups(): readonly QuestionSessionGroup[] {
 
 /** 特定の会期（slug）の一般質問の人数。会期が無ければ0 */
 export function countQuestionsForSession(sessionKey: string | null): number {
-  return selectQuestionsForSession(GENERAL_QUESTIONS, sessionKey).length;
+  return selectQuestionsForSession(ALL_GENERAL_QUESTIONS, sessionKey).length;
 }
 
 /**

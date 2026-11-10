@@ -32,24 +32,6 @@ import { collectMemberVoteRecords } from "../../shared/utils/aggregate-members";
 import { NO_FACTION_LABEL } from "../../shared/utils/group-members";
 import { getBillsWithMemberVotes } from "../loaders/get-member-vote-data";
 
-/** 「賛成3・反対1・欠席1」のような賛否の内訳（0の欠席・採決に加わらずは省く） */
-function formatVoteCounts(
-  records: readonly { vote: "yes" | "no" | "absent" | "not_voting" }[]
-): string {
-  const counts = { yes: 0, no: 0, absent: 0, not_voting: 0 };
-  for (const record of records) {
-    counts[record.vote] += 1;
-  }
-  return [
-    `賛成${counts.yes}`,
-    `反対${counts.no}`,
-    counts.absent > 0 ? `欠席${counts.absent}` : null,
-    counts.not_voting > 0 ? `採決に加わらず${counts.not_voting}` : null,
-  ]
-    .filter(Boolean)
-    .join("・");
-}
-
 interface MemberDetailPageProps {
   /** 議員ページのキー（空白なしのフルネーム、デコード済み） */
   memberKey: string;
@@ -214,17 +196,12 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
               variant="outer"
               defaultOpen={groupIndex === 0}
               summary={
-                <div className="flex flex-col gap-0.5">
-                  <h3 className="text-sm font-bold text-mirai-text">
-                    {group.label}
-                    <span className="ml-2 font-medium text-mirai-text-muted">
-                      {group.records.length}議案
-                    </span>
-                  </h3>
-                  <p className="text-xs text-mirai-text-secondary">
-                    {formatVoteCounts(group.records)}
-                  </p>
-                </div>
+                <h3 className="text-sm font-bold text-mirai-text">
+                  {group.label}
+                  <span className="ml-2 font-medium text-mirai-text-muted">
+                    {group.records.length}議案
+                  </span>
+                </h3>
               }
             >
               {groupBySession(group.records).map((session) => (
@@ -232,17 +209,12 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
                   key={session.key}
                   variant="inner"
                   summary={
-                    <div className="flex flex-col gap-0.5">
-                      <h4 className="text-sm font-bold text-mirai-text">
-                        {session.name}
-                        <span className="ml-2 text-xs font-medium text-mirai-text-muted">
-                          {session.records.length}議案
-                        </span>
-                      </h4>
-                      <p className="text-xs text-mirai-text-secondary">
-                        {formatVoteCounts(session.records)}
-                      </p>
-                    </div>
+                    <h4 className="text-sm font-bold text-mirai-text">
+                      {session.name}
+                      <span className="ml-2 text-xs font-medium text-mirai-text-muted">
+                        {session.records.length}議案
+                      </span>
+                    </h4>
                   }
                 >
                   {session.records.map(({ bill, vote }) => (

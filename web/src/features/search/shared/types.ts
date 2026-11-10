@@ -14,4 +14,6 @@ export interface SearchItem {
   /** bills.status_note（議決結果の語。バッジの「認定」「同意」などを決めるのに使う） */
   statusNote: string | null;
   tags: string[];
+  /** 議案名・概要から判定したテーマの id（BILL_THEMES）。どれにも入らなければ空 */
+  themes: string[];
 }

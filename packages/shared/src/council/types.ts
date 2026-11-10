@@ -111,8 +111,10 @@ export interface GeneralQuestionRecord {
   outline: QuestionOutlineItem[] | null;
   /** 要旨を情報開示請求で交付を受けた通告書から起こした場合だけ "disclosure" */
   outlineSource?: "disclosure";
-  /** 公式YouTubeチャンネルの録画（議員ごとに1本ある場合） */
+  /** 公式の録画（議員ごとに1本ある場合） */
   videoUrl: string | null;
+  /** この質問の公式の会議録（ある場合） */
+  minutesUrl?: string | null;
   /** 公式ページのURL */
   sourceUrl: string;
   /** 通告書PDFのURL */

@@ -24,7 +24,7 @@ export function FeaturedBillSection({ bills }: FeaturedBillSectionProps) {
       <div className="flex flex-col gap-1.5">
         <SectionHeading>注目の議案</SectionHeading>
         <p className="text-xs font-medium text-mirai-text-muted leading-[1.67]">
-          田川市議会に提出された注目議案
+          笠間市議会に提出された注目議案
         </p>
       </div>
 

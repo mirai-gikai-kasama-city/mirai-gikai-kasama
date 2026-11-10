@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { JsonLd } from "@/components/seo/json-ld";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
-import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
+import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
 import {
   DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
@@ -29,9 +29,6 @@ const notoSerifJP = Noto_Serif_JP({
   weight: ["500", "600"],
 });
 
-const isDev = process.env.NODE_ENV === "development";
-const isStaging = process.env.VERCEL_TARGET_ENV === "staging";
-
 export const metadata: Metadata = {
   metadataBase: new URL(env.webUrl),
   title: {
@@ -39,16 +36,15 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: [SITE_NAME, "議案", "政治", "田川市議会", "政策", "解説"],
+  keywords: [SITE_NAME, "議案", "政治", "笠間市議会", "政策", "解説"],
   icons: {
-    icon: isDev
-      ? "/icons/pwa/icon_dev_192_v3.png"
-      : isStaging
-        ? "/icons/pwa/icon_staging_192.png"
-        : "/icons/pwa/icon_android_192.png",
-    apple: isStaging
-      ? "/icons/pwa/icon_staging_ios.png"
-      : "/icons/pwa/icon_ios.png",
+    icon: [
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
   },
   manifest: "/manifest.json",
   openGraph: {
@@ -81,18 +77,18 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#b5432a",
+  themeColor: "#7fc247",
 };
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: SITE_NAME,
-  alternateName: "田川市議会見える化プラットフォーム",
+  alternateName: "笠間市議会見える化プラットフォーム",
   url: env.webUrl,
   description: SITE_DESCRIPTION,
   publisher: {
-    "@type": "Organization",
+    "@type": "Person",
     name: OPERATOR_NAME,
     url: env.webUrl,
   },
@@ -116,7 +112,7 @@ export default function RootLayout({
       <body
         className={`${notoSansJP.variable} ${notoSerifJP.variable} font-sans antialiased bg-background`}
       >
-        <NextTopLoader showSpinner={false} color="#b5432a" />
+        <NextTopLoader showSpinner={false} color="#4a7f1c" />
         <JsonLd data={websiteJsonLd} />
         {children}
         <Analytics />

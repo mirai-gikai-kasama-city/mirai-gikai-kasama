@@ -49,7 +49,7 @@ export function PreviousSessionSection({
           </Link>
         </div>
         <p className="text-sm text-mirai-text-muted">
-          過去の田川市議会に提出された議案
+          過去の笠間市議会に提出された議案
         </p>
       </div>
 

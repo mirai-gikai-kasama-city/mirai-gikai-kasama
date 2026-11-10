@@ -1,4 +1,4 @@
-import { CalendarDays, Users } from "lucide-react";
+import { CalendarDays } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layouts/container";
@@ -6,12 +6,18 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ShowMoreList } from "@/components/ui/show-more-list";
 import { TextLink } from "@/components/ui/text-link";
+import { MEMBER_PROFILES } from "@/features/members/shared/data/member-profiles";
+import { listMembersBySeat } from "@/features/members/shared/utils/group-members";
 import { routes } from "@/lib/routes";
+import { QuestionSearch } from "../../client/components/question-search";
 import {
   formatQuestionPeriod,
   type QuestionSessionGroup,
 } from "../../shared/utils/group-questions";
-import type { QuestionLinkContext } from "../loaders/get-general-questions";
+import {
+  getQuestionSearchItems,
+  type QuestionLinkContext,
+} from "../loaders/get-general-questions";
 import { QuestionDaySections } from "./question-day-sections";
 import { QuestionIntro, QuestionSourceNote } from "./question-intro";
 
@@ -33,13 +39,17 @@ export function GeneralQuestionListPage({
   groups,
   context,
 }: GeneralQuestionListPageProps) {
+  const searchItems = getQuestionSearchItems();
+  // 「議員で探す」には現職を議席番号の順に並べる
+  const members = listMembersBySeat(MEMBER_PROFILES).map(
+    ({ key, profile }) => ({
+      key,
+      fullName: profile.fullName,
+      count: searchItems.filter((item) => item.memberKey === key).length,
+    })
+  );
   const latest = groups.slice(0, FULL_SESSION_COUNT);
   const past = groups.slice(FULL_SESSION_COUNT);
-  const totalRecords = groups.reduce((sum, g) => sum + g.records.length, 0);
-  const videoCount = groups.reduce(
-    (sum, g) => sum + g.records.filter((r) => r.videoUrl).length,
-    0
-  );
 
   return (
     <div data-wide-column>
@@ -51,18 +61,6 @@ export function GeneralQuestionListPage({
           <div className="mt-2">
             <QuestionIntro />
           </div>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs">
-            <span className="rounded-md bg-white px-3 py-1.5 font-bold text-mirai-text">
-              {groups.length}回の定例会
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
-              <Users aria-hidden className="size-3.5" />
-              のべ{totalRecords}人の質問
-            </span>
-            <span className="rounded-md bg-white px-3 py-1.5 font-medium text-mirai-text-secondary">
-              録画あり {videoCount}人分
-            </span>
-          </div>
         </Container>
       </div>
 
@@ -72,53 +70,59 @@ export function GeneralQuestionListPage({
             一般質問の記録はまだありません
           </p>
         ) : (
-          <div className="flex flex-col gap-12">
-            {latest.map((group) => {
-              const sessionId = context.sessionIdByKey.get(group.sessionKey);
-              return (
-                <section key={group.sessionKey} className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-1.5">
-                    <SectionHeading>
-                      最新: {group.sessionName}の一般質問
-                    </SectionHeading>
-                    <p className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-mirai-text-muted">
-                      <span>
-                        {formatQuestionPeriod(group)}・{group.records.length}人
-                      </span>
-                      {sessionId && (
-                        <TextLink
-                          href={routes.sessionSummary(sessionId) as Route}
-                        >
-                          この会期のまとめ
-                        </TextLink>
-                      )}
-                    </p>
-                  </div>
-                  <QuestionDaySections
-                    days={group.days}
-                    context={context}
-                    headingLevel="h3"
-                  />
+          <QuestionSearch items={searchItems} members={members}>
+            <div className="flex flex-col gap-12">
+              {latest.map((group) => {
+                const sessionId = context.sessionIdByKey.get(group.sessionKey);
+                return (
+                  <section
+                    key={group.sessionKey}
+                    className="flex flex-col gap-5"
+                  >
+                    <div className="flex flex-col gap-1.5">
+                      <SectionHeading>
+                        最新: {group.sessionName}の一般質問
+                      </SectionHeading>
+                      <p className="flex flex-wrap items-center gap-x-2 text-xs font-medium text-mirai-text-muted">
+                        <span>
+                          {formatQuestionPeriod(group)}・{group.records.length}
+                          人
+                        </span>
+                        {sessionId && (
+                          <TextLink
+                            href={routes.sessionSummary(sessionId) as Route}
+                          >
+                            この会期のまとめ
+                          </TextLink>
+                        )}
+                      </p>
+                    </div>
+                    <QuestionDaySections
+                      days={group.days}
+                      context={context}
+                      headingLevel="h3"
+                    />
+                  </section>
+                );
+              })}
+
+              {past.length > 0 && (
+                <section className="flex flex-col gap-4">
+                  <SectionHeading>これまでの一般質問</SectionHeading>
+                  <ShowMoreList
+                    initialCount={PAST_SESSIONS_INITIAL}
+                    className="flex flex-col gap-2"
+                  >
+                    {past.map((group) => (
+                      <PastSessionRow key={group.sessionKey} group={group} />
+                    ))}
+                  </ShowMoreList>
                 </section>
-              );
-            })}
+              )}
 
-            {past.length > 0 && (
-              <section className="flex flex-col gap-4">
-                <SectionHeading>これまでの定例会の一般質問</SectionHeading>
-                <ShowMoreList
-                  initialCount={PAST_SESSIONS_INITIAL}
-                  className="flex flex-col gap-2"
-                >
-                  {past.map((group) => (
-                    <PastSessionRow key={group.sessionKey} group={group} />
-                  ))}
-                </ShowMoreList>
-              </section>
-            )}
-
-            <QuestionSourceNote />
-          </div>
+              <QuestionSourceNote />
+            </div>
+          </QuestionSearch>
         )}
       </Container>
 

@@ -26,6 +26,7 @@ import {
   pickCoverVariant,
 } from "@/features/bills/shared/utils/bill-cover";
 import { getBillDateLabel } from "@/features/bills/shared/utils/bill-status";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 import {
   COVER_COLORS,
   type CoverFamily,
@@ -56,7 +57,9 @@ const CATEGORY_STYLE: Record<string, { family: CoverFamily; icon: string }> = {
   人事: { family: "sage", icon: Users },
   意見書: { family: "ochre", icon: Send },
   決議: { family: "ochre", icon: Megaphone },
+  "意見書・決議": { family: "ochre", icon: Send },
   "契約・工事": { family: "brown", icon: HardHat },
+  指定管理者: { family: "brown", icon: Building2 },
   "財産処分・取得": { family: "brown", icon: Building2 },
   一部事務組合: { family: "beige", icon: Network },
   専決処分承認: { family: "beige", icon: Zap },
@@ -205,7 +208,7 @@ export async function GET(
           opacity: 0.7,
         }}
       >
-        みらい議会＠田川市
+        {SITE_NAME}
       </div>
 
       {/* メインテキスト */}

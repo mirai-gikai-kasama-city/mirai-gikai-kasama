@@ -33,7 +33,7 @@ export default async function DietSessionArchivePage() {
         <Container className="py-8">
           <h1 className="text-2xl font-bold text-mirai-text">会期一覧</h1>
           <p className="mt-1 text-sm text-mirai-text-muted">
-            田川市議会の全ての会期
+            笠間市議会の全ての会期
           </p>
         </Container>
       </div>

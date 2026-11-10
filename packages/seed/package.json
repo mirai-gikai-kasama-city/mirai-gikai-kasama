@@ -6,6 +6,8 @@
   "scripts": {
     "seed": "tsx main/run.ts",
     "seed:csv": "tsx csv/import-csv.ts",
+    "kasama:build-csv": "tsx kasama/build-csv.ts",
+    "kasama:scrape-questions": "tsx kasama/scrape-questions.ts",
     "tagawa:scrape": "tsx tagawa/scrape.ts",
     "tagawa:scrape-explanation-materials": "tsx tagawa/scrape-explanation-materials.ts",
     "tagawa:build-csv": "tsx tagawa/build-csv.ts",

@@ -1,7 +1,4 @@
-import { ChevronRight, ExternalLink } from "lucide-react";
-import type { Route } from "next";
-import Link from "next/link";
-import { routes } from "@/lib/routes";
+import { ExternalLink } from "lucide-react";
 import type { Bill } from "../../../shared/types";
 import {
   VOTE_ARIA_LABEL,
@@ -23,22 +20,21 @@ interface MemberVotesSectionProps {
 }
 
 /**
- * 全会一致（賛否が分かれなかった議案）の表示。
- * 市の賛否表は無いが「賛否が分かれた案件のみ公表される」という公開慣行から
- * 全会一致であることが分かるため、賛否表と同じ見た目の全面バーで表示する
+ * 異議なく議決された（賛否が分かれなかった）議案の表示。
+ * 欠席者や採決に加わらない議長がいるので「全員賛成」とは書かない
  */
 function UnanimousVotesBody() {
   return (
     <>
       <p className="mt-2 text-sm text-mirai-text">
-        全会一致（全員賛成・賛否は分かれませんでした）
+        異議なく議決（賛否は分かれませんでした）
       </p>
 
-      {/* 全員賛成の比率バー（賛否表がある議案とビジュアルを揃える） */}
+      {/* 異議が無かったことを示すバー（賛否表がある議案とビジュアルを揃える） */}
       <div
         className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-mirai-surface-muted"
         role="img"
-        aria-label="全会一致（全員賛成）"
+        aria-label="異議なく議決"
       >
         <div className="grow bg-vote-for" />
       </div>
@@ -49,9 +45,9 @@ function UnanimousVotesBody() {
         </summary>
         <div className="mt-2 space-y-2">
           <p>
-            ※田川市議会は、賛否が分かれた議案のみ議員別の賛否を公表しています。この議案は賛否の公表対象になっておらず、全会一致で議決されています（欠席・退席した議員がいる場合があります）
+            ※議会だよりには、賛否が分かれた議案だけ議員別の賛否が載っています。この議案は載っておらず、会議録では異議なく議決されています（欠席した議員がいる場合があります）
           </p>
-          <p>出典: 田川市議会 議決結果ページ</p>
+          <p>出典: かさま市議会だより、笠間市議会 会議録</p>
         </div>
       </details>
     </>
@@ -72,8 +68,8 @@ function SecretBallotVotesBody() {
 /**
  * 議員別の賛否セクション
  *
- * 田川市議会が「賛否が分かれた案件」についてのみ公開している、議員ごとの
- * 賛否（○×表）を、比率バー＋会派別チップで一覧表示する。
+ * 議会だよりに載っている「賛否が分かれた議案」の議員ごとの賛否を、
+ * 比率バー＋チップで一覧表示する。全議員を同じ形で並べ、順位付けはしない。
  * 賛否表が無い議案でも、可決系の結果であれば「全会一致」、無記名投票の
  * 議案であれば「非公表」の説明を表示する（判定はvote-disclosure.ts）。
  * 判定できない議案では何も表示しない
@@ -86,6 +82,7 @@ export function MemberVotesSection({
   if (memberVotes === null) {
     const disclosure = resolveVoteDisclosure({
       hasMemberVotes: false,
+      hasRecordedVote: bill.member_votes != null,
       billName: bill.name,
       sessionSlug,
       statusNote: bill.status_note,
@@ -148,32 +145,21 @@ export function MemberVotesSection({
             </h4>
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {group.members.map((member) => (
-                <Link
+                <span
                   key={member.name}
-                  href={routes.memberDetail(member.name) as Route}
-                  className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium underline decoration-dotted underline-offset-[3px] transition-opacity hover:opacity-70 ${VOTE_CHIP_CLASS[member.vote]}`}
+                  className={`inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[member.vote]}`}
                 >
                   {member.name}
                   <span aria-hidden="true">{VOTE_LABEL[member.vote]}</span>
                   <span className="sr-only">
                     （{VOTE_ARIA_LABEL[member.vote]}）
                   </span>
-                </Link>
+                </span>
               ))}
             </div>
           </div>
         ))}
       </div>
-
-      {/* 議員名鑑への導線（議員名チップからも個人ページへ飛べるが、
-          一覧の存在に気づけるよう明示的なリンクも置く） */}
-      <Link
-        href={routes.memberArchive() as Route}
-        className="mt-4 inline-flex items-center gap-0.5 text-sm font-bold text-primary-accent hover:opacity-70"
-      >
-        議員ごとの賛否一覧を見る
-        <ChevronRight className="h-4 w-4" />
-      </Link>
 
       <details className="mt-4 text-xs text-mirai-text-note">
         <summary className="cursor-pointer select-none text-mirai-text-secondary">
@@ -190,7 +176,7 @@ export function MemberVotesSection({
             </ul>
           )}
 
-          <p>※賛否が分かれた案件のみ、市議会が議員別の賛否を公開しています</p>
+          <p>※賛否が分かれた議案のみ、議会だよりに議員別の賛否が載っています</p>
 
           <a
             href={sourceUrl}
@@ -198,7 +184,7 @@ export function MemberVotesSection({
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-sm text-primary underline underline-offset-[3px] hover:opacity-70"
           >
-            出典: 田川市議会 議決結果ページ
+            出典: かさま市議会だより
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>

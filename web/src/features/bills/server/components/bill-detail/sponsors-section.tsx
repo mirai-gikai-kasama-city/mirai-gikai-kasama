@@ -1,8 +1,8 @@
 import { ExternalLink } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
+import { toMemberKey } from "@/features/members/shared/data/member-profiles";
 import {
-  extractFamilyName,
   parseBillSponsors,
   type SponsorPerson,
 } from "@/features/members/shared/utils/sponsors";
@@ -11,8 +11,8 @@ import type { Bill } from "../../../shared/types";
 
 interface SponsorsSectionProps {
   bill: Bill;
-  /** 議員名簿（議員別賛否データに登場する姓の集合）。歴代議員等、名簿に
-   * 無い人物はチップをリンクにしない */
+  /** 議員ページがある議員（現職）のキー（空白なしのフルネーム）の集合。
+   * 名簿に無い人物はチップをリンクにしない */
   memberNameSet: Set<string>;
 }
 
@@ -27,12 +27,12 @@ function SponsorChip({
   memberNameSet: Set<string>;
 }) {
   const label = person.title ? `${person.title} ${person.name}` : person.name;
-  const familyName = extractFamilyName(person.name);
+  const memberKey = toMemberKey(person.name);
 
-  if (memberNameSet.has(familyName)) {
+  if (memberNameSet.has(memberKey)) {
     return (
       <Link
-        href={routes.memberDetail(familyName) as Route}
+        href={routes.memberDetail(memberKey) as Route}
         className={`${CHIP_CLASS} underline decoration-dotted underline-offset-[3px] transition-opacity hover:opacity-70`}
       >
         {label}
@@ -101,12 +101,12 @@ export function SponsorsSection({ bill, memberNameSet }: SponsorsSectionProps) {
         rel="noopener noreferrer"
         className="mt-4 inline-flex items-center gap-1 text-sm text-primary underline underline-offset-[3px] hover:opacity-70"
       >
-        出典: 議案説明資料PDF（田川市公式サイト）
+        出典: 議案説明資料PDF（笠間市公式サイト）
         <ExternalLink className="h-3.5 w-3.5" />
       </a>
 
       <p className="mt-2 text-xs text-mirai-text-note">
-        ※田川市公式サイト掲載の議案説明資料PDFに記載された提出者・賛成者（連署議員）です
+        ※笠間市公式サイト掲載の議案説明資料PDFに記載された提出者・賛成者（連署議員）です
       </p>
     </section>
   );

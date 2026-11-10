@@ -1,4 +1,5 @@
 import type { BillWithContentLite } from "@/features/bills/shared/types";
+import { detectBillThemes } from "../data/bill-themes";
 import type { SearchItem } from "../types";
 
 /** 検索結果カードに表示するsummaryの最大文字数 */
@@ -16,14 +17,20 @@ function truncateSummary(summary?: string | null): string {
  * contentは含めないため、ページに渡すデータ量を抑えられる
  */
 export function buildSearchItems(bills: BillWithContentLite[]): SearchItem[] {
-  return bills.map((bill) => ({
-    id: bill.id,
-    title: bill.bill_content?.title || bill.name,
-    name: bill.name,
-    summary: truncateSummary(bill.bill_content?.summary),
-    submittedDate: bill.submitted_date,
-    status: bill.status,
-    statusNote: bill.status_note,
-    tags: bill.tags.map((tag) => tag.label),
-  }));
+  return bills.map((bill) => {
+    const title = bill.bill_content?.title || bill.name;
+    const summary = bill.bill_content?.summary ?? "";
+    return {
+      id: bill.id,
+      title,
+      name: bill.name,
+      summary: truncateSummary(summary),
+      submittedDate: bill.submitted_date,
+      status: bill.status,
+      statusNote: bill.status_note,
+      tags: bill.tags.map((tag) => tag.label),
+      // 概要は切り詰める前の全文で判定する
+      themes: detectBillThemes(`${title} ${bill.name} ${summary}`),
+    };
+  });
 }

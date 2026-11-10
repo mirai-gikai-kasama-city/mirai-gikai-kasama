@@ -1,73 +1,156 @@
 import type { MemberProfile } from "../data/member-profiles";
-import type { MemberSummary } from "./aggregate-members";
 
-/** 議員一覧の1グループ（現在の会派、または元議員） */
-export interface MemberListGroup {
-  label: string;
-  /** 賛否の記録がある議員 */
-  members: MemberSummary[];
-  /** 現職だが賛否の記録がまだ無い議員の姓（補欠選挙で当選した議員など） */
-  membersWithoutVotes: string[];
+/** 議員一覧の1人分（議員ページのキーと名簿の情報） */
+export interface MemberListEntry {
+  key: string;
+  profile: MemberProfile;
 }
 
-export const FORMER_MEMBERS_LABEL = "元議員";
+/** 議員一覧の1グループ（会派、または会派に入っていない議員の党派） */
+export interface MemberListGroup {
+  label: string;
+  members: MemberListEntry[];
+}
 
-/** 現職で会派の記載が無い場合のグループ名 */
-const NO_FACTION_LABEL = "会派なし";
+/** 議員を議席番号の順に並べる */
+export function listMembersBySeat(
+  profiles: Readonly<Record<string, MemberProfile>>
+): MemberListEntry[] {
+  return Object.entries(profiles)
+    .map(([key, profile]) => ({ key, profile }))
+    .sort((a, b) => a.profile.seat - b.profile.seat);
+}
 
 /**
- * 議員一覧を、公式名簿（MEMBER_PROFILES）の現在の会派ごとにまとめる。
- * 採決当時の会派（member_votes）で分けると会派の再編前の所属が出てしまうため、名簿の会派を使う。
- * 現職で賛否の記録がまだ無い議員も会派の中に加え、元議員（名簿に無い姓を含む）は最後に1つにまとめる。
- * 会派は人数の多い順、同数なら名前順
+ * 名簿の党派・会派の欄が空の議員のグループ名。
+ * 空欄を「無所属」とは言い切れないので、名簿のとおり「記載なし」と書く
  */
-export function groupMembersForList(
-  members: readonly MemberSummary[],
+export const NO_FACTION_LABEL = "党派・会派の記載なし";
+
+/**
+ * 現職議員を名簿の党派・会派ごとにまとめる。
+ * 会派に入っている議員は会派で、入っていない議員は党派でまとめる。
+ * 人数の多い順（同数なら名前順）で、「党派・会派の記載なし」は最後。グループの中は議席番号の順
+ */
+export function groupMembersByFaction(
   profiles: Readonly<Record<string, MemberProfile>>
 ): MemberListGroup[] {
-  const current = new Map<string, MemberListGroup>();
-  const groupFor = (label: string): MemberListGroup => {
-    const existing = current.get(label);
-    if (existing) return existing;
-    const created: MemberListGroup = {
-      label,
-      members: [],
-      membersWithoutVotes: [],
-    };
-    current.set(label, created);
-    return created;
+  const byLabel = new Map<string, MemberListEntry[]>();
+  for (const [key, profile] of Object.entries(profiles)) {
+    const label = profile.faction ?? profile.party ?? NO_FACTION_LABEL;
+    const members = byLabel.get(label) ?? [];
+    members.push({ key, profile });
+    byLabel.set(label, members);
+  }
+
+  const groups = [...byLabel.entries()].map(([label, members]) => ({
+    label,
+    members: members.sort((a, b) => a.profile.seat - b.profile.seat),
+  }));
+
+  return groups.sort((a, b) => {
+    if (a.label === NO_FACTION_LABEL) return 1;
+    if (b.label === NO_FACTION_LABEL) return -1;
+    return (
+      b.members.length - a.members.length ||
+      a.label.localeCompare(b.label, "ja")
+    );
+  });
+}
+
+/**
+ * 議長のグループ名。議長は委員会に所属しない（名簿でも所属委員会の欄が空）ので、
+ * 「記載なし」ではなく議長として各委員会より先に出す
+ */
+export const CHAIR_LABEL = "議長";
+
+/** 議長以外で、名簿に所属委員会が書かれていない議員のグループ名 */
+export const NO_COMMITTEE_LABEL = "所属委員会の記載なし";
+
+/** 委員会を並べる順（常任委員会、議会運営委員会、予算決算の委員会、広報委員会）。無いものは末尾に名前順 */
+const COMMITTEE_ORDER = [
+  "総務企画委員会",
+  "教育福祉委員会",
+  "建設産業委員会",
+  "議会運営委員会",
+  "予算決算委員会",
+  "予算決算運営委員会",
+  "広報委員会",
+];
+
+/** 委員会での役職（名簿のかっこ書き） */
+export type CommitteePosition = "委員長" | "副委員長";
+
+/** 委員会ごとの1人分。委員会での役職を添える */
+export interface CommitteeMemberEntry extends MemberListEntry {
+  position: CommitteePosition | null;
+}
+
+export interface CommitteeGroup {
+  label: string;
+  members: CommitteeMemberEntry[];
+}
+
+/** 「教育福祉委員会（副委員長）」→ 委員会名と役職に分ける */
+export function parseCommittee(text: string): {
+  name: string;
+  position: CommitteePosition | null;
+} {
+  const m = text.match(/^(.+?)（(委員長|副委員長)）$/);
+  return m
+    ? { name: m[1], position: m[2] as CommitteePosition }
+    : { name: text, position: null };
+}
+
+const POSITION_RANK: Record<CommitteePosition, number> = {
+  委員長: 0,
+  副委員長: 1,
+};
+
+/**
+ * 現職議員を所属委員会ごとにまとめる（1人が複数の委員会に入る）。
+ * 委員会の中は委員長・副委員長・議席番号の順。
+ * 委員会に所属しない議長は先頭に、それ以外で所属委員会の無い議員は最後にまとめる
+ */
+export function groupMembersByCommittee(
+  profiles: Readonly<Record<string, MemberProfile>>
+): CommitteeGroup[] {
+  const byName = new Map<string, CommitteeMemberEntry[]>();
+  for (const entry of listMembersBySeat(profiles)) {
+    const { committees: names, role } = entry.profile;
+    const committees =
+      names.length > 0
+        ? names.map(parseCommittee)
+        : [
+            {
+              name: role === CHAIR_LABEL ? CHAIR_LABEL : NO_COMMITTEE_LABEL,
+              position: null,
+            },
+          ];
+    for (const { name, position } of committees) {
+      const members = byName.get(name) ?? [];
+      members.push({ ...entry, position });
+      byName.set(name, members);
+    }
+  }
+
+  const rank = (name: string) => {
+    if (name === CHAIR_LABEL) return -1;
+    if (name === NO_COMMITTEE_LABEL) return Number.MAX_SAFE_INTEGER;
+    const index = COMMITTEE_ORDER.indexOf(name);
+    return index === -1 ? COMMITTEE_ORDER.length : index;
   };
+  const positionRank = (position: CommitteePosition | null) =>
+    position ? POSITION_RANK[position] : 2;
 
-  const former: MemberSummary[] = [];
-  for (const member of members) {
-    const profile = profiles[member.name];
-    if (profile?.isIncumbent) {
-      groupFor(profile.faction ?? NO_FACTION_LABEL).members.push(member);
-    } else {
-      former.push(member);
-    }
-  }
-
-  const namesWithVotes = new Set(members.map((member) => member.name));
-  for (const [name, profile] of Object.entries(profiles)) {
-    if (profile.isIncumbent && !namesWithVotes.has(name)) {
-      groupFor(profile.faction ?? NO_FACTION_LABEL).membersWithoutVotes.push(
-        name
-      );
-    }
-  }
-
-  const size = (group: MemberListGroup) =>
-    group.members.length + group.membersWithoutVotes.length;
-  const groups = [...current.values()].sort(
-    (a, b) => size(b) - size(a) || a.label.localeCompare(b.label, "ja")
-  );
-  if (former.length > 0) {
-    groups.push({
-      label: FORMER_MEMBERS_LABEL,
-      members: former,
-      membersWithoutVotes: [],
-    });
-  }
-  return groups;
+  return [...byName.entries()]
+    .sort(([a], [b]) => rank(a) - rank(b) || a.localeCompare(b, "ja"))
+    .map(([label, members]) => ({
+      label,
+      members: members.sort(
+        (a, b) =>
+          positionRank(a.position) - positionRank(b.position) ||
+          a.profile.seat - b.profile.seat
+      ),
+    }));
 }

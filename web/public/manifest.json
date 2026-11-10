@@ -1,24 +1,30 @@
 {
-  "name": "みらい議会＠田川市",
-  "short_name": "みらい議会＠田川市",
-  "description": "田川市議会で今どんな議案が検討されているか、わかりやすく伝えるプラットフォーム",
+  "name": "かさま議会ノート",
+  "short_name": "かさま議会ノート",
+  "description": "笠間市議会に提出された議案・予算・条例などを、AIがやさしい言葉で解説します。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#b5432a",
+  "theme_color": "#7fc247",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icons/pwa/icon_android_192.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/icons/pwa/icon_android_512.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

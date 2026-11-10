@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { getReportOgData } from "@/features/interview-report/server/loaders/get-report-og-data";
 import { truncateText } from "@/features/interview-report/shared/utils/truncate-text";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 
 /**
  * OGP画像のテキスト制限
@@ -120,7 +121,7 @@ export async function GET(request: Request) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#fbeee7",
+        backgroundColor: "#f1fadf",
       }}
     >
       {/* グラデーションborder用ラッパー */}
@@ -130,7 +131,7 @@ export async function GET(request: Request) {
           width: 1140,
           height: 560,
           borderRadius: 30,
-          backgroundColor: "#b5432a",
+          backgroundColor: "#4a7f1c",
           padding: 6,
           position: "relative",
         }}
@@ -170,7 +171,7 @@ export async function GET(request: Request) {
               maxHeight: OG_BILL_NAME_MAX_HEIGHT,
               fontSize: 32,
               fontWeight: 800,
-              color: "#8f2f1c",
+              color: "#356012",
               lineHeight: 1.5,
               overflow: "hidden",
               wordBreak: "break-all",
@@ -180,7 +181,7 @@ export async function GET(request: Request) {
           </div>
         </div>
 
-        {/* みらい議会バッジ */}
+        {/* かさま議会ノートバッジ */}
         <div
           style={{
             position: "absolute",
@@ -195,7 +196,7 @@ export async function GET(request: Request) {
             paddingBottom: 10,
             borderBottomLeftRadius: 30,
             borderTopRightRadius: 30,
-            backgroundColor: "#b5432a",
+            backgroundColor: "#4a7f1c",
           }}
         >
           <span
@@ -206,7 +207,7 @@ export async function GET(request: Request) {
               letterSpacing: "0.03em",
             }}
           >
-            みらい議会＠田川市
+            {SITE_NAME}
           </span>
         </div>
 
@@ -214,7 +215,7 @@ export async function GET(request: Request) {
         {logoDataUrl && (
           // biome-ignore lint/performance/noImgElement: ignore
           <img
-            alt="みらい議会＠田川市ロゴ"
+            alt={`${SITE_NAME}ロゴ`}
             src={logoDataUrl}
             width={189}
             height={160}

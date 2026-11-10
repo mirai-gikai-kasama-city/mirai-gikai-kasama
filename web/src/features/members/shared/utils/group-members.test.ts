@@ -1,70 +1,141 @@
 import { describe, expect, it } from "vitest";
 import type { MemberProfile } from "../data/member-profiles";
-import type { MemberSummary } from "./aggregate-members";
-import { FORMER_MEMBERS_LABEL, groupMembersForList } from "./group-members";
+import {
+  CHAIR_LABEL,
+  groupMembersByCommittee,
+  groupMembersByFaction,
+  listMembersBySeat,
+  NO_COMMITTEE_LABEL,
+  NO_FACTION_LABEL,
+  parseCommittee,
+} from "./group-members";
 
-function summary(name: string, latestFaction: string): MemberSummary {
+function profile(
+  seat: number,
+  fullName: string,
+  faction: string | null,
+  party: string | null = null
+): MemberProfile {
   return {
-    name,
-    factions: [latestFaction],
-    latestFaction,
-    counts: { yes: 1, no: 0, absent: 0, not_voting: 0 },
-    billCount: 1,
+    seat,
+    fullName,
+    reading: "よみ がな",
+    faction,
+    party,
+    role: null,
+    committees: [],
   };
 }
 
 const PROFILES: Record<string, MemberProfile> = {
-  尾﨑: { fullName: "尾﨑 行人", faction: "清風会", isIncumbent: true },
-  佐々木: { fullName: "佐々木 博", faction: "清風会", isIncumbent: true },
-  陸田: { fullName: "陸田 孝則", faction: "孔志会", isIncumbent: true },
-  世羅: { fullName: "世羅 翔二郎", faction: "翔誠クラブ", isIncumbent: true },
-  白石: { fullName: "白石 天一", faction: "孔志会", isIncumbent: false },
+  乙山二郎: profile(3, "乙山 二郎", "A会"),
+  甲野一郎: profile(1, "甲野 一郎", "A会"),
+  丙川三郎: profile(2, "丙川 三郎", null),
+  丁田四郎: profile(4, "丁田 四郎", "B会"),
+  戊井五郎: profile(5, "戊井 五郎", "A会"),
 };
 
-describe("groupMembersForList", () => {
-  it("採決当時の会派ではなく、名簿の現在の会派でまとめる", () => {
-    const groups = groupMembersForList(
-      [summary("尾﨑", "孔志会"), summary("佐々木", "孔志会")],
-      PROFILES
-    );
-    expect(groups[0].label).toBe("清風会");
-    expect(groups[0].members.map((m) => m.name)).toEqual(["尾﨑", "佐々木"]);
-  });
-
-  it("元議員と名簿に無い姓は最後の「元議員」にまとめる", () => {
-    const groups = groupMembersForList(
-      [
-        summary("白石", "孔志会"),
-        summary("村上", "新風会"),
-        summary("陸田", "孔志会"),
-      ],
-      PROFILES
-    );
-    const last = groups[groups.length - 1];
-    expect(last.label).toBe(FORMER_MEMBERS_LABEL);
-    expect(last.members.map((m) => m.name)).toEqual(["白石", "村上"]);
-  });
-
-  it("現職で賛否の記録がまだ無い議員も会派に加える", () => {
-    const groups = groupMembersForList([summary("陸田", "孔志会")], PROFILES);
-    const shosei = groups.find((g) => g.label === "翔誠クラブ");
-    expect(shosei?.members).toEqual([]);
-    expect(shosei?.membersWithoutVotes).toEqual(["世羅"]);
-  });
-
-  it("会派は人数の多い順に並べ、元議員がいなければ元議員の枠を作らない", () => {
-    const groups = groupMembersForList(
-      [
-        summary("尾﨑", "孔志会"),
-        summary("佐々木", "孔志会"),
-        summary("陸田", "孔志会"),
-      ],
-      PROFILES
-    );
+describe("groupMembersByFaction", () => {
+  it("会派は人数の多い順にし、会派の中は議席番号の順に並べる", () => {
+    const groups = groupMembersByFaction(PROFILES);
     expect(groups.map((g) => g.label)).toEqual([
-      "清風会",
-      "孔志会",
-      "翔誠クラブ",
+      "A会",
+      "B会",
+      NO_FACTION_LABEL,
+    ]);
+    expect(groups[0].members.map((m) => m.key)).toEqual([
+      "甲野一郎",
+      "乙山二郎",
+      "戊井五郎",
+    ]);
+  });
+
+  it("会派に入っていない議員は党派でまとめ、会派と党派の両方がある議員は会派に入れる", () => {
+    const groups = groupMembersByFaction({
+      ...PROFILES,
+      己野六郎: profile(6, "己野 六郎", null, "C党"),
+      庚田七郎: profile(7, "庚田 七郎", "B会", "C党"),
+    });
+    expect(groups.map((g) => [g.label, g.members.length])).toEqual([
+      ["A会", 3],
+      ["B会", 2],
+      ["C党", 1],
+      [NO_FACTION_LABEL, 1],
+    ]);
+  });
+
+  it("党派・会派の欄が空の議員は「党派・会派の記載なし」として最後にまとめる", () => {
+    const groups = groupMembersByFaction(PROFILES);
+    const last = groups[groups.length - 1];
+    expect(last.label).toBe(NO_FACTION_LABEL);
+    expect(last.members.map((m) => m.key)).toEqual(["丙川三郎"]);
+  });
+
+  it("全員が会派に入っていれば「会派の記載なし」の枠を作らない", () => {
+    const groups = groupMembersByFaction({ 甲野一郎: PROFILES.甲野一郎 });
+    expect(groups.map((g) => g.label)).toEqual(["A会"]);
+  });
+});
+
+describe("listMembersBySeat", () => {
+  it("議席番号の順に並べる", () => {
+    expect(listMembersBySeat(PROFILES).map((m) => m.profile.seat)).toEqual([
+      1, 2, 3, 4, 5,
+    ]);
+  });
+});
+
+describe("parseCommittee", () => {
+  it("かっこ書きの役職を分ける", () => {
+    expect(parseCommittee("教育福祉委員会（副委員長）")).toEqual({
+      name: "教育福祉委員会",
+      position: "副委員長",
+    });
+    expect(parseCommittee("広報委員会")).toEqual({
+      name: "広報委員会",
+      position: null,
+    });
+  });
+});
+
+describe("groupMembersByCommittee", () => {
+  const withCommittees = (
+    seat: number,
+    fullName: string,
+    committees: string[]
+  ): MemberProfile => ({ ...profile(seat, fullName, null), committees });
+
+  it("委員会の決まった順に並べ、委員会の中は委員長・副委員長・議席番号の順", () => {
+    const groups = groupMembersByCommittee({
+      甲野一郎: withCommittees(1, "甲野 一郎", [
+        "広報委員会",
+        "総務企画委員会",
+      ]),
+      乙山二郎: withCommittees(2, "乙山 二郎", ["総務企画委員会（副委員長）"]),
+      丙川三郎: withCommittees(3, "丙川 三郎", ["総務企画委員会（委員長）"]),
+      丁田四郎: withCommittees(4, "丁田 四郎", []),
+    });
+    expect(groups.map((g) => g.label)).toEqual([
+      "総務企画委員会",
+      "広報委員会",
+      NO_COMMITTEE_LABEL,
+    ]);
+    expect(groups[0].members.map((m) => [m.key, m.position])).toEqual([
+      ["丙川三郎", "委員長"],
+      ["乙山二郎", "副委員長"],
+      ["甲野一郎", null],
+    ]);
+    expect(groups[2].members.map((m) => m.key)).toEqual(["丁田四郎"]);
+  });
+
+  it("委員会に所属しない議長は「記載なし」ではなく議長として先頭に出す", () => {
+    const groups = groupMembersByCommittee({
+      甲野一郎: withCommittees(1, "甲野 一郎", ["総務企画委員会"]),
+      乙山二郎: { ...withCommittees(2, "乙山 二郎", []), role: "議長" },
+    });
+    expect(groups.map((g) => [g.label, g.members.map((m) => m.key)])).toEqual([
+      [CHAIR_LABEL, ["乙山二郎"]],
+      ["総務企画委員会", ["甲野一郎"]],
     ]);
   });
 });

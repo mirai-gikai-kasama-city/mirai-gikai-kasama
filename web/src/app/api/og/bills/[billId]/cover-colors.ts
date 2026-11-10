@@ -20,7 +20,7 @@ export const COVER_COLORS: Record<
   CoverFamily,
   readonly [string, string, string]
 > = {
-  terracotta: ["#f8e4d8", "#f3d3c1", "#ecc0a8"],
+  terracotta: ["#eef7d8", "#e1f0bd", "#d2e6a3"],
   slate: ["#e6ebee", "#d7dfe4", "#c6d1d8"],
   sage: ["#e7ede3", "#d6e0d0", "#c3d2bb"],
   ochre: ["#f3e9cf", "#ecdcb1", "#e3cd92"],

@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
+import { isHiddenSectionPath } from "@/config/site-sections";
 import { getBillsLite } from "@/features/bills/server/loaders/get-bills";
 import { getCommitteeMeetings } from "@/features/committees/server/loaders/get-committee-meetings";
 import { buildCommitteeGroups } from "@/features/committees/shared/utils/committee-groups";
@@ -12,9 +14,11 @@ import {
   getBillsWithMemberVotes,
   getBillsWithSponsors,
 } from "@/features/members/server/loaders/get-member-vote-data";
-import { aggregateMemberSummaries } from "@/features/members/shared/utils/aggregate-members";
+import {
+  MEMBER_PROFILES,
+  toMemberKey,
+} from "@/features/members/shared/data/member-profiles";
 import { PROPOSER_TYPES } from "@/features/members/shared/utils/proposer";
-import { extractFamilyName } from "@/features/members/shared/utils/sponsors";
 import { getPublishedTopicPages } from "@/features/user-topic-analysis/server/loaders/get-published-topic-pages";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
@@ -97,7 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     billsWithSponsors,
     ({ sponsors }) =>
       [...sponsors.proposers, ...sponsors.supporters].map((person) =>
-        extractFamilyName(person.name)
+        toMemberKey(person.name)
       ),
     ({ bill }) => bill.updated_at
   );
@@ -142,17 +146,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const memberUrls = aggregateMemberSummaries(billsWithMemberVotes).map(
-    (member) => ({
-      url: `${baseUrl}${routes.memberDetail(member.name)}`,
-      lastModified: latestOf([
-        latestBillByMemberVote.get(member.name),
-        latestBillByMemberSponsor.get(member.name),
-      ]),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    })
-  );
+  // 議員ページは名簿に載る現職だけ
+  const memberUrls = Object.keys(MEMBER_PROFILES).map((key) => ({
+    url: `${baseUrl}${routes.memberDetail(key)}`,
+    lastModified: latestOf([
+      latestBillByMemberVote.get(key),
+      latestBillByMemberSponsor.get(key),
+    ]),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
 
   // 会期別議案一覧（/archive/{slug}/bills）。slug未設定の会期は除外
   const archiveSessionUrls = sessions
@@ -213,12 +216,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const publishedBillIds = new Set(bills.map((bill) => bill.id));
   const topicUrls = buildTopicSitemapEntries({
     baseUrl,
-    pages: topicPages,
+    pages: AI_FEATURES_ENABLED ? topicPages : [],
     publishedBillIds,
   });
-  const interviewUrls = buildInterviewSitemapEntries({ baseUrl, bills });
+  const interviewUrls = buildInterviewSitemapEntries({
+    baseUrl,
+    bills: AI_FEATURES_ENABLED ? bills : [],
+  });
 
-  return [
+  const entries: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
       // トップも他の一覧系と同じく実データの更新に連動させる
@@ -263,6 +269,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     },
+    // 議員一覧の別の見せ方（中身は同じ名簿なので一覧より少し低くする）
+    ...[routes.memberByFaction(), routes.memberByCommittee()].map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: latestBillUpdatedAt,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    })),
     {
       url: `${baseUrl}${routes.archive()}`,
       lastModified: latestOf([latestBillUpdatedAt, latestSessionUpdatedAt]),
@@ -319,4 +332,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...topicUrls,
     ...interviewUrls,
   ];
+
+  return entries.filter(
+    (entry) => !isHiddenSectionPath(new URL(entry.url).pathname)
+  );
 }

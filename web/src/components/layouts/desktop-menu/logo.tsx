@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { routes } from "@/lib/routes";
+import { SITE_NAME } from "@/lib/seo/share-metadata";
 
 /**
  * デスクトップメニュー: ロゴ (画面左上)
@@ -15,7 +16,7 @@ export function DesktopMenuLogo() {
       <div className="relative w-[116px] h-[98.38px]">
         <Image
           src="/img/logo.svg"
-          alt="みらい議会＠田川市ロゴ"
+          alt={`${SITE_NAME}ロゴ`}
           fill
           className="object-contain"
           priority
@@ -32,7 +33,7 @@ export function DesktopMenuLogo() {
             letterSpacing: "0.1em",
           }}
         >
-          みらい議会＠田川市
+          {SITE_NAME}
         </h1>
         <p
           className="font-bold text-black"
@@ -41,7 +42,7 @@ export function DesktopMenuLogo() {
             lineHeight: "2em",
           }}
         >
-          田川市議会の議論をわかりやすく
+          笠間市議会の議論をわかりやすく
         </p>
       </div>
     </Link>

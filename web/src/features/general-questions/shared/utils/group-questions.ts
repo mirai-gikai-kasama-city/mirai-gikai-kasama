@@ -25,12 +25,12 @@ function sortByOrder(records: readonly GeneralQuestionRecord[]) {
 }
 
 /**
- * 会期キー（r8-6-teirei / h29-1-teirei）を「新しい順」に比べる。
+ * 会期キー（r8-6-teirei / h29-1-teirei、笠間市は kasama-r8-3-teirei）を「新しい順」に比べる。
  * 文字列比較だと r10 が r9 より前に来るため、元号・年・回を数値で比べる
  */
 export function compareSessionKeysDesc(a: string, b: string): number {
   const parse = (key: string) => {
-    const m = key.match(/^([hr])(\d+)-(\d+)/);
+    const m = key.match(/^(?:kasama-)?([hr])(\d+)-(\d+)/);
     if (!m) return [0, 0, 0];
     return [m[1] === "r" ? 1 : 0, Number(m[2]), Number(m[3])];
   };
@@ -74,33 +74,58 @@ export function groupQuestionsBySession(
 
   return groups.sort(
     (a, b) =>
-      (b.firstDate ?? "").localeCompare(a.firstDate ?? "") ||
+      compareDatesDesc(a.firstDate, b.firstDate) ||
       compareSessionKeysDesc(a.sessionKey, b.sessionKey)
   );
 }
 
-/** 質問日ごとにまとめ、日付順に並べる（不明な日付は末尾） */
+/**
+ * 日付を新しい順に比べる。どちらかが不明（null）なら 0 を返し、会期キーなどほかの基準に任せる。
+ * 通告一覧だけで日付の分からない会期（会期中など）を、日付の空欄のせいで末尾に回さないため
+ */
+function compareDatesDesc(a: string | null, b: string | null): number {
+  return a && b ? b.localeCompare(a) : 0;
+}
+
+/** 一般質問の記録を新しい順に比べる（質問日→会期→順番。質問日が不明なら会期で比べる） */
+export function compareQuestionRecordsDesc(
+  a: Pick<GeneralQuestionRecord, "questionDate" | "sessionKey" | "order">,
+  b: Pick<GeneralQuestionRecord, "questionDate" | "sessionKey" | "order">
+): number {
+  return (
+    compareDatesDesc(a.questionDate, b.questionDate) ||
+    compareSessionKeysDesc(a.sessionKey, b.sessionKey) ||
+    a.order - b.order
+  );
+}
+
+/**
+ * 質問日ごとにまとめ、日付順に並べる。日付が不明でも何日目か分かる記録はその日でまとめ、
+ * 何日目かの順に並べる（どちらも分からない記録は末尾）
+ */
 function groupByDay(
   records: readonly GeneralQuestionRecord[]
 ): QuestionDayGroup[] {
-  const byDate = new Map<string | null, QuestionDayGroup>();
+  const byDay = new Map<string, QuestionDayGroup>();
   for (const record of records) {
-    const day = byDate.get(record.questionDate);
+    const key =
+      record.questionDate ??
+      (record.dayIndex !== null ? `day-${record.dayIndex}` : "unknown");
+    const day = byDay.get(key);
     if (day) {
       day.records.push(record);
     } else {
-      byDate.set(record.questionDate, {
+      byDay.set(key, {
         date: record.questionDate,
         dayIndex: record.dayIndex,
         records: [record],
       });
     }
   }
-  return [...byDate.values()].sort((a, b) => {
-    if (a.date === b.date) return 0;
-    if (a.date === null) return 1;
-    if (b.date === null) return -1;
-    return a.date.localeCompare(b.date);
+  return [...byDay.values()].sort((a, b) => {
+    if (a.date && b.date) return a.date.localeCompare(b.date);
+    if (a.date || b.date) return a.date ? -1 : 1;
+    return (a.dayIndex ?? Infinity) - (b.dayIndex ?? Infinity);
   });
 }
 
@@ -136,19 +161,16 @@ export function selectQuestionsByMember(
         record.familyName === member.familyName &&
         (fullName === null || compactMemberName(record.memberName) === fullName)
     )
-    .sort(
-      (a, b) =>
-        (b.questionDate ?? "").localeCompare(a.questionDate ?? "") ||
-        compareSessionKeysDesc(a.sessionKey, b.sessionKey) ||
-        a.order - b.order
-    );
+    .sort(compareQuestionRecordsDesc);
 }
 
 /** 「1日目（9月9日）」のような日付見出し。日付が不明なら「日程未確認」 */
 export function formatQuestionDayLabel(
   day: Pick<QuestionDayGroup, "date" | "dayIndex">
 ): string {
-  if (!day.date) return "日程未確認";
+  if (!day.date) {
+    return day.dayIndex ? `${day.dayIndex}日目（日付未確認）` : "日程未確認";
+  }
   const [, month, dayOfMonth] = day.date.split("-");
   const dateLabel = `${Number(month)}月${Number(dayOfMonth)}日`;
   return day.dayIndex ? `${day.dayIndex}日目（${dateLabel}）` : dateLabel;

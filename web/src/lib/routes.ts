@@ -9,6 +9,9 @@
 /** 委員会記録一覧でテーマ絞り込みを載せるクエリ名（routes.committeesByTopic と CommitteeExplorer が共有） */
 export const COMMITTEE_TOPIC_PARAM = "topic";
 
+/** 会期一覧（routes.sessionArchive）のページ名。ナビ・パンくず・見出しで同じ名前を使う */
+export const SESSION_ARCHIVE_LABEL = "会期ごとのまとめ";
+
 export const routes = {
   // ── 静的ルート ──────────────────────────────────────
   home: () => "/" as const,
@@ -86,6 +89,8 @@ export const routes = {
 
   // ── 議員・提出者 ──────────────────────────────────
   memberArchive: () => "/members" as const,
+  memberByFaction: () => "/members/by-faction" as const,
+  memberByCommittee: () => "/members/by-committee" as const,
   memberDetail: (name: string) =>
     `/members/${encodeURIComponent(name)}` as const,
   proposerBills: (proposer: string) => `/proposers/${proposer}` as const,

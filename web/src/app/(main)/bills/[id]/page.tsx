@@ -14,7 +14,7 @@ import {
 } from "@/features/bills/shared/utils/bill-seo";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
-import { OPERATOR_NAME } from "@/lib/seo/organization-json-ld";
+import { OPERATOR_NAME } from "@/lib/seo/operator-json-ld";
 import { buildPageShareMetadata, SITE_NAME } from "@/lib/seo/share-metadata";
 
 interface BillDetailPageProps {
@@ -105,7 +105,7 @@ export default async function BillDetailPage({ params }: BillDetailPageProps) {
     dateModified: billWithContent.updated_at,
     mainEntityOfPage: billUrl,
     author: {
-      "@type": "Organization",
+      "@type": "Person",
       name: OPERATOR_NAME,
     },
     publisher: {

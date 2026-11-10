@@ -5,12 +5,13 @@ import { Container } from "@/components/layouts/container";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
-import { ShowMoreList } from "@/components/ui/show-more-list";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   VOTE_ARIA_LABEL,
   VOTE_CHIP_CLASS,
   VOTE_LABEL,
 } from "@/features/bills/shared/utils/member-vote-display";
+import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { MemberQuestionsSection } from "@/features/general-questions/server/components/member-questions-section";
 import {
   groupByTerm,
@@ -31,6 +32,24 @@ import { collectMemberVoteRecords } from "../../shared/utils/aggregate-members";
 import { NO_FACTION_LABEL } from "../../shared/utils/group-members";
 import { getBillsWithMemberVotes } from "../loaders/get-member-vote-data";
 
+/** 「賛成3・反対1・欠席1」のような賛否の内訳（0の欠席・採決に加わらずは省く） */
+function formatVoteCounts(
+  records: readonly { vote: "yes" | "no" | "absent" | "not_voting" }[]
+): string {
+  const counts = { yes: 0, no: 0, absent: 0, not_voting: 0 };
+  for (const record of records) {
+    counts[record.vote] += 1;
+  }
+  return [
+    `賛成${counts.yes}`,
+    `反対${counts.no}`,
+    counts.absent > 0 ? `欠席${counts.absent}` : null,
+    counts.not_voting > 0 ? `採決に加わらず${counts.not_voting}` : null,
+  ]
+    .filter(Boolean)
+    .join("・");
+}
+
 interface MemberDetailPageProps {
   /** 議員ページのキー（空白なしのフルネーム、デコード済み） */
   memberKey: string;
@@ -48,8 +67,32 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
     notFound();
   }
 
-  const items = await getBillsWithMemberVotes();
+  const [items, dietSessions] = await Promise.all([
+    getBillsWithMemberVotes(),
+    getAllDietSessions(),
+  ]);
   const records = collectMemberVoteRecords(items, memberKey);
+  const sessionNameById = new Map(
+    dietSessions.map((session) => [session.id, session.name])
+  );
+  /** 任期の中の記録を、会期ごとにまとめる（並びは入力のまま＝議決日の新しい順） */
+  const groupBySession = (termRecords: typeof records) => {
+    const bySession = new Map<
+      string,
+      { key: string; name: string; records: typeof records }
+    >();
+    for (const record of termRecords) {
+      const key = record.bill.diet_session_id ?? "unknown";
+      const session = bySession.get(key) ?? {
+        key,
+        name: sessionNameById.get(key) ?? "会期を確認中",
+        records: [],
+      };
+      session.records.push(record);
+      bySession.set(key, session);
+    }
+    return [...bySession.values()];
+  };
   const termOf = (record: (typeof records)[number]) =>
     record.bill.submitted_date ? termForDate(record.bill.submitted_date) : null;
   // 議決日が分からず任期を決められない記録（通常は無い）は末尾にまとめる
@@ -164,42 +207,54 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
               </p>
             )}
           </div>
-          {voteGroups.map((group) => {
-            const counts = { yes: 0, no: 0, absent: 0, not_voting: 0 };
-            for (const record of group.records) {
-              counts[record.vote] += 1;
-            }
-            return (
-              <div key={group.key} className="flex flex-col gap-3">
+          {/* 任期 → 定例会の2段の折りたたみ（新しい順。いちばん新しい任期だけ開いておく） */}
+          {voteGroups.map((group, groupIndex) => (
+            <Disclosure
+              key={group.key}
+              variant="outer"
+              defaultOpen={groupIndex === 0}
+              summary={
                 <div className="flex flex-col gap-0.5">
-                  <h3 className="text-sm font-bold text-mirai-text-secondary">
+                  <h3 className="text-sm font-bold text-mirai-text">
                     {group.label}
                     <span className="ml-2 font-medium text-mirai-text-muted">
                       {group.records.length}議案
                     </span>
                   </h3>
                   <p className="text-xs text-mirai-text-secondary">
-                    賛成{counts.yes}・反対{counts.no}
-                    {counts.absent > 0 && `・欠席${counts.absent}`}
-                    {counts.not_voting > 0 &&
-                      `・採決に加わらず${counts.not_voting}`}
+                    {formatVoteCounts(group.records)}
                   </p>
                 </div>
-                <ShowMoreList
-                  initialCount={5}
-                  step={50}
-                  className="flex flex-col gap-3"
+              }
+            >
+              {groupBySession(group.records).map((session) => (
+                <Disclosure
+                  key={session.key}
+                  variant="inner"
+                  summary={
+                    <div className="flex flex-col gap-0.5">
+                      <h4 className="text-sm font-bold text-mirai-text">
+                        {session.name}
+                        <span className="ml-2 text-xs font-medium text-mirai-text-muted">
+                          {session.records.length}議案
+                        </span>
+                      </h4>
+                      <p className="text-xs text-mirai-text-secondary">
+                        {formatVoteCounts(session.records)}
+                      </p>
+                    </div>
+                  }
                 >
-                  {group.records.map(({ bill, vote }) => (
+                  {session.records.map(({ bill, vote }) => (
                     <Link
                       key={bill.id}
                       href={routes.billDetail(bill.id) as Route}
                     >
-                      <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
+                      <Card className="flex flex-col gap-2 border-mirai-border p-3.5 transition-colors hover:bg-muted/50">
                         <div className="flex items-start justify-between gap-3">
-                          <h4 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
+                          <h5 className="line-clamp-2 text-sm font-bold leading-[1.6]">
                             {bill.bill_content?.title || bill.name}
-                          </h4>
+                          </h5>
                           <span
                             className={`inline-flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
                           >
@@ -215,10 +270,10 @@ export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
                       </Card>
                     </Link>
                   ))}
-                </ShowMoreList>
-              </div>
-            );
-          })}
+                </Disclosure>
+              ))}
+            </Disclosure>
+          ))}
         </section>
 
         <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">

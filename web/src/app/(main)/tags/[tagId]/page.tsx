@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props) {
     return { title: "タグが見つかりません" };
   }
 
-  const title = `${billsByTag.tag.label}の議案一覧（田川市議会）`;
+  const title = `${billsByTag.tag.label}の議案一覧（笠間市議会）`;
   const description = describeTagBills({
     label: billsByTag.tag.label,
     description: billsByTag.tag.description,

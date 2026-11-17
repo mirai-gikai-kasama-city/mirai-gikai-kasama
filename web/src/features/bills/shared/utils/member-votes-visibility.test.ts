@@ -60,6 +60,20 @@ describe("isMemberVotesSectionVisible", () => {
     ).toBe(false);
   });
 
+  it("member_votesはあるが議員別の表が空の議案は、可決系でも表示されない", () => {
+    // 笠間市で、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案
+    expect(
+      isMemberVotesSectionVisible(
+        {
+          member_votes: { ...validMemberVotes, entries: [] },
+          name: "議案第1号　テスト条例",
+          status_note: "原案可決",
+        },
+        "kasama-r3-1-teirei"
+      )
+    ).toBe(false);
+  });
+
   it("賛否表が無く否決系の結果は表示されない", () => {
     expect(
       isMemberVotesSectionVisible(

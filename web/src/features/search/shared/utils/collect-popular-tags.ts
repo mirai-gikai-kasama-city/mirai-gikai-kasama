@@ -5,8 +5,11 @@ import type { SearchItem } from "../types";
  *
  * 検索ページの初期状態（クエリ未入力）で「タグから探す」導線を
  * 表示するために使う。出現数が同じ場合はタグ名（コードポイント順）で
- * 安定させる。
+ * 安定させる。「その他」はどれにも当てはまらない議案の受け皿なので、
+ * 件数にかかわらず最後に回す。
  */
+const OTHER_TAG = "その他";
+
 export function collectPopularTags(
   items: SearchItem[],
   limit: number
@@ -18,9 +21,11 @@ export function collectPopularTags(
     }
   }
   return [...counts.entries()]
-    .sort(([aTag, aCount], [bTag, bCount]) =>
-      bCount !== aCount ? bCount - aCount : aTag < bTag ? -1 : 1
-    )
+    .sort(([aTag, aCount], [bTag, bCount]) => {
+      if (aTag === OTHER_TAG) return 1;
+      if (bTag === OTHER_TAG) return -1;
+      return bCount !== aCount ? bCount - aCount : aTag < bTag ? -1 : 1;
+    })
     .slice(0, limit)
     .map(([tag]) => tag);
 }

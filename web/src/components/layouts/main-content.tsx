@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
 import { isMainPage } from "@/lib/page-layout-utils";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +18,7 @@ interface MainContentProps {
  */
 export function MainContent({ children }: MainContentProps) {
   const pathname = usePathname();
-  const hasFixedChatButton = isMainPage(pathname);
+  const hasFixedChatButton = AI_FEATURES_ENABLED && isMainPage(pathname);
 
   return (
     <main

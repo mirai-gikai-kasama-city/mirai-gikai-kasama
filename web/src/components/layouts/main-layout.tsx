@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
 import { isInterviewSection, isMainPage } from "@/lib/page-layout-utils";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +31,9 @@ export function MainLayout({ children }: MainLayoutProps) {
         "main-column relative max-w-[700px] mx-auto lg:mt-24",
         useSidebarLayout || isInterview ? "md:mt-36" : "mt-36",
         // TOPページと議案詳細ページのみ、チャットサイドバー用のオフセット
-        useSidebarLayout && "pc:mr-[500px] xl:ml-[calc(calc(100vw-1180px)/2)]"
+        AI_FEATURES_ENABLED &&
+          useSidebarLayout &&
+          "pc:mr-[500px] xl:ml-[calc(calc(100vw-1180px)/2)]"
       )}
     >
       {children}

@@ -9,14 +9,10 @@ export function QuestionIntro() {
     <div className="flex flex-col gap-3">
       <p className="text-sm leading-relaxed text-mirai-text-secondary">
         一般質問は、定例会ごとに議員が市長や市の担当部署に対して市政全般について質問する場です。
-        質問する内容は事前に「通告」され、公式サイトに一覧が公開されます。
-        ここでは通告された質問事項と要旨に、録画・公式の会議録・本会議の記録への導線を添えています。
+        質問する内容は事前に「通告」されます。
+        ここでは笠間市議会が公開している通告の内容を、そのまま載せ、公式の会議録と録画へのリンクを添えています。
       </p>
-      <SourceBadge
-        kind="official"
-        detail="一般質問の一覧と通告書"
-        className="bg-white"
-      />
+      <SourceBadge kind="official" detail="一般質問通告" className="bg-white" />
     </div>
   );
 }
@@ -25,8 +21,8 @@ export function QuestionIntro() {
 export function QuestionSourceNote() {
   return (
     <SourceNote>
-      質問事項は田川市公式サイトの「一般質問一覧」、要旨は各会期の通告書PDF、録画は田川市議会の公式YouTubeチャンネルをもとに機械的に整理したものです。
-      実際の質問・答弁の内容は、録画や公式の会議録（会議録検索システム。公開されている日は各日の見出しから開けます）をご確認ください。
+      質問者と質問事項は、笠間市議会の「一般質問通告」の内容をそのまま転記したものです。AIによる要約や評価はしていません。
+      実際の質問・答弁の内容は、各質問のリンクから公式の会議録や録画をご確認ください。
       <TextLink href={routes.sources()} className="ml-1">
         出典の種類と読み方について
       </TextLink>

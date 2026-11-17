@@ -105,14 +105,11 @@ export async function BillDetailHeader({
               </time>
             )}
           </div>
-          {/* 提出者区分バッジ（提出者別の議案一覧への導線） */}
+          {/* 提出者区分バッジ */}
           {proposerType && (
-            <Link
-              href={routes.proposerBills(proposerType) as Route}
-              className="rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary transition-colors hover:bg-mirai-surface-tag"
-            >
+            <span className="rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary">
               {PROPOSER_LABELS[proposerType]}
-            </Link>
+            </span>
           )}
           {/* 会期バッジ（会期まとめページへの導線） */}
           {dietSession && (

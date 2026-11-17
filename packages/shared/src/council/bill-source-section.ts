@@ -1,5 +1,5 @@
 /**
- * 議案の本文（bill_contents.content）の末尾に付ける「## 出典」と、その読み取り【田川市専用】
+ * 議案の本文（bill_contents.content）の末尾に付ける「## 出典」と、その読み取り
  *
  * 出典の書き出し（seed の build-csv.ts）と、画面に出す出典バッジのための読み取り
  * （web の議案詳細）が同じ文言を前提にするため、両方をここに置く。
@@ -28,10 +28,10 @@ export type BillResultSource = "official" | "minutes" | "broadcast";
 const MINUTES_LINK = `[${OFFICIAL_MINUTES_SYSTEM_NAME}](${OFFICIAL_MINUTES_TOP_URL})`;
 
 const BROADCAST_CHANNEL_LINK =
-  "[田川市議会 公式YouTubeチャンネル](https://www.joho.tagawa.fukuoka.jp/kiji0037830/index.html)";
+  "笠間市議会の本会議中継（http://kasama.gijiroku.com/）";
 
 const EXPLANATION_MATERIALS_BULLET =
-  "- 田川市議会公式サイトに掲載の議案説明資料（PDF）等の公開情報";
+  "- 笠間市公式サイトに掲載の議案説明資料（PDF）等の公開情報";
 
 const MINUTES_DESCRIPTION_BULLET = `- ${MINUTES_LINK}の本会議録（提案理由説明・委員会審査結果報告・質疑・討論等）`;
 
@@ -43,7 +43,7 @@ const RESULT_SOURCE_BULLET: Record<
 > = {
   minutes: `- 議決結果は${MINUTES_LINK}の本会議録から自動抽出したものです`,
   broadcast:
-    "- 議決結果は公式YouTubeチャンネルの本会議中継映像で確認したものです（議決結果ページの公開後に照合します）",
+    "- 議決結果は本会議の中継映像で確認したものです（議会だよりの発行後に照合します）",
 };
 
 /** 解説文の典拠ごとの箇条書きと末尾の注記 */
@@ -53,27 +53,29 @@ const DESCRIPTION_SOURCE_CITATIONS: Record<
 > = {
   minutes: {
     bullets: [MINUTES_DESCRIPTION_BULLET],
-    note: "※ 上記の解説は、田川市議会 会議録検索システムで公開されている本会議録（提案理由説明・委員会審査結果報告・質疑・討論の内容）をもとに作成しています。",
+    note: "※ 上記の解説は、笠間市公式サイトで公開されている本会議の会議録（提案理由説明・委員会審査結果報告・質疑・討論の内容）をもとに、AIを使って作成しています。",
   },
   "explanation-materials": {
     bullets: [EXPLANATION_MATERIALS_BULLET],
-    note: "※ 上記の解説は、田川市議会公式サイトが公開する議案説明資料等の情報をもとに作成しています。本会議での質疑・討論の内容は、会議録が本稿執筆時点（2026年7月）で田川市議会 会議録検索システムに未公開のため反映していません。",
+    note: "※ 上記の解説は、笠間市公式サイトが公開する議案説明資料等の情報をもとに作成しています。本会議での質疑・討論の内容は、会議録が未公開のため反映していません。",
   },
   broadcast: {
     bullets: [EXPLANATION_MATERIALS_BULLET, BROADCAST_DESCRIPTION_BULLET],
-    note: "※ 上記の解説は、田川市議会公式サイトが公開する議案説明資料等と、公式YouTubeチャンネルの本会議中継映像（自動字幕）をもとに作成しています。本会議録は本稿執筆時点（2026年9月）で田川市議会 会議録検索システムに未公開のため、発言の細部は中継映像でご確認ください。",
+    note: "※ 上記の解説は、笠間市公式サイトが公開する議案説明資料等と、本会議の中継映像をもとに作成しています。会議録が未公開のため、発言の細部は中継映像でご確認ください。",
   },
 };
 
 const NOTE_FACTS_ONLY =
-  "※ この内容は田川市議会事務局が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。";
+  "※ この内容は笠間市議会が公開する情報を基に事実のみを転記したものです。分かりやすい解説文のAIによる生成は行っていません。";
 
 const SOURCE_HEADING = "## 出典";
 
 export interface BillSourceSectionInput {
   sessionName: string;
-  /** 市公式サイトの「提出議案と議決結果」ページ */
+  /** 議案の事実を確かめられる市公式サイトのページ */
   sourceUrl: string;
+  /** そのページの題名。省略時は「{会期名}の提出議案と議決結果」 */
+  officialPageTitle?: string;
   /** 会期中の会期は公式ページの題名が「提出議案」（議決結果ページはまだ無い） */
   isOngoing: boolean;
   /** 解説文の典拠。解説が無い議案は null */
@@ -97,7 +99,7 @@ export function buildBillSourceSection(
   return [
     SOURCE_HEADING,
     "",
-    `- [田川市議会「${input.sessionName}の${pageTitle}」](${input.sourceUrl})（福岡県田川市公式サイト）`,
+    `- [笠間市議会「${input.officialPageTitle ?? `${input.sessionName}の${pageTitle}`}」](${input.sourceUrl})（笠間市公式サイト）`,
     ...(citations?.bullets ?? []),
     ...(resultBullet ? [resultBullet] : []),
     "",
@@ -107,7 +109,7 @@ export function buildBillSourceSection(
 
 /** 本文の「## 出典」から読み取れた出典 */
 export interface ParsedBillSources {
-  /** 市公式サイトの議案ページ（「提出議案と議決結果」または会期中の「提出議案」） */
+  /** 議案の事実を確かめられる市公式サイトのページ */
   officialPage: { url: string; isOngoing: boolean } | null;
   /** 解説文の典拠。解説が無い（事実の転記だけの）議案は null */
   descriptionSource: BillDescriptionSource | null;
@@ -126,10 +128,7 @@ export function parseBillSources(
   if (headingIndex === -1) return null;
   const section = content.slice(headingIndex);
 
-  const pageMatch =
-    /- \[田川市議会「[^」]*の(提出議案と議決結果|提出議案)」\]\(([^)]+)\)/.exec(
-      section
-    );
+  const pageMatch = /- \[笠間市議会「([^」]*)」\]\(([^)]+)\)/.exec(section);
 
   let descriptionSource: BillDescriptionSource | null = null;
   if (section.includes(MINUTES_DESCRIPTION_BULLET)) {
@@ -149,7 +148,7 @@ export function parseBillSources(
 
   return {
     officialPage: pageMatch
-      ? { url: pageMatch[2], isOngoing: pageMatch[1] === "提出議案" }
+      ? { url: pageMatch[2], isOngoing: pageMatch[1].endsWith("の提出議案") }
       : null,
     descriptionSource,
     resultSource,

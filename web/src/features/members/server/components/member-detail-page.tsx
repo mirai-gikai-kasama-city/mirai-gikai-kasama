@@ -5,104 +5,106 @@ import { Container } from "@/components/layouts/container";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Card } from "@/components/ui/card";
-import { ShowMoreList } from "@/components/ui/show-more-list";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   VOTE_ARIA_LABEL,
   VOTE_CHIP_CLASS,
   VOTE_LABEL,
 } from "@/features/bills/shared/utils/member-vote-display";
+import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { MemberQuestionsSection } from "@/features/general-questions/server/components/member-questions-section";
+import {
+  groupByTerm,
+  termForDate,
+} from "@/features/general-questions/shared/utils/council-terms";
 import { SourceBadge } from "@/features/sources/shared/components/source-badge";
 import { env } from "@/lib/env";
 import { routes } from "@/lib/routes";
 import { formatDateWithDots } from "@/lib/utils/date";
-import { ROSTER_AS_OF } from "../../shared/data/member-profiles";
 import {
-  aggregateMemberSummaries,
-  collectMemberVoteRecords,
-} from "../../shared/utils/aggregate-members";
-import {
-  resolveMemberDisplayName,
-  resolveMemberProfile,
-} from "../../shared/utils/resolve-member-display";
-import {
-  collectSponsorNames,
-  extractFamilyName,
-} from "../../shared/utils/sponsors";
-import {
-  getBillsWithMemberVotes,
-  getBillsWithSponsors,
-} from "../loaders/get-member-vote-data";
+  affiliationOf,
+  familyNameOf,
+  getMemberProfile,
+  ROSTER_AS_OF,
+  ROSTER_SOURCES,
+} from "../../shared/data/member-profiles";
+import { collectMemberVoteRecords } from "../../shared/utils/aggregate-members";
+import { NO_FACTION_LABEL } from "../../shared/utils/group-members";
+import { getBillsWithMemberVotes } from "../loaders/get-member-vote-data";
 
 interface MemberDetailPageProps {
-  /** 議員名（姓、デコード済み） */
-  name: string;
+  /** 議員ページのキー（空白なしのフルネーム、デコード済み） */
+  memberKey: string;
 }
 
-// 提出者・賛成者チップの共通スタイル（vote チップと視覚的に区別するため
-// bg-mirai-surface-muted の単色トーンにしている）
-const SPONSOR_CHIP_CLASS =
-  "inline-flex shrink-0 items-center gap-1 rounded-md bg-mirai-surface-muted px-2.5 py-1 text-xs font-medium text-mirai-text-secondary";
-
 /**
- * 議員個人ページ
+ * 議員個人ページ（現職のみ）
  *
- * 賛否が分かれた案件での、この議員の投票記録（賛成・反対・欠席・
- * 採決に加わらず）と、議案説明資料PDFから分かる提出・連署の記録を
- * 議決日の新しい順に一覧表示する
+ * 公式名簿の会派・役職・所属委員会と、一般質問、賛否が分かれた議案での
+ * この議員の賛否（賛成・反対・欠席・採決に加わらず）を議決日の新しい順に載せる
  */
-export async function MemberDetailPage({ name }: MemberDetailPageProps) {
-  const [items, sponsoredBills] = await Promise.all([
-    getBillsWithMemberVotes(),
-    getBillsWithSponsors(),
-  ]);
-  const summary = aggregateMemberSummaries(items).find(
-    (member) => member.name === name
-  );
-
-  if (!summary) {
+export async function MemberDetailPage({ memberKey }: MemberDetailPageProps) {
+  const profile = getMemberProfile(memberKey);
+  if (!profile) {
     notFound();
   }
 
-  const records = collectMemberVoteRecords(items, name);
-  const { yes, no, absent, not_voting } = summary.counts;
-
-  const proposedBills = sponsoredBills.filter(({ sponsors }) =>
-    sponsors.proposers.some((person) => extractFamilyName(person.name) === name)
+  const [items, dietSessions] = await Promise.all([
+    getBillsWithMemberVotes(),
+    getAllDietSessions(),
+  ]);
+  const records = collectMemberVoteRecords(items, memberKey);
+  const sessionNameById = new Map(
+    dietSessions.map((session) => [session.id, session.name])
   );
-  const supportedBills = sponsoredBills.filter(({ sponsors }) =>
-    sponsors.supporters.some(
-      (person) => extractFamilyName(person.name) === name
-    )
-  );
-
-  // 表示名はMEMBER_PROFILES（公式名簿）を優先し、無ければsponsorsデータ中で
-  // この議員の姓と一致するフルネームがちょうど1つだけ見つかった場合それを使う
-  // （どちらも無ければ姓のみ表示）
-  const allSponsorNames = collectSponsorNames(
-    sponsoredBills.map(({ sponsors }) => sponsors)
-  );
-  const displayName = resolveMemberDisplayName(name, allSponsorNames);
-  const profile = resolveMemberProfile(name);
+  /** 任期の中の記録を、会期ごとにまとめる（並びは入力のまま＝議決日の新しい順） */
+  const groupBySession = (termRecords: typeof records) => {
+    const bySession = new Map<
+      string,
+      { key: string; name: string; records: typeof records }
+    >();
+    for (const record of termRecords) {
+      const key = record.bill.diet_session_id ?? "unknown";
+      const session = bySession.get(key) ?? {
+        key,
+        name: sessionNameById.get(key) ?? "会期を確認中",
+        records: [],
+      };
+      session.records.push(record);
+      bySession.set(key, session);
+    }
+    return [...bySession.values()];
+  };
+  const termOf = (record: (typeof records)[number]) =>
+    record.bill.submitted_date ? termForDate(record.bill.submitted_date) : null;
+  // 議決日が分からず任期を決められない記録（通常は無い）は末尾にまとめる
+  const undated = records.filter((record) => termOf(record) === null);
+  const voteGroups = [
+    ...groupByTerm(records, termOf).map(({ term, records }) => ({
+      key: String(term.endYear),
+      label: term.label,
+      records,
+    })),
+    ...(undated.length > 0
+      ? [{ key: "unknown", label: "任期を確認中", records: undated }]
+      : []),
+  ];
 
   // 議員個人の構造化データ（Person）。検索エンジンが人物ページとして理解できるようにする
-  // profileがMEMBER_PROFILESに未収録（＝現職/元職が公式名簿から確認できていない）の
-  // 場合、可視UI（下記の元議員表示）と同様にjobTitleを断定しない
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: displayName,
-    url: new URL(routes.memberDetail(name), env.webUrl).toString(),
-    ...(profile && {
-      jobTitle: profile.isIncumbent ? "田川市議会議員" : "元田川市議会議員",
+    name: profile.fullName,
+    url: new URL(routes.memberDetail(memberKey), env.webUrl).toString(),
+    jobTitle: "笠間市議会議員",
+    ...((profile.party || profile.faction) && {
+      affiliation: [profile.party, profile.faction]
+        .filter((name) => name !== null)
+        .map((name) => ({ "@type": "Organization", name })),
     }),
-    affiliation: summary.factions.map((faction) => ({
-      "@type": "Organization",
-      name: faction,
-    })),
     memberOf: {
       "@type": "GovernmentOrganization",
-      name: "田川市議会",
+      name: "笠間市議会",
     },
   };
 
@@ -111,149 +113,152 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
       <JsonLd data={personJsonLd} />
       <Container className="py-8">
         <div className="flex flex-col gap-1.5 pb-6">
+          <p className="text-xs text-mirai-text-muted">{profile.reading}</p>
           <h1 className="text-[22px] font-bold text-black leading-[1.48]">
-            {displayName} 議員
+            {profile.fullName} 議員
           </h1>
-          {profile?.reading && (
-            <p className="text-xs text-mirai-text-muted">{profile.reading}</p>
-          )}
-          <p className="text-xs text-mirai-text-secondary">
-            会派: {summary.factions.join(" / ")}
-            {summary.factions.length > 1 && "（新しい順）"}
-            {profile?.role && `・${profile.role}`}
-            {profile?.electedCount !== undefined &&
-              `・当選${profile.electedCount}回`}
-          </p>
-          {profile && !profile.isIncumbent && (
-            <p className="text-xs text-mirai-text-muted">
-              元議員
-              {profile.note && `（${profile.note}）`}
-            </p>
-          )}
-          {profile && (
-            <p className="text-xs text-mirai-text-note">
-              ※氏名・役職・当選回数は公式議員名簿（{ROSTER_AS_OF}時点）より
-            </p>
-          )}
         </div>
 
-        {/* 集計サマリー */}
-        <div className="mb-6 rounded-md bg-white px-4 py-5">
-          <p className="text-xs text-mirai-text-secondary">
-            賛成{yes}・反対{no}
-            {absent > 0 && `・欠席${absent}`}
-            {not_voting > 0 && `・採決に加わらず${not_voting}`}
-            <span className="ml-1 font-medium text-mirai-text-muted">
-              （{summary.billCount}議案）
-            </span>
-          </p>
-          <p className="mt-2 text-xs text-mirai-text-note">
-            ※賛成・反対の数は議員の評価を示すものではありません。個々の議案の内容とあわせてご覧ください。
-          </p>
-        </div>
-
-        {/* 提出した議案（議案説明資料PDFに提出者として記載がある議案のみ） */}
-        {proposedBills.length > 0 && (
-          <section className="mb-8 flex flex-col gap-3">
-            <h2 className="text-lg font-bold text-mirai-text">提出した議案</h2>
-            {proposedBills.map(({ bill }) => (
-              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
-                      {bill.bill_content?.title || bill.name}
-                    </h3>
-                    <span className={SPONSOR_CHIP_CLASS}>提出者</span>
-                  </div>
-                  <p className="text-xs text-mirai-text-muted">
-                    {bill.submitted_date &&
-                      `${formatDateWithDots(bill.submitted_date)} 議決`}
-                  </p>
-                </Card>
-              </Link>
+        {/* 名簿の情報 */}
+        <section className="mb-8 rounded-md bg-white px-4 py-5">
+          <h2 className="text-sm font-bold text-mirai-text">
+            この議員について
+          </h2>
+          <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+            <dt className="text-mirai-text-muted">党派・会派</dt>
+            <dd className="text-mirai-text">
+              {affiliationOf(profile) ?? NO_FACTION_LABEL}
+            </dd>
+            {profile.role && (
+              <>
+                <dt className="text-mirai-text-muted">役職</dt>
+                <dd className="text-mirai-text">{profile.role}</dd>
+              </>
+            )}
+            <dt className="text-mirai-text-muted">所属委員会</dt>
+            <dd className="text-mirai-text">
+              {profile.committees.length > 0 ? (
+                <ul className="flex flex-col gap-0.5">
+                  {profile.committees.map((committee) => (
+                    <li key={committee}>{committee}</li>
+                  ))}
+                </ul>
+              ) : (
+                "名簿に記載なし"
+              )}
+            </dd>
+            <dt className="text-mirai-text-muted">議席番号</dt>
+            <dd className="text-mirai-text">{profile.seat}番</dd>
+          </dl>
+          {profile.note && (
+            <p className="mt-3 text-xs text-mirai-text-muted">
+              ※{profile.note}
+            </p>
+          )}
+          <p className="mt-3 text-xs text-mirai-text-note">
+            ※{ROSTER_AS_OF}現在の公式名簿より。
+            {ROSTER_SOURCES.map((source) => (
+              <a
+                key={source.url}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ml-2 text-primary-accent underline underline-offset-[3px] hover:opacity-70"
+              >
+                {source.label}
+              </a>
             ))}
-          </section>
-        )}
-
-        {/* 賛成者として連署した議案（議案説明資料PDFに賛成者として記載がある議案のみ） */}
-        {supportedBills.length > 0 && (
-          <section className="mb-8 flex flex-col gap-3">
-            <h2 className="text-lg font-bold text-mirai-text">
-              賛成者として連署した議案
-            </h2>
-            <ShowMoreList initialCount={5} className="flex flex-col gap-3">
-              {supportedBills.map(({ bill }) => (
-                <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                  <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
-                        {bill.bill_content?.title || bill.name}
-                      </h3>
-                      <span className={SPONSOR_CHIP_CLASS}>賛成者</span>
-                    </div>
-                    <p className="text-xs text-mirai-text-muted">
-                      {bill.submitted_date &&
-                        `${formatDateWithDots(bill.submitted_date)} 議決`}
-                    </p>
-                  </Card>
-                </Link>
-              ))}
-            </ShowMoreList>
-          </section>
-        )}
+          </p>
+        </section>
 
         {/* 一般質問で取り上げたこと（公式サイトの一般質問一覧より。無ければ非表示） */}
         <MemberQuestionsSection
-          familyName={name}
-          fullName={profile?.fullName ?? null}
+          familyName={familyNameOf(profile)}
+          fullName={profile.fullName}
         />
 
         {/* 議案ごとの投票記録 */}
         <section className="flex flex-col gap-3">
-          <h2 className="text-lg font-bold text-mirai-text">
-            議案ごとの投票（新しい順）
-          </h2>
-          <ShowMoreList
-            initialCount={10}
-            step={50}
-            className="flex flex-col gap-3"
-          >
-            {records.map(({ bill, vote, faction }) => (
-              <Link key={bill.id} href={routes.billDetail(bill.id) as Route}>
-                <Card className="flex flex-col gap-2 border-mirai-border p-4 transition-colors hover:bg-muted/50">
-                  <div className="flex items-start justify-between gap-3">
-                    <h3 className="line-clamp-2 text-[15px] font-bold leading-[1.6]">
-                      {bill.bill_content?.title || bill.name}
-                    </h3>
-                    <span
-                      className={`inline-flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-bold text-mirai-text">
+              賛否が分かれた議案での賛否（新しい順）
+            </h2>
+            {records.length === 0 && (
+              <p className="text-xs text-mirai-text-secondary">
+                賛否が分かれた議案の記録はまだありません。
+              </p>
+            )}
+          </div>
+          {/* 任期 → 定例会の2段の折りたたみ（新しい順。いちばん新しい任期だけ開いておく） */}
+          {voteGroups.map((group, groupIndex) => (
+            <Disclosure
+              key={group.key}
+              variant="outer"
+              defaultOpen={groupIndex === 0}
+              summary={
+                <h3 className="text-sm font-bold text-mirai-text">
+                  {group.label}
+                  <span className="ml-2 font-medium text-mirai-text-muted">
+                    {group.records.length}議案
+                  </span>
+                </h3>
+              }
+            >
+              {groupBySession(group.records).map((session) => (
+                <Disclosure
+                  key={session.key}
+                  variant="inner"
+                  summary={
+                    <h4 className="text-sm font-bold text-mirai-text">
+                      {session.name}
+                      <span className="ml-2 text-xs font-medium text-mirai-text-muted">
+                        {session.records.length}議案
+                      </span>
+                    </h4>
+                  }
+                >
+                  {session.records.map(({ bill, vote }) => (
+                    <Link
+                      key={bill.id}
+                      href={routes.billDetail(bill.id) as Route}
                     >
-                      {VOTE_ARIA_LABEL[vote]}
-                      <span aria-hidden="true">{VOTE_LABEL[vote]}</span>
-                    </span>
-                  </div>
-                  <p className="text-xs text-mirai-text-muted">
-                    {bill.submitted_date &&
-                      `${formatDateWithDots(bill.submitted_date)} 議決・`}
-                    {faction}
-                  </p>
-                </Card>
-              </Link>
-            ))}
-          </ShowMoreList>
+                      <Card className="flex flex-col gap-2 border-mirai-border p-3.5 transition-colors hover:bg-muted/50">
+                        <div className="flex items-start justify-between gap-3">
+                          <h5 className="line-clamp-2 text-sm font-bold leading-[1.6]">
+                            {bill.bill_content?.title || bill.name}
+                          </h5>
+                          <span
+                            className={`inline-flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium ${VOTE_CHIP_CLASS[vote]}`}
+                          >
+                            {VOTE_ARIA_LABEL[vote]}
+                            <span aria-hidden="true">{VOTE_LABEL[vote]}</span>
+                          </span>
+                        </div>
+                        {bill.submitted_date && (
+                          <p className="text-xs text-mirai-text-muted">
+                            {formatDateWithDots(bill.submitted_date)} 議決
+                          </p>
+                        )}
+                      </Card>
+                    </Link>
+                  ))}
+                </Disclosure>
+              ))}
+            </Disclosure>
+          ))}
         </section>
 
         <div className="mt-10 flex flex-col gap-1 rounded-md bg-white px-4 py-4 text-xs leading-[1.8] text-mirai-text-note">
           <SourceBadge
             kind="official"
-            detail="議員名簿と議決結果のページ"
+            detail="議員名簿・議会だより・会議録"
             className="mb-1"
           />
           <p>
-            ※田川市議会が公開している「賛否が分かれた案件」の議員別賛否のみを掲載しています。全会一致で議決された議案は含まれません。
+            ※賛否は、議会だよりの賛否一覧などに載る「賛否が分かれた議案」だけを載せています（議会だよりに賛否一覧が載り始めた平成28年12月からの記録）。それより前の採決は、議会だより・会議録に議員ごとの記録がありません。全会一致で議決された議案は含みません。
           </p>
           <p>
-            ※「採決に加わらず」は議長職務・除斥などにより採決に参加していないことを表します。
+            ※「採決に加わらず」は、議長として採決に加わらないことなどを表します。賛成・反対の数は議員の評価を示すものではありません。個々の議案の内容とあわせてご覧ください。
           </p>
         </div>
       </Container>
@@ -262,11 +267,8 @@ export async function MemberDetailPage({ name }: MemberDetailPageProps) {
         <Breadcrumb
           items={[
             { label: "TOP", href: routes.home() },
-            {
-              label: "議員・提出者から見る",
-              href: routes.memberArchive(),
-            },
-            { label: `${summary.name} 議員` },
+            { label: "議員一覧", href: routes.memberArchive() },
+            { label: `${profile.fullName} 議員` },
           ]}
         />
       </Container>

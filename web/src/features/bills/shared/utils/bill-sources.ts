@@ -23,9 +23,7 @@ export function buildBillSourceRefs(
   if (parsed.officialPage) {
     refs.push({
       kind: "official",
-      detail: parsed.officialPage.isOngoing
-        ? "提出議案のページ"
-        : "議決結果のページ",
+      detail: parsed.officialPage.isOngoing ? "提出議案のページ" : "議会だより",
       scope:
         resultIsOfficial && !parsed.officialPage.isOngoing
           ? "議案番号・件名・提出者・議決結果"

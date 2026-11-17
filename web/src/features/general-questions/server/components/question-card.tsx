@@ -1,5 +1,5 @@
 import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
-import { FileText, MessageSquareText, Youtube } from "lucide-react";
+import { FileText, MessageSquareText, Video } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,11 @@ interface QuestionCardProps {
   compact?: boolean;
   /** 議員名の代わりに会期名を見出しにし、会期ページの該当箇所へリンクする（議員ページ用） */
   headingBySession?: boolean;
+  /**
+   * 見出しを出さない（折りたたみの見出しに会期名を出す議員ページ用）。
+   * 代わりに、会期ページの該当箇所へのリンクを下に置く
+   */
+  hideHeading?: boolean;
 }
 
 /**
@@ -39,12 +44,12 @@ export function QuestionCard({
   headingLevel,
   compact = false,
   headingBySession = false,
+  hideHeading = false,
 }: QuestionCardProps) {
   const Heading = headingLevel;
-  const memberKey = resolveMemberPageKey(
-    { familyName: record.familyName, name: record.memberName },
-    context
-  );
+  const sessionAnchorHref =
+    `${routes.questionSession(record.sessionKey)}#${questionAnchorId(record)}` as Route;
+  const memberKey = resolveMemberPageKey({ name: record.memberName }, context);
   const answerRecordId = record.questionDate
     ? context.answerRecordIdByDate.get(record.questionDate)
     : undefined;
@@ -68,36 +73,35 @@ export function QuestionCard({
         !headingBySession && jumpTargetClassName
       )}
     >
-      <header className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-        {!headingBySession && (
-          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-mirai-surface-key text-xs font-bold text-primary-accent">
-            {record.order}
-            <span className="sr-only">番目</span>
-          </span>
-        )}
-        <Heading className="text-base font-bold leading-[1.5] text-mirai-text">
-          {headingBySession ? (
-            <Link
-              href={
-                `${routes.questionSession(record.sessionKey)}#${questionAnchorId(record)}` as Route
-              }
-              className="hover:underline"
-            >
-              {record.sessionName}
-            </Link>
-          ) : (
-            <MemberLink memberKey={memberKey} className="text-mirai-text">
-              {record.memberName} 議員
-            </MemberLink>
+      {!hideHeading && (
+        <header className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+          {!headingBySession && (
+            <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-mirai-surface-key text-xs font-bold text-primary-accent">
+              {record.order}
+              <span className="sr-only">番目</span>
+            </span>
           )}
-        </Heading>
-        {record.isRepresentative && record.faction && (
-          <Badge variant="muted">代表質問（{record.faction}）</Badge>
-        )}
-        {record.format && !compact && (
-          <span className="text-xs text-mirai-text-muted">{record.format}</span>
-        )}
-      </header>
+          <Heading className="text-base font-bold leading-[1.5] text-mirai-text">
+            {headingBySession ? (
+              <Link href={sessionAnchorHref} className="hover:underline">
+                {record.sessionName}
+              </Link>
+            ) : (
+              <MemberLink memberKey={memberKey} className="text-mirai-text">
+                {record.memberName} 議員
+              </MemberLink>
+            )}
+          </Heading>
+          {record.isRepresentative && record.faction && (
+            <Badge variant="muted">代表質問（{record.faction}）</Badge>
+          )}
+          {record.format && !compact && (
+            <span className="text-xs text-mirai-text-muted">
+              {record.format}
+            </span>
+          )}
+        </header>
+      )}
 
       <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm leading-[1.7] text-mirai-text">
         {record.items.map((item, index) => {
@@ -134,15 +138,29 @@ export function QuestionCard({
         </details>
       )}
 
-      {(record.videoUrl ||
+      {(hideHeading ||
+        record.videoUrl ||
+        record.minutesUrl ||
         answerRecordId ||
         record.pdfUrl ||
         outlineFromDisclosure) && (
         <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
+          {hideHeading && (
+            <TextLink href={sessionAnchorHref}>
+              <MessageSquareText aria-hidden className="size-3.5" />
+              会期のページで見る
+            </TextLink>
+          )}
           {record.videoUrl && (
             <TextLink external href={record.videoUrl}>
-              <Youtube aria-hidden className="size-3.5" />
+              <Video aria-hidden className="size-3.5" />
               録画を見る
+            </TextLink>
+          )}
+          {record.minutesUrl && (
+            <TextLink external href={record.minutesUrl}>
+              <FileText aria-hidden className="size-3.5" />
+              公式の会議録（質問と答弁の全文）
             </TextLink>
           )}
           {answerRecordId && (

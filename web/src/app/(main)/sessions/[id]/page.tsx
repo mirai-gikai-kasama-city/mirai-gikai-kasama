@@ -37,7 +37,7 @@ export async function generateMetadata({
   }
 
   const { session, bills } = data;
-  const title = `田川市議会 ${session.name}のまとめ`;
+  const title = `笠間市議会 ${session.name}のまとめ`;
   const description = describeSessionSummary({
     name: session.name,
     startDate: session.start_date,

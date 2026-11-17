@@ -1,8 +1,13 @@
 import { MessageCircleQuestion } from "lucide-react";
 import Image from "next/image";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
 import { ManualRuby } from "@/lib/rubyful/manual-ruby";
 
 export function LongPressSection() {
+  if (!AI_FEATURES_ENABLED) {
+    return null;
+  }
+
   return (
     <section className="relative bg-white rounded-lg !px-3 !py-10 overflow-hidden">
       {/* コンテンツエリア */}

@@ -27,9 +27,7 @@ export function BillShareButtonsClient({
     setIsModalOpen(false);
   };
 
-  const handleReport = () => {
-    window.open(EXTERNAL_LINKS.REPORT, "_blank");
-  };
+  const reportUrl = EXTERNAL_LINKS.REPORT;
 
   return (
     <>
@@ -48,20 +46,22 @@ export function BillShareButtonsClient({
           />
           記事を共有する
         </Button>
-        <Button
-          variant="outline"
-          onClick={handleReport}
-          className="px-6 py-3 h-auto font-bold text-base"
-        >
-          <Image
-            src="/icons/report-error.svg"
-            alt="報告アイコン"
-            width={26}
-            height={26}
-            className="shrink-0"
-          />
-          問題を報告する
-        </Button>
+        {reportUrl != null && (
+          <Button
+            variant="outline"
+            onClick={() => window.open(reportUrl, "_blank")}
+            className="px-6 py-3 h-auto font-bold text-base"
+          >
+            <Image
+              src="/icons/report-error.svg"
+              alt="報告アイコン"
+              width={26}
+              height={26}
+              className="shrink-0"
+            />
+            問題を報告する
+          </Button>
+        )}
       </div>
 
       {/* 共有モーダル */}

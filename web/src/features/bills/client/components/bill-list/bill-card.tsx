@@ -2,6 +2,7 @@ import Image from "next/image";
 import { RubySafeLineClamp } from "@/components/ruby-safe-line-clamp";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
 import { formatDateWithDots } from "@/lib/utils/date";
 import type { BillWithContent } from "../../../shared/types";
 import { isDefaultThumbnail } from "../../../shared/utils/bill-cover";
@@ -21,6 +22,7 @@ interface BillCardProps {
 }
 
 export function BillCard({ bill }: BillCardProps) {
+  const showInterviewBadge = AI_FEATURES_ENABLED && bill.hasPublicInterview;
   const displayTitle = bill.bill_content?.title;
   const summary = bill.bill_content?.summary;
   const memberVotes = parseMemberVotes(bill.member_votes);
@@ -100,12 +102,12 @@ export function BillCard({ bill }: BillCardProps) {
                 className="text-sm leading-relaxed"
               />
               {/* タグ表示 */}
-              {(bill.tags.length > 0 || bill.hasPublicInterview) && (
+              {(bill.tags.length > 0 || showInterviewBadge) && (
                 <div className="flex flex-wrap gap-3">
                   {bill.tags.map((tag) => (
                     <BillTag key={tag.id} tag={tag} />
                   ))}
-                  {bill.hasPublicInterview && (
+                  {showInterviewBadge && (
                     <span className="inline-flex items-center justify-center px-3 py-1 text-xs font-medium text-primary-accent bg-mirai-surface-key-subtle rounded-md">
                       AIインタビュー受付中
                     </span>

@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useRef } from "react";
+import { AI_FEATURES_ENABLED } from "@/config/ai-features";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
 import { TextSelectionWrapper } from "@/features/bills/client/components/text-selection-tooltip/text-selection-wrapper";
 import {
@@ -36,6 +37,10 @@ export function BillDetailClient({
   const handleOpenChat = (selectedText: string) => {
     chatButtonRef.current?.openWithText(selectedText);
   };
+
+  if (!AI_FEATURES_ENABLED) {
+    return <>{children}</>;
+  }
 
   return (
     <>

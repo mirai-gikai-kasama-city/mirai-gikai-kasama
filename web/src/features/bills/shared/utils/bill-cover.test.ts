@@ -61,6 +61,15 @@ describe("extractBillNumberLabel", () => {
     ).toBe("諮問第8号");
   });
 
+  test("決議案第N号と選挙第N号を抽出する", () => {
+    expect(extractBillNumberLabel("決議案第1号　平和的解決を求める決議")).toBe(
+      "決議案第1号"
+    );
+    expect(extractBillNumberLabel("選挙第2号　選挙管理委員の選挙")).toBe(
+      "選挙第2号"
+    );
+  });
+
   test("先頭以外に番号がある場合はマッチしない", () => {
     expect(extractBillNumberLabel("○○について（議案第10号関連）")).toBeNull();
   });

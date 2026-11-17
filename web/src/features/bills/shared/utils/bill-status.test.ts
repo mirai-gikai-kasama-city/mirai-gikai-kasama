@@ -7,9 +7,9 @@ import {
 
 describe("getCardStatusLabel", () => {
   it.each([
-    ["introduced", "田川市議会審議中"],
-    ["in_originating_house", "田川市議会審議中"],
-    ["in_receiving_house", "田川市議会審議中"],
+    ["introduced", "笠間市議会審議中"],
+    ["in_originating_house", "笠間市議会審議中"],
+    ["in_receiving_house", "笠間市議会審議中"],
   ] as const)("審議中ステータス %s → %s", (status, expected) => {
     expect(getCardStatusLabel(status)).toBe(expected);
   });
@@ -52,7 +52,7 @@ describe("getCardStatusLabel", () => {
     ["in_originating_house", "継続審議"],
     ["in_receiving_house", "認定"],
   ] as const)("審議中 %s は status_note「%s」があっても審議中のまま", (status, statusNote) => {
-    expect(getCardStatusLabel(status, statusNote)).toBe("田川市議会審議中");
+    expect(getCardStatusLabel(status, statusNote)).toBe("笠間市議会審議中");
   });
 
   it("preparing は status_note があっても議案提出前のまま", () => {

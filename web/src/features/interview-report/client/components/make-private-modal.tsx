@@ -55,7 +55,7 @@ export function MakePrivateModal({
             非公開にした場合、あなたのご意見が世の中に公開されることはありません。
           </CheckListItem>
           <CheckListItem>
-            みらい議会＠田川市の運営者による政策検討に最大限活用させていただきます。
+            かさま議会ノートの運営者による政策検討に最大限活用させていただきます。
           </CheckListItem>
         </div>
 

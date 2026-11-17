@@ -5,6 +5,9 @@
  */
 export const OPERATOR_NAME = "すがのゆういち";
 
+/** 運営者の氏名（漢字と読み）。画面右下に常に出す連絡先の枠で使う */
+export const OPERATOR_FULL_NAME = "菅野裕一（すがのゆういち）";
+
 /** 運営者の立場。サイトを見る人が判断できるよう、フッターとサイトの説明に表示する */
 export const OPERATOR_ROLE = "笠間市議会議員一般選挙の候補者";
 

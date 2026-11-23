@@ -1,3 +1,7 @@
+import { H23_1_RINJI_BILLS, H23_1_RINJI_SESSION } from "./h23-1-rinji";
+import { H23_1_TEIREI_BILLS, H23_1_TEIREI_SESSION } from "./h23-1-teirei";
+import { H23_2_RINJI_BILLS, H23_2_RINJI_SESSION } from "./h23-2-rinji";
+import { H23_3_RINJI_BILLS, H23_3_RINJI_SESSION } from "./h23-3-rinji";
 import { H26_1_RINJI_BILLS, H26_1_RINJI_SESSION } from "./h26-1-rinji";
 import { H26_3_TEIREI_BILLS, H26_3_TEIREI_SESSION } from "./h26-3-teirei";
 import { H26_4_TEIREI_BILLS, H26_4_TEIREI_SESSION } from "./h26-4-teirei";
@@ -139,6 +143,22 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   // 平成26年9月〜11月は平成22年12月からの任期の終わり。12月の一般選挙の後、平成26年第1回臨時会からが
   // 平成30年11月までの任期。議会だよりに議員ごとの賛否一覧が載るのは第44号からで、それより前の
   // 賛否が分かれた議案は vote.unpublished（議員ごとの記録なし）。第44号より前は members を持たない
+  toSession(H23_1_RINJI_SESSION, {
+    ...dayori(20, "page000048", "1314796109", [], 2),
+    bills: H23_1_RINJI_BILLS,
+  }),
+  toSession(H23_2_RINJI_SESSION, {
+    ...dayori(21, "page000047", "1314795421", [], 3),
+    bills: H23_2_RINJI_BILLS,
+  }),
+  toSession(H23_1_TEIREI_SESSION, {
+    ...dayori(21, "page000047", "1314795421", [], 2),
+    bills: H23_1_TEIREI_BILLS,
+  }),
+  toSession(H23_3_RINJI_SESSION, {
+    ...dayori(21, "page000047", "1314795421", [], 4),
+    bills: H23_3_RINJI_BILLS,
+  }),
   toSession(H26_3_TEIREI_SESSION, {
     ...dayori(35, "page005681", "1414475417", [], 2),
     bills: H26_3_TEIREI_BILLS,

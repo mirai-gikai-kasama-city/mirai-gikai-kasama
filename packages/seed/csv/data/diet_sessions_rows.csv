@@ -1,4 +1,8 @@
 id,name,start_date,end_date,created_at,updated_at,slug,shugiin_url,is_active
+4ccec40c-6591-5082-a2f3-4e8c148e0d4d,平成23年第1回臨時会,2011-01-05,2011-01-05,2011-01-05T00:00:00.000Z,2011-01-05T00:00:00.000Z,kasama-h23-1-rinji,https://www.city.kasama.lg.jp/page/page000048.html,false
+2ca523f5-bbbf-5407-aad5-9fb0433452ac,平成23年第2回臨時会,2011-01-25,2011-01-25,2011-01-25T00:00:00.000Z,2011-01-25T00:00:00.000Z,kasama-h23-2-rinji,https://www.city.kasama.lg.jp/page/page000047.html,false
+9a163ba1-aa3b-5edb-b975-0e0a096fb64d,平成23年第1回定例会,2011-03-01,2011-03-18,2011-03-01T00:00:00.000Z,2011-03-01T00:00:00.000Z,kasama-h23-1-teirei,https://www.city.kasama.lg.jp/page/page000047.html,false
+0faec910-116a-58e0-afe4-f8cb07ec31b8,平成23年第3回臨時会,2011-04-26,2011-04-26,2011-04-26T00:00:00.000Z,2011-04-26T00:00:00.000Z,kasama-h23-3-rinji,https://www.city.kasama.lg.jp/page/page000047.html,false
 6eb7ede1-508b-54d2-9010-d8faefeac2da,平成26年第3回定例会,2014-09-02,2014-09-19,2014-09-02T00:00:00.000Z,2014-09-02T00:00:00.000Z,kasama-h26-3-teirei,https://www.city.kasama.lg.jp/page/page005681.html,false
 38810664-e0e1-549a-95c6-2e89fa9dcc3a,平成26年第4回定例会,2014-11-04,2014-11-12,2014-11-04T00:00:00.000Z,2014-11-04T00:00:00.000Z,kasama-h26-4-teirei,https://www.city.kasama.lg.jp/page/page006030.html,false
 e97acdf5-c7cf-5085-8edb-bb7068e5144b,平成26年第1回臨時会,2014-12-25,2014-12-25,2014-12-25T00:00:00.000Z,2014-12-25T00:00:00.000Z,kasama-h26-1-rinji,https://www.city.kasama.lg.jp/page/page006030.html,false

@@ -41,6 +41,137 @@ function fromMinutes(input: {
   };
 }
 
+/** 平成23年第4回定例会（12月）。一般質問は9日・12日・13日の3日間で12人 */
+const H23_4 = {
+  sessionKey: "h23-4-teirei",
+  sessionName: "平成23年第4回定例会",
+} as const;
+const H23_4_DAY1 = {
+  ...H23_4,
+  questionDate: "2011-12-09",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1370327262_doc_56_1.pdf",
+} as const;
+const H23_4_DAY2 = {
+  ...H23_4,
+  questionDate: "2011-12-12",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1329443117_doc_56_3.pdf",
+} as const;
+const H23_4_DAY3 = {
+  ...H23_4,
+  questionDate: "2011-12-13",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1329443117_doc_56_4.pdf",
+} as const;
+
+const H23_4_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H23_4_DAY1,
+    order: 1,
+    memberName: "鹿志村 清一",
+    items: [
+      "青年海外派遣事業について",
+      "展望台の眺望の確保について",
+      "福島県の避難自治体の子どもたちの交流を進めることについて",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY1,
+    order: 2,
+    memberName: "鈴木 貞夫",
+    items: [
+      "福島原発事故放射能汚染への対応について",
+      "東海原発から30キロ圏内地域防災計画について",
+      "イノシシ対策について",
+      "エコフロンティアかさまに搬入されている廃棄物について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY1,
+    order: 3,
+    memberName: "町田 征久",
+    items: [
+      "交通安全対策について",
+      "公共下水道、農業集落排水の今後の計画について",
+      "スポーツ施設の改善について",
+      "各種予防接種について",
+      "岩間支所の１階フロア事務スペースについて",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY1,
+    order: 4,
+    memberName: "小磯 節子",
+    items: ["地場農産物振興拡大事業について", "県道上吉影岩間線の堅倉街道踏切の改良工事について"],
+  }),
+  fromMinutes({
+    ...H23_4_DAY1,
+    order: 5,
+    memberName: "石松 俊雄",
+    items: [
+      "これまで運用してきた本市の指定管理者制度の評価と今後の指定管理者制度の最適化について",
+      "笠間市の福島第一原発事故による放射能汚染対策について",
+      "電力自由化に対する取り組みについて",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY2,
+    order: 6,
+    memberName: "大関 久義",
+    items: ["笠間市の地域集会所について", "狭あい道路整備事業について"],
+  }),
+  fromMinutes({
+    ...H23_4_DAY2,
+    order: 7,
+    memberName: "石田 安夫",
+    items: ["拠点避難所整備について", "定住化対策について"],
+  }),
+  fromMinutes({
+    ...H23_4_DAY2,
+    order: 8,
+    memberName: "畑岡 洋二",
+    items: ["市政情報の市民への提供方法について", "笠間市一般廃棄物処理手数料収納事務委託手数料について"],
+  }),
+  fromMinutes({
+    ...H23_4_DAY2,
+    order: 9,
+    memberName: "西山 猛",
+    items: [
+      "行政区制度の適正運営について",
+      "通年型「かさまの観光」の実現について",
+      "「統計かさま」から見えてくる市の実情について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY2,
+    order: 10,
+    memberName: "横倉 きん",
+    items: [
+      "保育行政について",
+      "水道料金の統一に向けて",
+      "放射能から子どもの健康を守る放射能汚染の問題について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY3,
+    order: 11,
+    memberName: "野口 圓",
+    items: [
+      "東日本大震災後の対応について",
+      "災害復旧の進捗状況について",
+      "防災計画について",
+      "災害復旧と建設業界の問題について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_4_DAY3,
+    order: 12,
+    memberName: "萩原 瑞子",
+    items: ["水道料金の滞納対策について", "観光振興について"],
+  }),
+];
+
 /** 平成24年第1回定例会（3月）。一般質問は13日・14日・15日の3日間で11人 */
 const H24_1 = {
   sessionKey: "h24-1-teirei",
@@ -433,6 +564,7 @@ const H24_4_DAY3 = {
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...H23_4_RECORDS,
   ...H24_1_RECORDS,
   ...H24_2_RECORDS,
   ...H24_3_RECORDS,

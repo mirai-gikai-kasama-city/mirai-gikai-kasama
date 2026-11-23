@@ -13,6 +13,7 @@ import { H25_1_RINJI_BILLS, H25_1_RINJI_SESSION } from "./h25-1-rinji";
 import { H25_1_TEIREI_BILLS, H25_1_TEIREI_SESSION } from "./h25-1-teirei";
 import { H25_2_RINJI_BILLS, H25_2_RINJI_SESSION } from "./h25-2-rinji";
 import { H25_2_TEIREI_BILLS, H25_2_TEIREI_SESSION } from "./h25-2-teirei";
+import { H25_3_TEIREI_BILLS, H25_3_TEIREI_SESSION } from "./h25-3-teirei";
 import { H26_1_RINJI_BILLS, H26_1_RINJI_SESSION } from "./h26-1-rinji";
 import { H26_3_TEIREI_BILLS, H26_3_TEIREI_SESSION } from "./h26-3-teirei";
 import { H26_4_TEIREI_BILLS, H26_4_TEIREI_SESSION } from "./h26-4-teirei";
@@ -213,6 +214,10 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(H25_2_RINJI_SESSION, {
     ...dayori(30, "page003289", "1479809038", [], 2, 5),
     bills: H25_2_RINJI_BILLS,
+  }),
+  toSession(H25_3_TEIREI_SESSION, {
+    ...dayori(31, "page003380", "1479808541", [], 0, 5),
+    bills: H25_3_TEIREI_BILLS,
   }),
   toSession(H26_3_TEIREI_SESSION, {
     ...dayori(35, "page005681", "1414475417", [], 2),

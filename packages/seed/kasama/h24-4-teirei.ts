@@ -16,8 +16,12 @@
  * 市の番号が無い議事（会議録署名議員の指名、会期の決定、諸般の報告、陳情の付託、継続審査、
  * 議長・副議長の辞職と選挙、議席の変更、委員の選任、一部事務組合の議会議員の選挙、農業委員の推薦）は、
  * 当サイトの番号（「種類-番号」。種類ごとに会議録の議事の順で1から）を付けて UNNUMBERED_BILLS に載せた。
- * 委員の名簿は会議録に無く、議会だより第28号の名簿は縦書きで文字の順が崩れて読み取れないので、名前は書いていない。
+ * 委員の名前は会議録に無いので、議会だより第28号の名簿を画像にして読んだもの（共通の KASAMA_COMMITTEE_ROSTERS）を使う。
  */
+import {
+  type CommitteeRoster,
+  KASAMA_COMMITTEE_ROSTERS,
+} from "@mirai-gikai/shared/council/kasama-committee-rosters";
 import {
   type SiteNumberKind,
   siteNumber,
@@ -192,14 +196,32 @@ function unionElection(input: {
   });
 }
 
-/** 委員会の委員の選任（議長の指名。名簿は会議録に無い） */
-function committeeMembers(number: number, committee: string, detail = ""): KasamaBill {
+/** この日に選任された委員会の顔ぶれ（議会だより第28号の名簿） */
+const ROSTER = (() => {
+  const snapshot = KASAMA_COMMITTEE_ROSTERS.find((s) => s.selectedOn === LAST_DAY);
+  if (!snapshot) throw new Error(`${LAST_DAY} の委員会の名簿がありません`);
+  return snapshot;
+})();
+
+/**
+ * 委員会の委員の選任（議長の指名）。会議録には「お手元の名簿のとおり」とだけあり名前が無いので、
+ * 議会だよりの名簿から委員長・副委員長・委員を並べる
+ */
+function committeeMembers(number: number, kind: CommitteeRoster["kind"], committee: string): KasamaBill {
+  const lines = ROSTER.committees
+    .filter((c) => c.kind === kind)
+    .map((c) => `- ${c.committee}：委員長 ${c.chair}、副委員長 ${c.viceChair}、委員 ${c.members.join("・")}`)
+    .join("\n");
   return unnumbered("選任", number, {
     title: `${committee}委員の選任について`,
     resultLabel: "選任",
     decidedOn: LAST_DAY,
     summary: `${committee}の委員を選ぶ議事。議長が名簿のとおり指名し、異議なく決まった。`,
-    body: `${committee}の委員は、委員会条例第8条第1項により、議長が指名して選びます。議長・副議長が新しくなった12月18日に、議長が配った名簿のとおり指名し、異議なく決まりました。${detail}委員の名簿は会議録には載っておらず、かさま市議会だより第28号の4ページに紹介されています。`,
+    body: `${committee}の委員は、委員会条例第8条第1項により、議長が指名して選びます。議長・副議長が新しくなった12月18日に、議長が配った名簿のとおり指名し、異議なく決まりました。
+
+${lines}
+
+委員の名前は会議録には載っていないため、かさま市議会だより第${ROSTER.source.issue}号（${ROSTER.source.pages.join("・")}ページ）の名簿によります。`,
   });
 }
 
@@ -298,13 +320,9 @@ const UNNUMBERED_BILLS: readonly KasamaBill[] = [
       "議長が代わったことに合わせて、柴沼広議員を22番、小薗江一三議長を24番の議席に変えた。",
     body: `議長・副議長の選挙の後、議席の一部変更が日程に追加されました。議長は24番の議席に座るという申し合わせがあるため、柴沼広議員が22番に、小薗江一三議長が24番に変わります。事務局長の説明のとおり変えることに異議はなく、12月18日に決まりました。`,
   }),
-  committeeMembers(
-    1,
-    "常任委員会",
-    "対象は総務委員会、文教厚生委員会、産業経済委員会、土木建設委員会の4つです。"
-  ),
-  committeeMembers(2, "議会運営委員会"),
-  committeeMembers(3, "議会だより編集委員会"),
+  committeeMembers(1, "常任委員会", "常任委員会"),
+  committeeMembers(2, "議会運営委員会", "議会運営委員会"),
+  committeeMembers(3, "議会だより編集委員会", "議会だより編集委員会"),
   unionElection({
     number: 3,
     body: "茨城県後期高齢者医療広域連合",

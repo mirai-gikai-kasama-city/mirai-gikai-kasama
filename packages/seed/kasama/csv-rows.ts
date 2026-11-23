@@ -3,6 +3,10 @@
  * 実際の書き出しは build-csv.ts が行う
  */
 import { buildBillSourceSection } from "@mirai-gikai/shared/council/bill-source-section";
+import {
+  parseSiteNumber,
+  SITE_NUMBER_NOTE,
+} from "@mirai-gikai/shared/council/site-bill-number";
 import { uuidv5 } from "../tagawa/uuidv5";
 import {
   type KasamaBill,
@@ -115,6 +119,7 @@ export function buildBillContent(session: KasamaSession, bill: KasamaBill): stri
     "## 議案情報",
     "",
     `- **議案番号**: ${bill.billNumberLabel}`,
+    ...(parseSiteNumber(bill.billNumberLabel) ? [`- ${SITE_NUMBER_NOTE}`] : []),
     `- **件名**: ${bill.title}`,
     ...(bill.submitter === null
       ? []
@@ -130,6 +135,10 @@ export function buildBillContent(session: KasamaSession, bill: KasamaBill): stri
       officialPageTitle: pending ? undefined : session.sourceTitle,
       isOngoing: pending,
       descriptionSource: bill.source,
+      // 市の番号が無い議事は議会だよりの審議結果に載らないので、出典を会議録だけにする
+      resultSource: parseSiteNumber(bill.billNumberLabel)
+        ? "unnumbered-minutes"
+        : undefined,
     }),
   ].join("\n");
 }

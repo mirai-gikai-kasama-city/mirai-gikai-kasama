@@ -45,6 +45,14 @@ export function buildBillSourceRefs(
       detail: BROADCAST_DETAIL,
       scope: "議決結果（議決結果のページが公開されたら照らし合わせます）",
     });
+  } else if (parsed.resultSource === "unnumbered-minutes") {
+    // 市の番号が無い議事は議会だよりの審議結果に載らないので、件名・結果とも会議録による
+    refs.push({
+      kind: "official",
+      detail: MINUTES_DETAIL,
+      scope: "件名・結果",
+      href: OFFICIAL_MINUTES_TOP_URL,
+    });
   }
 
   if (parsed.descriptionSource === "minutes") {

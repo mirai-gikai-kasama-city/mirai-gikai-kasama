@@ -25,6 +25,21 @@ describe("buildBillSourceSection", () => {
     ]);
   });
 
+  it("市の番号が無い議事は公式ページの行を出さず、会議録によることを書き、読み取ると同じ出典に戻る", () => {
+    const section = buildBillSourceSection({
+      ...base,
+      descriptionSource: "minutes",
+      resultSource: "unnumbered-minutes",
+    });
+    expect(section.join("\n")).not.toContain("笠間市議会「");
+    expect(section.join("\n")).toContain("議会だよりの審議結果には載っていません");
+    expect(parseBillSources(section.join("\n"))).toEqual({
+      officialPage: null,
+      descriptionSource: "minutes",
+      resultSource: "unnumbered-minutes",
+    });
+  });
+
   it("会期中の会期は公式ページの題名を「提出議案」にする", () => {
     expect(buildBillSourceSection({ ...base, isOngoing: true })[2]).toContain(
       "9月定例会の提出議案」"

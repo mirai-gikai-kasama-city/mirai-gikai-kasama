@@ -21,9 +21,15 @@ export type BillDescriptionSource =
 /**
  * 議決結果が何で確認されたか。
  * official: 市公式サイトの議決結果ページ / minutes: 会議録検索システムの本会議録 /
- * broadcast: 公式YouTubeの本会議中継映像（議決結果ページが公開される前の会期）
+ * broadcast: 公式YouTubeの本会議中継映像（議決結果ページが公開される前の会期） /
+ * unnumbered-minutes: 市の番号が無い議事（会期の決定、委員の選任など）。議会だよりの審議結果に
+ * 載らないので、件名・結果とも本会議録による（公式ページの行は出さない）
  */
-export type BillResultSource = "official" | "minutes" | "broadcast";
+export type BillResultSource =
+  | "official"
+  | "minutes"
+  | "broadcast"
+  | "unnumbered-minutes";
 
 const MINUTES_LINK = `[${OFFICIAL_MINUTES_SYSTEM_NAME}](${OFFICIAL_MINUTES_TOP_URL})`;
 
@@ -44,6 +50,7 @@ const RESULT_SOURCE_BULLET: Record<
   minutes: `- 議決結果は${MINUTES_LINK}の本会議録から自動抽出したものです`,
   broadcast:
     "- 議決結果は本会議の中継映像で確認したものです（議会だよりの発行後に照合します）",
+  "unnumbered-minutes": `- 件名・結果は${MINUTES_LINK}の本会議録によります（市の番号が無い議事のため、議会だよりの審議結果には載っていません）`,
 };
 
 /** 解説文の典拠ごとの箇条書きと末尾の注記 */
@@ -96,10 +103,16 @@ export function buildBillSourceSection(
     input.resultSource && input.resultSource !== "official"
       ? RESULT_SOURCE_BULLET[input.resultSource]
       : undefined;
+  const officialPageLine =
+    input.resultSource === "unnumbered-minutes"
+      ? []
+      : [
+          `- [笠間市議会「${input.officialPageTitle ?? `${input.sessionName}の${pageTitle}`}」](${input.sourceUrl})（笠間市公式サイト）`,
+        ];
   return [
     SOURCE_HEADING,
     "",
-    `- [笠間市議会「${input.officialPageTitle ?? `${input.sessionName}の${pageTitle}`}」](${input.sourceUrl})（笠間市公式サイト）`,
+    ...officialPageLine,
     ...(citations?.bullets ?? []),
     ...(resultBullet ? [resultBullet] : []),
     "",
@@ -144,6 +157,8 @@ export function parseBillSources(
     resultSource = "minutes";
   } else if (section.includes(RESULT_SOURCE_BULLET.broadcast)) {
     resultSource = "broadcast";
+  } else if (section.includes(RESULT_SOURCE_BULLET["unnumbered-minutes"])) {
+    resultSource = "unnumbered-minutes";
   }
 
   return {

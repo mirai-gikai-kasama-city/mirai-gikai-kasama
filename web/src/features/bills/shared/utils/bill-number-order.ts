@@ -2,6 +2,10 @@
  * 議案名の先頭の番号（「議案第53号」「請願第27-4号」「委員会提出議案第1号」など）で並べるための比較。
  * 会期の中で、議決日（審議中は提出日）が同じ議案どうしを番号順に並べるのに使う
  */
+import {
+  parseSiteNumber,
+  siteNumberKindOrder,
+} from "@mirai-gikai/shared/council/site-bill-number";
 
 /** 種類の並び（笠間市議会の審議結果の表に近い順）。ここに無い種類は後ろに回す */
 const KIND_ORDER = [
@@ -24,10 +28,19 @@ function toHalfWidthDigits(text: string): string {
   );
 }
 
-/** 議案名から [種類の順位, 番号, 枝番号] を取り出す。番号が無ければ null */
+/**
+ * 議案名から [種類の順位, 番号, 枝番号] を取り出す。番号が無ければ null。
+ * 当サイトが便宜的に付けた番号（「手続-1」「選任-2」など）は、会期の初めの種類を
+ * 市の番号がある議案より前に、それ以外を後ろに並べる
+ */
 export function billNumberSortKey(
   name: string
 ): [number, number, number] | null {
+  const site = parseSiteNumber(name);
+  if (site) {
+    const order = siteNumberKindOrder(site.kind);
+    return [order < 0 ? order : KIND_ORDER.length + order, site.number, 0];
+  }
   const m = toHalfWidthDigits(name).match(/^(\S*?)第(\d+)(?:[-－‐](\d+))?号/);
   if (!m) return null;
   const kindIndex = KIND_ORDER.indexOf(m[1]);

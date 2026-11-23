@@ -41,6 +41,127 @@ function fromMinutes(input: {
   };
 }
 
+/** 平成24年第3回定例会（9月）。一般質問は18日・19日・20日の3日間で11人 */
+const H24_3 = {
+  sessionKey: "h24-3-teirei",
+  sessionName: "平成24年第3回定例会",
+} as const;
+const H24_3_DAY1 = {
+  ...H24_3,
+  questionDate: "2012-09-18",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1354152863_doc_56_2.pdf",
+} as const;
+const H24_3_DAY2 = {
+  ...H24_3,
+  questionDate: "2012-09-19",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1354152863_doc_56_3.pdf",
+} as const;
+const H24_3_DAY3 = {
+  ...H24_3,
+  questionDate: "2012-09-20",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1354152863_doc_56_4.pdf",
+} as const;
+
+const H24_3_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H24_3_DAY1,
+    order: 1,
+    memberName: "町田 征久",
+    items: [
+      "県道南指原岩間停車場線の工事の進捗状況について",
+      "県道石岡城里線下安居十字路のバイパスの進捗状況",
+      "笠間市の小・中学校のいじめの実態。また、対策はどのようにしているのか",
+      "岩間海洋センターのプールの屋根の修理について",
+      "肺炎球菌ワクチン接種の無料化について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_3_DAY1,
+    order: 2,
+    memberName: "畑岡 洋二",
+    items: [
+      "笠間市の道路行政における交通安全総点検とバリアフリーについて",
+      "笠間市の魅力発信について",
+      "笠間市のいな吉の使用方法について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_3_DAY1,
+    order: 3,
+    memberName: "萩原 瑞子",
+    items: [
+      "芸術の森公園の整備について",
+      "工芸の丘内の登り窯の修復について",
+      "笠間のいなり寿司が観光の目玉について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_3_DAY1,
+    order: 4,
+    memberName: "小磯 節子",
+    items: ["６次産業化について"],
+  }),
+  fromMinutes({
+    ...H24_3_DAY1,
+    order: 5,
+    memberName: "横倉 きん",
+    items: ["消防行政について", "原子力防災について", "図書館の拡充について"],
+  }),
+  fromMinutes({
+    ...H24_3_DAY2,
+    order: 6,
+    memberName: "石松 俊雄",
+    // 2問目・3問目は「通告二問目の…」「通告３問目の…」と読み上げている。1問目は題を読み上げていないので、
+    // 「災害時要援護者への対応について課題となったこと…」の文から写した
+    items: [
+      "災害時要援護者への対応について",
+      "笠間芸術の森公園の維持管理費用について",
+      "生活道路の整備と適切な維持管理費について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_3_DAY2,
+    order: 7,
+    memberName: "西山 猛",
+    items: [
+      "いじめ問題と対策について",
+      "虐待と社会情勢について",
+      "復旧から復興に向けた「まちづくり」について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_3_DAY2,
+    order: 8,
+    memberName: "鹿志村 清一",
+    // 2問目は題を読み上げていないので、「…非核平和都市宣言の市であることを表明し、内外にアピールするための標柱設置を考えてはいかがか」の文から写した
+    items: [
+      "市内小・中学校における原子力エネルギー等の教育について",
+      "非核平和都市宣言の市であることを表明し、内外にアピールするための標柱設置",
+    ],
+  }),
+  fromMinutes({
+    ...H24_3_DAY2,
+    order: 9,
+    memberName: "石田 安夫",
+    items: ["自然エネルギー活用助成事業について", "地域維持型契約方式の活用について"],
+  }),
+  fromMinutes({
+    ...H24_3_DAY3,
+    order: 10,
+    memberName: "鈴木 貞夫",
+    items: ["放射能汚染から市民の安全を守るために"],
+  }),
+  fromMinutes({
+    ...H24_3_DAY3,
+    order: 11,
+    memberName: "大関 久義",
+    items: ["笠間支所の整備について"],
+  }),
+];
+
 /** 平成24年第4回定例会（12月）。一般質問は13日・14日・17日の3日間で10人 */
 const H24_4 = {
   sessionKey: "h24-4-teirei",
@@ -66,6 +187,7 @@ const H24_4_DAY3 = {
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...H24_3_RECORDS,
   fromMinutes({
     ...H24_4_DAY1,
     order: 1,

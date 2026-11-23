@@ -6,6 +6,8 @@ import { getCommitteeMeetingListItems } from "@/features/committees/server/loade
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
 import { GENERAL_QUESTIONS } from "../../shared/data/general-questions-data";
+import { DAYORI_QUESTION_SUMMARIES } from "../../shared/data/general-questions-dayori";
+import { MINUTES_GENERAL_QUESTIONS } from "../../shared/data/general-questions-minutes";
 import { PENDING_GENERAL_QUESTIONS } from "../../shared/data/general-questions-pending";
 import {
   groupQuestionsBySession,
@@ -35,7 +37,9 @@ export interface QuestionLinkContext extends MemberLinkContext {
 
 /**
  * 一般質問の全記録。会議録検索システムから自動生成した記録に、まだそこに載っていない会期の
- * 手で起こした記録（通告一覧の PDF から）を足す。同じ会期が自動生成のほうに入ったら、そちらを使う
+ * 手で起こした記録（通告一覧の PDF から）と、通告が公開されていない時期（平成26年8月まで）に
+ * 会議録から起こした記録を足す。同じ会期が自動生成のほうに入ったら、そちらを使う。
+ * 議会だよりの「問」「答」を写したものがあれば、id で合わせる
  */
 const SCRAPED_SESSION_KEYS = new Set(
   GENERAL_QUESTIONS.map((r) => r.sessionKey)
@@ -45,7 +49,11 @@ const ALL_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
     (record) => !SCRAPED_SESSION_KEYS.has(record.sessionKey)
   ),
   ...GENERAL_QUESTIONS,
-];
+  ...MINUTES_GENERAL_QUESTIONS,
+].map((record) => {
+  const dayoriSummary = DAYORI_QUESTION_SUMMARIES[record.id];
+  return dayoriSummary ? { ...record, dayoriSummary } : record;
+});
 
 /** 一般質問の全記録（公式サイトから作った静的データ） */
 export function getAllGeneralQuestions(): readonly GeneralQuestionRecord[] {

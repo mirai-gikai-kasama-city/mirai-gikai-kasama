@@ -15,6 +15,7 @@ import {
   resolveMemberPageKey,
 } from "../../shared/utils/question-links";
 import type { QuestionLinkContext } from "../loaders/get-general-questions";
+import { DayoriSummary } from "./dayori-summary";
 import { OutlinePoints } from "./outline-points";
 
 interface QuestionCardProps {
@@ -138,12 +139,17 @@ export function QuestionCard({
         </details>
       )}
 
+      {!compact && record.dayoriSummary && (
+        <DayoriSummary summary={record.dayoriSummary} />
+      )}
+
       {(hideHeading ||
         record.videoUrl ||
         record.minutesUrl ||
         answerRecordId ||
         record.pdfUrl ||
-        outlineFromDisclosure) && (
+        outlineFromDisclosure ||
+        record.itemsSource === "minutes") && (
         <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
           {hideHeading && (
             <TextLink href={sessionAnchorHref}>
@@ -177,6 +183,9 @@ export function QuestionCard({
           )}
           {outlineFromDisclosure && (
             <SourceBadge kind="disclosure" detail="要旨は通告書の写しから" />
+          )}
+          {record.itemsSource === "minutes" && !compact && (
+            <SourceBadge kind="official" detail="質問事項は会議録から" />
           )}
         </footer>
       )}

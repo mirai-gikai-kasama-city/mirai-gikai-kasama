@@ -41,6 +41,124 @@ function fromMinutes(input: {
   };
 }
 
+/** 平成24年第1回定例会（3月）。一般質問は13日・14日・15日の3日間で11人 */
+const H24_1 = {
+  sessionKey: "h24-1-teirei",
+  sessionName: "平成24年第1回定例会",
+} as const;
+const H24_1_DAY1 = {
+  ...H24_1,
+  questionDate: "2012-03-13",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1338428457_doc_56_2.pdf",
+} as const;
+const H24_1_DAY2 = {
+  ...H24_1,
+  questionDate: "2012-03-14",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1338428457_doc_56_3.pdf",
+} as const;
+const H24_1_DAY3 = {
+  ...H24_1,
+  questionDate: "2012-03-15",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1338428457_doc_56_4.pdf",
+} as const;
+
+const H24_1_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H24_1_DAY1,
+    order: 1,
+    memberName: "鹿志村 清一",
+    items: [
+      "市庁舎内の相談室の整備について",
+      "介護保険における要介護度４以上の方の在宅介護における在宅介護慰労金の増額を検討したらどうか",
+      "自主防災組織について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_1_DAY1,
+    order: 2,
+    memberName: "石田 安夫",
+    items: ["都市鉱山活用について", "歩道グレードアップ事業について", "デマンド交通について"],
+  }),
+  fromMinutes({
+    ...H24_1_DAY1,
+    order: 3,
+    memberName: "鈴木 貞夫",
+    // 会議録で題を読み上げたのは2つ目だけなので、議会だより第25号の見出しを使う（2つ目も見出しと同じ）
+    items: [
+      "安心して住み続けられるために",
+      "自然エネルギー太陽光発電の促進について",
+      "エコフロンティアかさまに搬入される廃棄物の放射能の汚染について",
+      "耕作放棄地と山林の荒廃対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_1_DAY1,
+    order: 4,
+    memberName: "石松 俊雄",
+    // 2つ目は題を読み上げておらず、議会だよりにも載っていないので、会議録の質問の中の言葉を使う
+    items: ["合併10年後からの地方交付税の動向と市の財政計画について", "地域主権関連３法について"],
+  }),
+  fromMinutes({
+    ...H24_1_DAY1,
+    order: 5,
+    memberName: "町田 征久",
+    items: [
+      "市税滞納の徴収について",
+      "空き家、空き店舗対策について",
+      "市の省エネルギー対策について",
+      "生活道路の改善について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_1_DAY2,
+    order: 6,
+    memberName: "西山 猛",
+    items: ["都市計画について", "通年型観光について", "男女共同参画について", "応急仮設住宅"],
+  }),
+  fromMinutes({
+    ...H24_1_DAY2,
+    order: 7,
+    memberName: "横倉 きん",
+    items: [
+      "高齢者福祉計画と介護保険について",
+      "子育て支援対策について",
+      "児童館について",
+      "災害に強いまちづくりについて",
+    ],
+  }),
+  fromMinutes({
+    ...H24_1_DAY2,
+    order: 8,
+    memberName: "小薗江 一三",
+    items: [
+      "学校教育必修科目について",
+      "市立病院の改革について",
+      "友部駅周辺今後の計画並びに建設会社のモラルについて",
+    ],
+  }),
+  fromMinutes({
+    ...H24_1_DAY2,
+    order: 9,
+    memberName: "大関 久義",
+    items: ["笠間市公用車の利用について", "笠間稲荷門前通り拠点整備事業及び周辺関連事業と観光について"],
+  }),
+  fromMinutes({
+    ...H24_1_DAY3,
+    order: 10,
+    memberName: "飯田 正憲",
+    items: ["野犬対策について", "笠間市から配布される印刷物について"],
+  }),
+  fromMinutes({
+    ...H24_1_DAY3,
+    order: 11,
+    memberName: "鈴木 裕士",
+    items: ["人口対策について", "防災無線について", "先の震災に伴う廃棄物の処理に関して"],
+  }),
+];
+
 /** 平成24年第2回定例会（6月）。一般質問は12日・13日・14日の3日間で12人 */
 const H24_2 = {
   sessionKey: "h24-2-teirei",
@@ -315,6 +433,7 @@ const H24_4_DAY3 = {
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...H24_1_RECORDS,
   ...H24_2_RECORDS,
   ...H24_3_RECORDS,
   fromMinutes({

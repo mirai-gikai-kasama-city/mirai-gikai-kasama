@@ -1,3 +1,4 @@
+import { parseSiteNumber } from "@mirai-gikai/shared/council/site-bill-number";
 import { Container } from "@/components/layouts/container";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
@@ -97,14 +98,19 @@ export async function BillDetailLayout({
             />
           </div>
 
-          {/* 議案ステータス進捗 */}
-          <div className="my-8">
-            <BillStatusProgress
-              status={bill.status}
-              originatingHouse={bill.originating_house}
-              statusNote={bill.status_note}
-            />
-          </div>
+          {/*
+            議案ステータス進捗。市の番号が無い議事（会期の決定、署名議員の指名、諸般の報告など）は
+            提出・委員会審査の段階が無く、図が実際の流れと合わないので出さない
+          */}
+          {!parseSiteNumber(bill.name) && (
+            <div className="my-8">
+              <BillStatusProgress
+                status={bill.status}
+                originatingHouse={bill.originating_house}
+                statusNote={bill.status_note}
+              />
+            </div>
+          )}
 
           {/* 所属会期のまとめページへのリンク（diet_session_idが無い議案では非表示） */}
           {dietSession && (

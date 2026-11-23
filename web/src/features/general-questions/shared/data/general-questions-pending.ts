@@ -10,8 +10,12 @@
  * - 出典は通告一覧（発言順・9人）の PDF。ほかに1〜5番目・6〜9番目の5人分・4人分の PDF があり、
  *   一般質問の1日目・2日目の分と見られるが、PDF に日付が無いので questionDate は null にした
  *   （会期日程では一般質問は11月13日・16日・17日）
- * - 質問事項（items）は通告一覧の「大項目」、要旨（outline）は「小項目」。①②…の記号は外した
- *   （表示で(1)(2)…が付く）。小項目の前に前置きの文がある質問は、前置きを1点目にして①…をその下に並べた
+ * - 質問事項（items）は通告一覧の「大項目」。
+ * - 「小項目」も下の outline に書き起こしてあるが、サイトには出さない（outline: null）。
+ *   会議録検索システムの通告は大項目だけで、過去の会期の通告一覧PDFは市のサイトから消えていて
+ *   小項目をそろえられないため、小項目は入れないことに統一した（運営者の判断。2026-11-23）。
+ *   書き起こしは、方針が変わったときのために残している。①②…の記号は外し、前置きの文がある質問は
+ *   前置きを1点目にして①…をその下に並べた
  * - 表記は通告一覧のまま（「デットライン」など）
  */
 import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
@@ -40,14 +44,8 @@ function r84(input: {
     isRepresentative: false,
     format: "一問一答",
     items: input.outline.map((item) => item.title),
-    outline: input.outline.map((item) => ({
-      title: item.title,
-      points: item.points.map((point) =>
-        typeof point === "string"
-          ? { text: point, subPoints: [] }
-          : { text: point[0], subPoints: point[1] }
-      ),
-    })),
+    // 小項目は、ほかの会期（会議録検索システムの通告は大項目だけ）にそろえて載せない（運営者の判断。2026-11-23）
+    outline: null,
     videoUrl: null,
     minutesUrl: null,
     sourceUrl: R8_4_LIST_PDF,

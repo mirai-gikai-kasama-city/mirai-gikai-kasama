@@ -183,7 +183,7 @@ export function QuestionSearch({
                 テーマで探す
               </h2>
               <p className="text-xs leading-[1.7] text-mirai-text-secondary">
-                質問事項と通告書の要旨に含まれる言葉で、暮らしのテーマごとにまとめています（議案と同じテーマです）。1人分の質問が複数のテーマに入ることもあります。
+                質問事項に含まれる言葉で、暮らしのテーマごとにまとめています（議案と同じテーマです）。1人分の質問が複数のテーマに入ることもあります。
               </p>
             </div>
             <ThemeGrid

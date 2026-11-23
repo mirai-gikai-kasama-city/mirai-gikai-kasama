@@ -203,7 +203,7 @@ export function describeQuestionSession({
   memberNames: readonly string[];
 }): string {
   return joinWithinLimit({
-    prefix: `笠間市議会 ${sessionName}で${memberNames.length}人の議員が通告した一般質問の質問事項と要旨を掲載しています。質問者: `,
+    prefix: `笠間市議会 ${sessionName}で${memberNames.length}人の議員が通告した一般質問の質問事項を掲載しています。質問者: `,
     items: memberNames,
     overflow: (omitted) => `ほか${omitted}人`,
   });

@@ -15,7 +15,7 @@ export function DayoriSummary({ summary }: DayoriSummaryProps) {
   return (
     <details className="rounded-md bg-mirai-surface px-3 py-2 text-[13px] text-mirai-text-secondary">
       <summary className="cursor-pointer font-medium text-mirai-text">
-        議会だよりの要約（問と答・答弁{answerCount}件）
+        議会だよりの要約（問と答・{answerCount}件）
       </summary>
       <p className="mt-2 text-xs leading-[1.7] text-mirai-text-muted">
         かさま市議会だより第{summary.issue}号（{summary.page}
@@ -30,9 +30,9 @@ export function DayoriSummary({ summary }: DayoriSummaryProps) {
             <dt
               className={cn(
                 "h-fit shrink-0 rounded px-1.5 text-xs font-bold leading-[1.7]",
-                entry.kind === "問"
-                  ? "bg-mirai-surface-key text-primary-accent"
-                  : "border border-mirai-border bg-white text-mirai-text"
+                entry.kind === "答"
+                  ? "border border-mirai-border bg-white text-mirai-text"
+                  : "bg-mirai-surface-key text-primary-accent"
               )}
             >
               {entry.kind}

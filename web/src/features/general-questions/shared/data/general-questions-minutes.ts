@@ -41,7 +41,7 @@ function fromMinutes(input: {
   };
 }
 
-/** 平成24年第4回定例会（12月）。一般質問は13日・14日・17日の3日間で10人（試作として、まず3人） */
+/** 平成24年第4回定例会（12月）。一般質問は13日・14日・17日の3日間で10人 */
 const H24_4 = {
   sessionKey: "h24-4-teirei",
   sessionName: "平成24年第4回定例会",
@@ -51,6 +51,18 @@ const H24_4_DAY1 = {
   questionDate: "2012-12-13",
   dayIndex: 1,
   minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1360799867_doc_56_2.pdf",
+} as const;
+const H24_4_DAY2 = {
+  ...H24_4,
+  questionDate: "2012-12-14",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1360799867_doc_56_3.pdf",
+} as const;
+const H24_4_DAY3 = {
+  ...H24_4,
+  questionDate: "2012-12-17",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1360799867_doc_56_4.pdf",
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
@@ -79,5 +91,54 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
     order: 3,
     memberName: "石田 安夫",
     items: ["街路灯のＬＥＤ化について"],
+  }),
+  fromMinutes({
+    ...H24_4_DAY1,
+    order: 4,
+    memberName: "鈴木 裕士",
+    items: ["産業立地、主として加工産業の立地について", "税金の収納に関して"],
+  }),
+  fromMinutes({
+    ...H24_4_DAY2,
+    order: 5,
+    memberName: "鈴木 貞夫",
+    items: ["健康都市宣言にふさわしい環境対策を"],
+  }),
+  fromMinutes({
+    ...H24_4_DAY2,
+    order: 6,
+    memberName: "西山 猛",
+    items: ["総合計画３カ年実施計画について", "区長制度の見直しについて"],
+  }),
+  fromMinutes({
+    ...H24_4_DAY2,
+    order: 7,
+    memberName: "野口 圓",
+    items: ["いじめの問題"],
+  }),
+  fromMinutes({
+    ...H24_4_DAY2,
+    order: 8,
+    memberName: "石松 俊雄",
+    // 会議録で題として読み上げたのは2問目（「通告２問目の行政外部評価制度の結果について」）だけ。
+    // 1問目は質問の趣旨を述べた文（「…行政評価制度の現状と課題、さらには今後について質問をいたします」）、
+    // 3問目は前置きの文（「…コミュニティセンターの整備、検討について説明がございました」）から写した
+    items: [
+      "笠間市における行政評価制度の現状と課題、さらには今後について",
+      "行政外部評価制度の結果について",
+      "コミュニティセンターの整備、検討について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_4_DAY3,
+    order: 9,
+    memberName: "大関 久義",
+    items: ["笠間市のし尿処理について"],
+  }),
+  fromMinutes({
+    ...H24_4_DAY3,
+    order: 10,
+    memberName: "飯田 正憲",
+    items: ["鳥獣被害防止特措法一部改正について", "有害鳥獣対策について"],
   }),
 ];

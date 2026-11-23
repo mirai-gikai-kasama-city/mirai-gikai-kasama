@@ -41,6 +41,140 @@ function fromMinutes(input: {
   };
 }
 
+/** 平成23年第3回定例会（9月）。一般質問は13日・14日・15日の3日間で14人 */
+const H23_3 = {
+  sessionKey: "h23-3-teirei",
+  sessionName: "平成23年第3回定例会",
+} as const;
+const H23_3_DAY1 = {
+  ...H23_3,
+  questionDate: "2011-09-13",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1322549192_doc_56_2.pdf",
+} as const;
+const H23_3_DAY2 = {
+  ...H23_3,
+  questionDate: "2011-09-14",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1322549192_doc_56_3.pdf",
+} as const;
+const H23_3_DAY3 = {
+  ...H23_3,
+  questionDate: "2011-09-15",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1322549192_doc_56_4.pdf",
+} as const;
+
+const H23_3_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H23_3_DAY1,
+    order: 1,
+    memberName: "鈴木 裕士",
+    items: ["市有地等の管理について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY1,
+    order: 2,
+    memberName: "鹿志村 清一",
+    items: [
+      "犯罪被害者支援の取り組みについて",
+      "空き家の適正管理に関する対応について",
+      "酸性雨対策について",
+      "恋人の聖地イベントの安全対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_3_DAY1,
+    order: 3,
+    memberName: "町田 征久",
+    items: [
+      "岩間中学校に合気道部の創設を",
+      "第一東宝ランドの道路の側溝の改善について",
+      "県道南指原岩間停車場線の進捗状況について",
+      "岩間工業団地内の交通安全対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_3_DAY1,
+    order: 4,
+    memberName: "橋本 良一",
+    items: [
+      "友部地区２カ所の道路整備進捗状況について",
+      "北山公園と周辺道路の整備状況について",
+      "宍戸駅周辺の安全対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_3_DAY1,
+    order: 5,
+    memberName: "萩原 瑞子",
+    items: ["東日本大震災を踏まえた防災計画について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY2,
+    order: 6,
+    memberName: "西山 猛",
+    items: ["安心・安全な笠間づくりについて", "入札制度の見直しについて"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY2,
+    order: 7,
+    memberName: "市村 博之",
+    // 会議録では題を名乗らずに3つの問いを読み上げているので、議会だより第23号の見出しを使う
+    items: ["日本語教育について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY2,
+    order: 8,
+    memberName: "大関 久義",
+    items: ["東日本大震災について", "岩間地域の安戸地区の道路について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY2,
+    order: 9,
+    memberName: "鈴木 貞夫",
+    // 1つ目と4つ目は題を名乗っていないので、議会だより第23号の見出しを使う
+    items: [
+      "原発問題について",
+      "東日本大震災と福島原発事故に対する対応について",
+      "防災ラジオの問題",
+      "河川での除草剤の使用について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_3_DAY2,
+    order: 10,
+    memberName: "石田 安夫",
+    items: ["防災授業を含めた救命士育成について", "東日本大震災復興基本法について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY3,
+    order: 11,
+    memberName: "飯田 正憲",
+    items: ["岩間八郷線について", "有害鳥獣など駆除について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY3,
+    order: 12,
+    memberName: "横倉 きん",
+    items: ["国民健康保険について", "市民の健康づくりについて", "放射能汚染対策について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY3,
+    order: 13,
+    memberName: "石松 俊雄",
+    // 1つ目は題を名乗っておらず、議会だよりにも載っていないので、会議録の質問の中の言葉を使う
+    items: ["基準モデルと改定モデルの違いについて", "ファシリティーマネジメントについて", "廃棄物処理について"],
+  }),
+  fromMinutes({
+    ...H23_3_DAY3,
+    order: 14,
+    memberName: "藤枝 浩",
+    // 会議録では題を名乗っていないので、議会だより第23号の見出しを使う
+    items: ["震災の復旧状況について", "放射能測定器の管理運用について", "笠間給食センターの建て替えについて"],
+  }),
+];
+
 /** 平成23年第4回定例会（12月）。一般質問は9日・12日・13日の3日間で12人 */
 const H23_4 = {
   sessionKey: "h23-4-teirei",
@@ -564,6 +698,7 @@ const H24_4_DAY3 = {
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...H23_3_RECORDS,
   ...H23_4_RECORDS,
   ...H24_1_RECORDS,
   ...H24_2_RECORDS,

@@ -1,14 +1,16 @@
 import { describe, expect, it } from "vitest";
+import { AI_QUESTION_SUMMARIES } from "./general-questions-ai-summaries";
 import { DAYORI_QUESTION_SUMMARIES } from "./general-questions-dayori";
 import { GENERAL_QUESTIONS } from "./general-questions-data";
 import { MINUTES_GENERAL_QUESTIONS } from "./general-questions-minutes";
 import { PENDING_GENERAL_QUESTIONS } from "./general-questions-pending";
 
-const ALL_IDS = new Set(
-  [...GENERAL_QUESTIONS, ...PENDING_GENERAL_QUESTIONS, ...MINUTES_GENERAL_QUESTIONS].map(
-    (r) => r.id
-  )
-);
+const ALL_RECORDS = [
+  ...GENERAL_QUESTIONS,
+  ...PENDING_GENERAL_QUESTIONS,
+  ...MINUTES_GENERAL_QUESTIONS,
+];
+const ALL_IDS = new Set(ALL_RECORDS.map((r) => r.id));
 
 describe("DAYORI_QUESTION_SUMMARIES", () => {
   it.each(Object.entries(DAYORI_QUESTION_SUMMARIES))(
@@ -18,6 +20,18 @@ describe("DAYORI_QUESTION_SUMMARIES", () => {
       expect(summary.entries[0]?.kind).toBe("問");
       expect(summary.entries.some((e) => e.kind === "答")).toBe(true);
       for (const entry of summary.entries) expect(entry.text.trim()).not.toBe("");
+    }
+  );
+
+  it.each(Object.entries(AI_QUESTION_SUMMARIES))(
+    "%s: AIによる要約の題は、その一般質問の題のどれかで、「問」から始まる",
+    (id, summary) => {
+      const record = ALL_RECORDS.find((r) => r.id === id);
+      expect(record).toBeDefined();
+      for (const topic of summary.topics) {
+        expect(record?.items).toContain(topic.item);
+        expect(topic.entries[0]?.kind).toBe("問");
+      }
     }
   );
 

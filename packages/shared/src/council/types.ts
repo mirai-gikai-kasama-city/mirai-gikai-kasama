@@ -105,6 +105,17 @@ export interface QuestionDayoriSummary {
   entries: QuestionDayoriEntry[];
 }
 
+/**
+ * 議会だよりに要約が載っていない題について、会議録をもとにAI（Claude）がまとめた「問」「答」。
+ * 議会だよりの要約とは分けて持ち、画面でもAIによる要約だと分かるように出す（運営者の判断。2026-11-24）
+ */
+export interface QuestionMinutesSummary {
+  /** もとにした会議録（PDF） */
+  minutesUrl: string;
+  /** 題ごとの要約（議会だよりに載っていない題だけ） */
+  topics: { item: string; entries: QuestionDayoriEntry[] }[];
+}
+
 /** 議員1人の1回の一般質問（通告） */
 export interface GeneralQuestionRecord {
   /** 安定ID（会期キー-順番） */
@@ -138,6 +149,8 @@ export interface GeneralQuestionRecord {
   itemsSource?: "minutes";
   /** 議会だよりの一般質問のページ（問と答の要約）。まだ写していない・無いときは省略 */
   dayoriSummary?: QuestionDayoriSummary;
+  /** 議会だよりに載っていない題の、会議録をもとにしたAIによる要約 */
+  minutesSummary?: QuestionMinutesSummary;
   /** 通告書PDFの要旨（PDFが無い・読み取れない場合は null） */
   outline: QuestionOutlineItem[] | null;
   /** 要旨を情報開示請求で交付を受けた通告書から起こした場合だけ "disclosure" */

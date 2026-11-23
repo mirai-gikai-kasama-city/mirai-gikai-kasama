@@ -6,6 +6,7 @@ import { getCommitteeMeetingListItems } from "@/features/committees/server/loade
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
 import { GENERAL_QUESTIONS } from "../../shared/data/general-questions-data";
+import { AI_QUESTION_SUMMARIES } from "../../shared/data/general-questions-ai-summaries";
 import { DAYORI_QUESTION_SUMMARIES } from "../../shared/data/general-questions-dayori";
 import { MINUTES_GENERAL_QUESTIONS } from "../../shared/data/general-questions-minutes";
 import { PENDING_GENERAL_QUESTIONS } from "../../shared/data/general-questions-pending";
@@ -52,7 +53,12 @@ const ALL_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...MINUTES_GENERAL_QUESTIONS,
 ].map((record) => {
   const dayoriSummary = DAYORI_QUESTION_SUMMARIES[record.id];
-  return dayoriSummary ? { ...record, dayoriSummary } : record;
+  const minutesSummary = AI_QUESTION_SUMMARIES[record.id];
+  return {
+    ...record,
+    ...(dayoriSummary ? { dayoriSummary } : {}),
+    ...(minutesSummary ? { minutesSummary } : {}),
+  };
 });
 
 /** 一般質問の全記録（公式サイトから作った静的データ） */

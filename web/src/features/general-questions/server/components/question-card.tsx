@@ -15,7 +15,7 @@ import {
   resolveMemberPageKey,
 } from "../../shared/utils/question-links";
 import type { QuestionLinkContext } from "../loaders/get-general-questions";
-import { DayoriSummary } from "./dayori-summary";
+import { AiMinutesSummary, DayoriSummary } from "./dayori-summary";
 import { OutlinePoints } from "./outline-points";
 
 interface QuestionCardProps {
@@ -141,6 +141,9 @@ export function QuestionCard({
 
       {!compact && record.dayoriSummary && (
         <DayoriSummary summary={record.dayoriSummary} />
+      )}
+      {!compact && record.minutesSummary && (
+        <AiMinutesSummary summary={record.minutesSummary} />
       )}
 
       {(hideHeading ||

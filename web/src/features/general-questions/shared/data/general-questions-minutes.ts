@@ -41,6 +41,134 @@ function fromMinutes(input: {
   };
 }
 
+/** 平成24年第2回定例会（6月）。一般質問は12日・13日・14日の3日間で12人 */
+const H24_2 = {
+  sessionKey: "h24-2-teirei",
+  sessionName: "平成24年第2回定例会",
+} as const;
+const H24_2_DAY1 = {
+  ...H24_2,
+  questionDate: "2012-06-12",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1346026201_doc_56_2.pdf",
+} as const;
+const H24_2_DAY2 = {
+  ...H24_2,
+  questionDate: "2012-06-13",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1346026201_doc_56_3.pdf",
+} as const;
+const H24_2_DAY3 = {
+  ...H24_2,
+  questionDate: "2012-06-14",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1346026201_doc_56_4.pdf",
+} as const;
+
+const H24_2_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H24_2_DAY1,
+    order: 1,
+    memberName: "西山 猛",
+    items: ["地域の復旧・復興について", "高速バス復活と笠間の復興について"],
+  }),
+  fromMinutes({
+    ...H24_2_DAY1,
+    order: 2,
+    memberName: "横倉 きん",
+    items: ["教育環境について", "原子力防災について", "国保税の改善について"],
+  }),
+  fromMinutes({
+    ...H24_2_DAY1,
+    order: 3,
+    memberName: "野口 圓",
+    // 会議録では題を読み上げていないので、議会だより第26号の見出しを使う
+    items: ["若年労働者の非正規雇用とワーキングプアの問題について"],
+  }),
+  fromMinutes({
+    ...H24_2_DAY1,
+    order: 4,
+    memberName: "上野 登",
+    items: ["茨城中央工業団地予定地について", "生活道路について"],
+  }),
+  fromMinutes({
+    ...H24_2_DAY1,
+    order: 5,
+    memberName: "大関 久義",
+    items: ["畜産試験場跡地の雨水排水処理施設整備について", "自警団への補助金制度について"],
+  }),
+  fromMinutes({
+    ...H24_2_DAY2,
+    order: 6,
+    memberName: "石松 俊雄",
+    items: ["笠間市の情報化政策", "市民と行政の協働について"],
+  }),
+  fromMinutes({
+    ...H24_2_DAY2,
+    order: 7,
+    memberName: "萩原 瑞子",
+    items: [
+      "観光名刺と観光年賀状について",
+      "エコフロンティアかさま内の教育施設の利活用について",
+      "がん対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_2_DAY2,
+    order: 8,
+    memberName: "石田 安夫",
+    items: [
+      "中小企業グループ等災害復旧補助金について",
+      "地域グリーンニューディール基金について",
+      "原子力災害周辺地域産業復興企業立地補助金について",
+      "笠間給食センターについて",
+    ],
+  }),
+  fromMinutes({
+    ...H24_2_DAY2,
+    order: 9,
+    memberName: "鹿志村 清一",
+    items: [
+      "生物多様性への取り組みについて",
+      "石づくり彫刻による野外彫刻ミュージアム公園建設について",
+      "防災教育に、震災、風水害記録映像の活用を図ってはいかがか",
+      "笠間の観光ＰＲ媒体について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_2_DAY2,
+    order: 10,
+    memberName: "鈴木 貞夫",
+    items: [
+      "東海原発30キロ圏内の市町村の安全協定問題について",
+      "市内の放射能測定について",
+      "市内の除染した汚染土壌の処理について",
+      "瓦れきの広域処理の問題",
+      "環境保全委員会の問題",
+      "エコフロンティアかさまの最終処分場の発生ガス問題について",
+      "エコフロンティアかさまの処分場の山積みされた産業廃棄物問題について",
+      "森林の荒廃問題と河川の保護について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_2_DAY3,
+    order: 11,
+    memberName: "町田 征久",
+    items: [
+      "学校給食費の無料化",
+      "岩間地区弁天池の下の排水路清掃について",
+      "通学路の安全対策について",
+      "愛宕山道の側溝清掃について",
+    ],
+  }),
+  fromMinutes({
+    ...H24_2_DAY3,
+    order: 12,
+    memberName: "畑岡 洋二",
+    items: ["市税等の納付方法について", "公衆無線ＬＡＮについて", "笠間の菊まつりについて"],
+  }),
+];
+
 /** 平成24年第3回定例会（9月）。一般質問は18日・19日・20日の3日間で11人 */
 const H24_3 = {
   sessionKey: "h24-3-teirei",
@@ -187,6 +315,7 @@ const H24_4_DAY3 = {
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...H24_2_RECORDS,
   ...H24_3_RECORDS,
   fromMinutes({
     ...H24_4_DAY1,

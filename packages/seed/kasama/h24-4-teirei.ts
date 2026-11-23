@@ -154,19 +154,22 @@ function unnumbered(
   };
 }
 
-/** 会議録署名議員の指名（本会議の日ごとに行われる） */
+/**
+ * 会議録署名議員の指名。本会議の日ごとに行われるが、会期ごとに1件にまとめる（運営者の判断）。
+ * 日付は会期の最終日、本文に日ごとの指名を並べる
+ */
 function signers(
   number: number,
-  decidedOn: string,
-  dateText: string,
-  names: string
+  days: readonly { dateText: string; names: string }[]
 ): KasamaBill {
   return unnumbered("手続", number, {
     title: "会議録署名議員の指名について",
     resultLabel: "指名",
-    decidedOn,
-    summary: `${dateText}の本会議の会議録に署名する議員の指名。議長が${names}を指名した。`,
-    body: `会議録署名議員は、その日の本会議の会議録に、議長とともに署名する議員です。会議規則第81条により、議長が指名します。${dateText}の本会議の初めに、議長が${names}を指名しました。`,
+    decidedOn: LAST_DAY,
+    summary: `本会議の日ごとに、その日の会議録に署名する議員を議長が指名した（${days.length}日分）。`,
+    body: `会議録署名議員は、その日の本会議の会議録に、議長とともに署名する議員です。会議規則第81条により、本会議の日ごとに議長が指名します。この定例会では、次のとおり指名されました。
+
+${days.map((day) => `- ${day.dateText}：${day.names}`).join("\n")}`,
   });
 }
 
@@ -202,7 +205,14 @@ function committeeMembers(number: number, committee: string, detail = ""): Kasam
 
 /** 市の番号が無い議事。順番は会議録の議事の順（種類ごとに1から） */
 const UNNUMBERED_BILLS: readonly KasamaBill[] = [
-  signers(1, FIRST_DAY, "12月4日", "21番市村博之議員と22番小薗江一三議員"),
+  signers(1, [
+    { dateText: "12月4日", names: "21番 市村博之議員、22番 小薗江一三議員" },
+    { dateText: "12月6日", names: "22番 小薗江一三議員、23番 石﨑勝三議員" },
+    { dateText: "12月13日", names: "22番 小薗江一三議員、23番 石﨑勝三議員" },
+    { dateText: "12月14日", names: "22番 小薗江一三議員、23番 石﨑勝三議員" },
+    { dateText: "12月17日", names: "22番 小薗江一三議員、23番 石﨑勝三議員" },
+    { dateText: "12月18日", names: "21番 市村博之議員、22番 小薗江一三議員" },
+  ]),
   unnumbered("手続", 2, {
     title: "会期の決定について",
     resultLabel: "決定",
@@ -239,11 +249,6 @@ const UNNUMBERED_BILLS: readonly KasamaBill[] = [
     summary: "この定例会に出された陳情を、受け持ちの常任委員会に任せて審査してもらうことにした。",
     body: `市民などから出された請願・陳情は、まず受け持ちの常任委員会で審査し（付託）、その結果をもとに本会議で採決します。12月4日に、議長が請願陳情文書表のとおり各常任委員会に付託しました。議会運営委員長の報告では、この日に付託した陳情は3件です。どの陳情かは、会議録には「文書表のとおり」とだけ書かれています。`,
   }),
-  signers(3, "2012-12-06", "12月6日", "22番小薗江一三議員と23番石﨑勝三議員"),
-  signers(4, "2012-12-13", "12月13日", "22番小薗江一三議員と23番石﨑勝三議員"),
-  signers(5, "2012-12-14", "12月14日", "22番小薗江一三議員と23番石﨑勝三議員"),
-  signers(6, "2012-12-17", "12月17日", "22番小薗江一三議員と23番石﨑勝三議員"),
-  signers(7, LAST_DAY, "12月18日", "21番市村博之議員と22番小薗江一三議員"),
   unnumbered("継続", 1, {
     title: "委員会の閉会中の継続審査について",
     resultLabel: "決定",

@@ -41,6 +41,135 @@ function fromMinutes(input: {
   };
 }
 
+/** 平成23年第2回定例会（6月）。一般質問は13日・14日・15日の3日間で13人（平成23年第1回は震災で一般質問が中止） */
+const H23_2 = {
+  sessionKey: "h23-2-teirei",
+  sessionName: "平成23年第2回定例会",
+} as const;
+const H23_2_DAY1 = {
+  ...H23_2,
+  questionDate: "2011-06-13",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1319073938_doc_56_2.pdf",
+} as const;
+const H23_2_DAY2 = {
+  ...H23_2,
+  questionDate: "2011-06-14",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1319073938_doc_56_3.pdf",
+} as const;
+const H23_2_DAY3 = {
+  ...H23_2,
+  questionDate: "2011-06-15",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1319073938_doc_56_4.pdf",
+} as const;
+
+const H23_2_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H23_2_DAY1,
+    order: 1,
+    memberName: "横倉 きん",
+    items: ["震災復旧と防災対策について", "福島第一原発関連の問題について", "就学援助制度について"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY1,
+    order: 2,
+    memberName: "西山 猛",
+    items: [
+      "少子化に対する対策の現在とこれからの考え方、今後の考え方について",
+      "入札制度と笠間の復興について",
+      "東日本大震災における地域消防の実務について",
+      "公用車の管理運営について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_2_DAY1,
+    order: 3,
+    memberName: "小薗江 一三",
+    items: ["東日本大震災に思う", "環境衛生について"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY1,
+    order: 4,
+    memberName: "鈴木 貞夫",
+    items: [
+      "市内の放射能の測定と公表について",
+      "市内の道路の復旧とインフラの整備について",
+      "市民生活を回復するための市民への助成について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_2_DAY1,
+    order: 5,
+    memberName: "石田 安夫",
+    items: ["公共施設の耐震化について", "学校の放射線量について", "英語指導助手について", "通学路の安全対策について"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY2,
+    order: 6,
+    memberName: "大関 久義",
+    items: [
+      "笠間市の防災と防犯について",
+      "笠間市の雨水排水事業について",
+      "運転免許証返納者の支援制度とデマンドタクシーについて",
+    ],
+  }),
+  fromMinutes({
+    ...H23_2_DAY2,
+    order: 7,
+    memberName: "小磯 節子",
+    items: ["今回の震災の対応について"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY2,
+    order: 8,
+    memberName: "鈴木 裕士",
+    // 会議録では題を名乗っていないので、議会だより第22号の見出しを使う
+    items: ["防災について", "米粉について"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY2,
+    order: 9,
+    memberName: "野口 圓",
+    // 会議録では題を名乗っていないので、議会だより第22号の見出しを使う
+    items: ["大震災関連について", "放射能関連について", "ＴＰＰ関連について", "捨て犬、捨て猫の問題について"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY2,
+    order: 10,
+    memberName: "石松 俊雄",
+    // 1つ目は題を名乗っていないので議会だより第22号の見出し、3つ目は会議録の質問の中の言葉を使う
+    items: ["大震災と防災計画について", "河川の被災と洪水対策について", "土地改良区の施設使用料"],
+  }),
+  fromMinutes({
+    ...H23_2_DAY3,
+    order: 11,
+    memberName: "鹿志村 清一",
+    items: [
+      "まちづくりでの自転車利用の促進",
+      "東日本大震災の対応と今後の対応について",
+      "ネット販売による地場産品の販路拡大について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_2_DAY3,
+    order: 12,
+    memberName: "萩原 瑞子",
+    items: [
+      "選挙投票率のアップと選挙開票事務の迅速効率化について",
+      "高齢者支援の充実について",
+      "男女共同参画計画推進について",
+    ],
+  }),
+  fromMinutes({
+    ...H23_2_DAY3,
+    order: 13,
+    memberName: "畑岡 洋二",
+    items: ["災害廃棄物の処理について", "防災行政無線について"],
+  }),
+];
+
 /** 平成23年第3回定例会（9月）。一般質問は13日・14日・15日の3日間で14人 */
 const H23_3 = {
   sessionKey: "h23-3-teirei",
@@ -698,6 +827,7 @@ const H24_4_DAY3 = {
 } as const;
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  ...H23_2_RECORDS,
   ...H23_3_RECORDS,
   ...H23_4_RECORDS,
   ...H24_1_RECORDS,

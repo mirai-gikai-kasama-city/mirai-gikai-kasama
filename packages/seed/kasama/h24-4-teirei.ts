@@ -199,8 +199,10 @@ function unionElection(input: {
 /** この日に選任された委員会の顔ぶれ（議会だより第28号の名簿） */
 const ROSTER = (() => {
   const snapshot = KASAMA_COMMITTEE_ROSTERS.find((s) => s.selectedOn === LAST_DAY);
-  if (!snapshot) throw new Error(`${LAST_DAY} の委員会の名簿がありません`);
-  return snapshot;
+  if (snapshot?.source.kind !== "議会だより") {
+    throw new Error(`${LAST_DAY} の委員会の名簿（議会だより）がありません`);
+  }
+  return { ...snapshot, source: snapshot.source };
 })();
 
 /**
@@ -210,7 +212,14 @@ const ROSTER = (() => {
 function committeeMembers(number: number, kind: CommitteeRoster["kind"], committee: string): KasamaBill {
   const lines = ROSTER.committees
     .filter((c) => c.kind === kind)
-    .map((c) => `- ${c.committee}：委員長 ${c.chair}、副委員長 ${c.viceChair}、委員 ${c.members.join("・")}`)
+    .map((c) =>
+      [
+        `- ${c.committee}：`,
+        c.chair ? `委員長 ${c.chair}、` : "",
+        c.viceChair ? `副委員長 ${c.viceChair}、` : "",
+        `委員 ${c.members.join("・")}`,
+      ].join("")
+    )
     .join("\n");
   return unnumbered("選任", number, {
     title: `${committee}委員の選任について`,

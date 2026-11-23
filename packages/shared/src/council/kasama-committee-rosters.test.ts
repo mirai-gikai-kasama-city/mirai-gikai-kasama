@@ -1,5 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { KASAMA_COMMITTEE_ROSTERS } from "./kasama-committee-rosters";
+import {
+  type CommitteeRoster,
+  KASAMA_COMMITTEE_ROSTERS,
+} from "./kasama-committee-rosters";
 
 /** 平成22年12月の選挙で選ばれた24人（任期中に入れ替わりは無い） */
 const H22_TERM_MEMBERS = [
@@ -9,39 +12,54 @@ const H22_TERM_MEMBERS = [
   "町田征久", "大関久義", "市村博之", "柴沼広", "石﨑勝三", "小薗江一三",
 ];
 
-const everyone = (c: { chair: string; viceChair: string; members: readonly string[] }) => [
-  c.chair,
-  c.viceChair,
-  ...c.members,
-];
-
 /** 平成22年12月の選挙から、次の平成26年12月14日の選挙までの任期の名簿 */
 const H22_TERM = KASAMA_COMMITTEE_ROSTERS.filter(
   (s) => s.selectedOn >= "2010-12-12" && s.selectedOn < "2014-12-14"
 );
+
+const everyone = (c: CommitteeRoster) =>
+  [c.chair, c.viceChair, ...c.members].filter((n): n is string => n !== null);
 
 describe("KASAMA_COMMITTEE_ROSTERS（平成22年12月からの任期）", () => {
   test("この任期の名簿がある", () => {
     expect(H22_TERM.length).toBeGreaterThan(0);
   });
 
-  test.each(H22_TERM.map((s) => [s.selectedOn, s] as const))(
-    "%s: 常任委員会4つで、議員全員がちょうど1回ずつ出てくる",
-    (_, snapshot) => {
-      const names = snapshot.committees
-        .filter((c) => c.kind === "常任委員会")
-        .flatMap(everyone);
-      expect(names).toHaveLength(H22_TERM_MEMBERS.length);
-      expect([...names].sort()).toEqual([...H22_TERM_MEMBERS].sort());
-    }
-  );
+  test("選任した日の順に並んでいる", () => {
+    const dates = KASAMA_COMMITTEE_ROSTERS.map((s) => s.selectedOn);
+    expect(dates).toEqual([...dates].sort());
+  });
 
-  test("どの委員会でも、名前はその任期の議員で、重なりが無い", () => {
+  test.each(
+    H22_TERM.filter((s) => s.committees.some((c) => c.kind === "常任委員会")).map(
+      (s) => [s.selectedOn, s] as const
+    )
+  )("%s: 常任委員会4つで、議員全員がちょうど1回ずつ出てくる", (_, snapshot) => {
+    const names = snapshot.committees
+      .filter((c) => c.kind === "常任委員会")
+      .flatMap(everyone);
+    expect([...names].sort()).toEqual([...H22_TERM_MEMBERS].sort());
+  });
+
+  test("どの委員会・議会の外の役職でも、名前はその任期の議員で、委員会の中で重なりが無い", () => {
     for (const snapshot of H22_TERM) {
       for (const committee of snapshot.committees) {
         const names = everyone(committee);
         expect(new Set(names).size).toBe(names.length);
         for (const name of names) expect(H22_TERM_MEMBERS).toContain(name);
+      }
+      for (const post of snapshot.outsideCouncilPosts ?? []) {
+        for (const { name } of post.posts) expect(H22_TERM_MEMBERS).toContain(name);
+      }
+    }
+  });
+
+  test("予算・決算特別委員会は8人", () => {
+    for (const snapshot of H22_TERM) {
+      for (const c of snapshot.committees) {
+        if (/^(予算|決算)特別委員会$/.test(c.committee)) {
+          expect(everyone(c)).toHaveLength(8);
+        }
       }
     }
   });

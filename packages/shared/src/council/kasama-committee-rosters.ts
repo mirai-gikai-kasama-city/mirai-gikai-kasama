@@ -60,7 +60,7 @@ export interface RosterSnapshot {
 const member = (name: string) => ({ role: "委員", name });
 const unionMember = (name: string) => ({ role: "議員", name });
 
-/** 特別委員会（予算・決算）の選任。8人の名前は会議録の読み上げのまま */
+/** 特別委員会（予算・決算）の選任。委員の名前は会議録の読み上げのまま（平成26年までは8人、それ以降は9人） */
 function specialCommittee(input: {
   selectedOn: string;
   sessionKey: string;
@@ -486,5 +486,80 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
     names: ["菅井信", "小磯節子", "野口圓", "鈴木裕士", "石松俊雄", "海老澤勝", "横倉きん", "大関久義"],
     chair: "鈴木裕士",
     chairReportedOn: "2014-09-19",
+  }),
+
+  // ── 平成26年12月14日の選挙からの任期（定数22人。特別委員会は9人） ──
+  // 常任委員会などの顔ぶれ（議会だよりの名簿）はまだ入れていない
+  specialCommittee({
+    selectedOn: "2015-03-05",
+    sessionKey: "h27-1-teirei",
+    committee: "予算特別委員会",
+    occasion: "平成27年度の当初予算の審査のため（第1回定例会）",
+    names: ["村上寿之", "石井栄", "小松﨑均", "菅井信", "畑岡洋二", "野口圓", "横倉きん", "大貫千尋", "大関久義"],
+    chair: "大関久義",
+    chairReportedOn: "2015-03-20",
+  }),
+  specialCommittee({
+    selectedOn: "2015-09-03",
+    sessionKey: "h27-3-teirei",
+    committee: "決算特別委員会",
+    occasion: "平成26年度の決算の審査のため（第3回定例会）",
+    names: ["村上寿之", "石井栄", "小松﨑均", "菅井信", "畑岡洋二", "橋本良一", "飯田正憲", "横倉きん", "大貫千尋"],
+    chair: "飯田正憲",
+    chairReportedOn: "2015-09-17",
+  }),
+  specialCommittee({
+    selectedOn: "2016-03-03",
+    sessionKey: "h28-1-teirei",
+    committee: "予算特別委員会",
+    occasion: "平成28年度の当初予算の審査のため（第1回定例会）",
+    names: ["田村泰之", "橋本良一", "石田安夫", "飯田正憲", "西山猛", "石松俊雄", "萩原瑞子", "大関久義", "市村博之"],
+    chair: "石田安夫",
+    chairReportedOn: "2016-03-17",
+  }),
+  specialCommittee({
+    selectedOn: "2016-09-05",
+    sessionKey: "h28-3-teirei",
+    committee: "決算特別委員会",
+    occasion: "平成27年度の決算の審査のため（第3回定例会）",
+    names: ["村上寿之", "菅井信", "橋本良一", "野口圓", "西山猛", "石松俊雄", "海老澤勝", "萩原瑞子", "横倉きん"],
+    chair: "菅井信",
+    chairReportedOn: "2016-09-16",
+  }),
+  specialCommittee({
+    selectedOn: "2017-03-02",
+    sessionKey: "h29-1-teirei",
+    committee: "予算特別委員会",
+    occasion: "平成29年度の当初予算の審査のため（第1回定例会）",
+    names: ["田村泰之", "村上寿之", "石井栄", "小松﨑均", "畑岡洋二", "橋本良一", "石田安夫", "萩原瑞子", "市村博之"],
+    chair: "萩原瑞子",
+    chairReportedOn: "2017-03-16",
+  }),
+  specialCommittee({
+    selectedOn: "2017-09-04",
+    sessionKey: "h29-3-teirei",
+    committee: "決算特別委員会",
+    occasion: "平成28年度の決算の審査のため（第3回定例会）",
+    names: ["田村泰之", "村上寿之", "畑岡洋二", "橋本良一", "石田安夫", "野口圓", "萩原瑞子", "横倉きん", "小薗江一三"],
+    chair: "萩原瑞子",
+    chairReportedOn: "2017-09-15",
+  }),
+  specialCommittee({
+    selectedOn: "2018-02-28",
+    sessionKey: "h30-1-teirei",
+    committee: "予算特別委員会",
+    occasion: "平成30年度の当初予算の審査のため（第1回定例会）",
+    names: ["田村泰之", "小松﨑均", "菅井信", "畑岡洋二", "野口圓", "西山猛", "石松俊雄", "萩原瑞子", "大関久義"],
+    chair: "西山猛",
+    chairReportedOn: "2018-03-14",
+  }),
+  specialCommittee({
+    selectedOn: "2018-09-06",
+    sessionKey: "h30-3-teirei",
+    committee: "決算特別委員会",
+    occasion: "平成29年度の決算の審査のため（第3回定例会）",
+    names: ["田村泰之", "村上寿之", "石井栄", "小松﨑均", "畑岡洋二", "石田安夫", "野口圓", "西山猛", "萩原瑞子"],
+    chair: "野口圓",
+    chairReportedOn: "2018-09-21",
   }),
 ];

@@ -1321,6 +1321,115 @@ const H25_4_RECORDS: readonly GeneralQuestionRecord[] = [
   }),
 ];
 
+/** 平成26年第1回定例会（3月）。一般質問は10日・11日・13日の3日間で10人 */
+const H26_1 = {
+  sessionKey: "h26-1-teirei",
+  sessionName: "平成26年第1回定例会",
+} as const;
+const H26_1_DAY1 = {
+  ...H26_1,
+  questionDate: "2014-03-10",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1409720684_doc_153_2.pdf",
+} as const;
+const H26_1_DAY2 = {
+  ...H26_1,
+  questionDate: "2014-03-11",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1409720684_doc_153_3.pdf",
+} as const;
+const H26_1_DAY3 = {
+  ...H26_1,
+  questionDate: "2014-03-13",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1409720684_doc_153_4.pdf",
+} as const;
+
+const H26_1_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H26_1_DAY1,
+    order: 1,
+    memberName: "石田 安夫",
+    items: [
+      "防犯灯のＬＥＤ化について",
+      "国道355号バイパス及び来栖・本戸線について",
+      "ホテルステノの撤退について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_1_DAY1,
+    order: 2,
+    memberName: "鹿志村 清一",
+    // 3つ目は「学校給食と食育、地産地消を推進するためにということで」と読み上げていて形が外れる（議会だより第33号の見出しも同じ言い方）。運営者に相談中
+    items: [
+      "筑波海軍航空隊記念館について",
+      "防災・観光・まちづくりにラジコンヘリの活用について",
+      "学校給食と食育、地産地消を推進するために",
+    ],
+  }),
+  fromMinutes({
+    ...H26_1_DAY1,
+    order: 3,
+    memberName: "鈴木 貞夫",
+    // 1つ目のほかは「介護保険制度の改正なのか、改悪なのか」「エコフロンティアの問題」「森林湖沼税の問題」と名乗っていて形が外れるので、議会だより第33号の見出しを案として入れている。運営者に相談中
+    items: [
+      "原子力災害対策計画について",
+      "介護保険の見直しについて",
+      "エコフロンティアかさまに埋立てられている放射性物質について",
+      "森林湖沼環境税の活用について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_1_DAY1,
+    order: 4,
+    memberName: "野口 圓",
+    // 1つ目は「児童虐待の件」と名乗っていて形が外れるので、議会だより第33号の見出しを案として入れている。運営者に相談中
+    items: [
+      "児童虐待について",
+      "雇用対策について",
+      "工業用地の未売却用地について",
+      "大雪災害について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_1_DAY2,
+    order: 5,
+    memberName: "横倉 きん",
+    items: ["原子力防災について", "高齢化社会の課題について"],
+  }),
+  fromMinutes({
+    ...H26_1_DAY2,
+    order: 6,
+    memberName: "石松 俊雄",
+    items: ["受動喫煙防止対策について", "子ども・子育て新制度と市の対応について"],
+  }),
+  fromMinutes({
+    ...H26_1_DAY2,
+    order: 7,
+    memberName: "鈴木 裕士",
+    // 1つ目は会議録で題を読み上げていないので、議会だより第33号の見出しを使っている。2つ目は「ふるさと納税制度、これについて」と読み上げている
+    items: ["先般の雪と地元業者の育成について", "ふるさと納税制度について"],
+  }),
+  fromMinutes({
+    ...H26_1_DAY2,
+    order: 8,
+    memberName: "西山 猛",
+    items: ["市内の環境保全施設について", "教育に投じる予算について"],
+  }),
+  fromMinutes({
+    ...H26_1_DAY3,
+    order: 9,
+    memberName: "大関 久義",
+    items: ["平成26年度に予算化された新規事業について"],
+  }),
+  fromMinutes({
+    ...H26_1_DAY3,
+    order: 10,
+    memberName: "萩原 瑞子",
+    items: ["道路行政について", "定住化対策について"],
+  }),
+];
+
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H23_2_RECORDS,
   ...H23_3_RECORDS,
@@ -1407,4 +1516,5 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H25_2_RECORDS,
   ...H25_3_RECORDS,
   ...H25_4_RECORDS,
+  ...H26_1_RECORDS,
 ];

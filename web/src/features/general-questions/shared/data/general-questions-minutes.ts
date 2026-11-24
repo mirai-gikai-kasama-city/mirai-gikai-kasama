@@ -1054,6 +1054,146 @@ const H25_2_RECORDS: readonly GeneralQuestionRecord[] = [
   }),
 ];
 
+/** 平成25年第3回定例会（9月）。一般質問は17日・18日・19日の3日間で12人 */
+const H25_3 = {
+  sessionKey: "h25-3-teirei",
+  sessionName: "平成25年第3回定例会",
+} as const;
+const H25_3_DAY1 = {
+  ...H25_3,
+  questionDate: "2013-09-17",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1386037928_doc_78_3.pdf",
+} as const;
+const H25_3_DAY2 = {
+  ...H25_3,
+  questionDate: "2013-09-18",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1386037928_doc_78_4.pdf",
+} as const;
+const H25_3_DAY3 = {
+  ...H25_3,
+  questionDate: "2013-09-19",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1386037928_doc_78_5.pdf",
+} as const;
+
+const H25_3_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H25_3_DAY1,
+    order: 1,
+    memberName: "野口 圓",
+    items: ["ＮＰＯ法人と市のかかわりについて", "社会福祉協議会と市のかかわりについて"],
+  }),
+  fromMinutes({
+    ...H25_3_DAY1,
+    order: 2,
+    memberName: "横倉 きん",
+    items: [
+      "友部小学校校庭の排水問題の改善について",
+      "子育て支援の取り組みについて",
+      "地域防災計画原子力災害対策編について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY1,
+    order: 3,
+    memberName: "畑岡 洋二",
+    // 2つ目は会議録で読み上げたとおり
+    items: ["観光事業の国際化戦略について", "農産物「梅」というもののブランド戦略について"],
+  }),
+  fromMinutes({
+    ...H25_3_DAY1,
+    order: 4,
+    memberName: "西山 猛",
+    items: ["明日の笠間市のあり方について"],
+  }),
+  fromMinutes({
+    ...H25_3_DAY1,
+    order: 5,
+    memberName: "石田 安夫",
+    items: ["外部委託について", "子どもたちの情報モラルと危機回避能力について"],
+  }),
+  fromMinutes({
+    ...H25_3_DAY2,
+    order: 6,
+    memberName: "鹿志村 清一",
+    items: [
+      "笠間市への視察研修状況と対応について",
+      "受動喫煙防止策と健康増進法について",
+      "笠間市におけるＮＰＯ育成策について",
+      "松山団地及び友部高校正門前の市道の街灯の管理について",
+      "がんばろう笠間商品券発行支援事業補助金交付要綱廃止に伴う新たな笠間商品券発行支援事業補助金交付について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY2,
+    order: 7,
+    memberName: "鈴木 裕士",
+    // 2つ目から4つ目は会議録で題を読み上げていないので、議会だより第31号の見出しを使っている
+    items: [
+      "防災無線等による情報の伝達について",
+      "かさめーるについて",
+      "消防の立ち入り検査について（火災予防査察規定・違反処理規定関係）",
+      "家庭用火災報知器の設置推進策について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY2,
+    order: 8,
+    memberName: "鈴木 貞夫",
+    // 3つ目は「市民の安全安心のために市内の放射線の定期的な測定を」と名乗っていて形が外れる。運営者に相談中
+    // 4つ目は読み上げた言い方の形が外れるので、議会だより第31号の見出しを使っている
+    items: [
+      "笠間市の原子力災害対策計画、東海第二原発の再稼働問題について",
+      "再生可能な自然エネルギーの促進の問題について",
+      "市民の安全安心のために市内の放射線の定期的な測定を",
+      "「平成25年度笠間産米の放射性物質検査」の報告について",
+      "エコフロンティアの問題について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY2,
+    order: 9,
+    memberName: "町田 征久",
+    items: [
+      "合併後の市政について",
+      "空き家等の管理に関する条例について",
+      "給食アレルギーについて",
+      "高齢者対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY2,
+    order: 10,
+    memberName: "石松 俊雄",
+    items: [
+      "第二次情報化基本計画（案）とオープンデータについて",
+      "学校給食におけるアレルギー対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY3,
+    order: 11,
+    memberName: "萩原 瑞子",
+    items: [
+      "笠間稲荷門前周辺事業の状況について",
+      "佐白山整備について",
+      "茨城県の畜産試験場跡地について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_3_DAY3,
+    order: 12,
+    memberName: "大関 久義",
+    items: [
+      "笠間市の消防団について",
+      "笠間市のヘルスロードについて",
+      "笠間市駅周辺整備活性化プランについて",
+    ],
+  }),
+];
+
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H23_2_RECORDS,
   ...H23_3_RECORDS,
@@ -1138,4 +1278,5 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   }),
   ...H25_1_RECORDS,
   ...H25_2_RECORDS,
+  ...H25_3_RECORDS,
 ];

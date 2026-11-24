@@ -827,6 +827,120 @@ const H24_4_DAY3 = {
   minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1360799867_doc_56_4.pdf",
 } as const;
 
+/** 平成25年第1回定例会（3月）。一般質問は13日・14日・15日の3日間で11人 */
+const H25_1 = {
+  sessionKey: "h25-1-teirei",
+  sessionName: "平成25年第1回定例会",
+} as const;
+const H25_1_DAY1 = {
+  ...H25_1,
+  questionDate: "2013-03-13",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1369887087_doc_56_2.pdf",
+} as const;
+const H25_1_DAY2 = {
+  ...H25_1,
+  questionDate: "2013-03-14",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1369887087_doc_56_3.pdf",
+} as const;
+const H25_1_DAY3 = {
+  ...H25_1,
+  questionDate: "2013-03-15",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1369887087_doc_56_4.pdf",
+} as const;
+
+const H25_1_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H25_1_DAY1,
+    order: 1,
+    memberName: "横倉 きん",
+    items: [
+      "生活保護制度の基準引き下げに伴う市民の生活支援策について",
+      "介護保険制度の生活援助時間の改善、介護士の待遇改善について",
+      "県地域原子力防災計画について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_1_DAY1,
+    order: 2,
+    memberName: "鈴木 貞夫",
+    // 1つ目は題を名乗っていないので議会だより第29号の見出しを使う。3つ目は「三つ目に、森林湖沼環境税ですね」と名乗っている（形が外れるので運営者に相談中）
+    items: ["笠間市防災計画について（原子力災害対策）", "エコフロンティアの問題について", "森林湖沼環境税"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY1,
+    order: 3,
+    memberName: "萩原 瑞子",
+    // 題は一つで、その中で「一つ目」〜「四つ目」と分けて質問している
+    items: ["重要施策並びに事業について"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY1,
+    order: 4,
+    memberName: "西山 猛",
+    items: ["笠間市駅周辺整備活性化プランとまちづくりについて", "県との連携について"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY1,
+    order: 5,
+    memberName: "石松 俊雄",
+    // 2つ目は「地域包括ケア体制に関する質問」と名乗っているので「に関して」の形にする
+    items: ["公共交通政策について", "地域包括ケア体制に関して", "地域医療と市立病院整備方針について"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY2,
+    order: 6,
+    memberName: "野口 圓",
+    items: ["校舎の耐震化について", "通学路について", "防災について"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY2,
+    order: 7,
+    memberName: "鹿志村 清一",
+    // 1つ目は題を名乗っていないので、議会だより第29号の見出しを使う
+    items: ["低炭素循環型社会の取り組みについて", "笠間市の定住化対策について"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY2,
+    order: 8,
+    memberName: "大関 久義",
+    items: ["生活保護制度について"],
+  }),
+  fromMinutes({
+    ...H25_1_DAY2,
+    order: 9,
+    memberName: "石田 安夫",
+    items: [
+      "防災について",
+      "学校などの耐震化について",
+      "太陽光システム助成制度について",
+      "通学路の安全対策について",
+      "子育て支援について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_1_DAY3,
+    order: 10,
+    memberName: "町田 征久",
+    // 2つ目は会議録で読み上げたとおり（形が外れるので運営者に相談中）
+    items: [
+      "小学校の統合について",
+      "岩間の吉岡地区の弁天池の土砂除去し、防災用のため池として利用してはどうか",
+      "学校の教師の体罰について",
+      "グラウンドの整備について",
+      "衆議院議員選挙投票所の変更について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_1_DAY3,
+    order: 11,
+    memberName: "橋本 良一",
+    items: ["動物愛護に関する市の取り組みについて"],
+  }),
+];
+
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H23_2_RECORDS,
   ...H23_3_RECORDS,
@@ -909,4 +1023,5 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
     memberName: "飯田 正憲",
     items: ["鳥獣被害防止特措法一部改正について", "有害鳥獣対策について"],
   }),
+  ...H25_1_RECORDS,
 ];

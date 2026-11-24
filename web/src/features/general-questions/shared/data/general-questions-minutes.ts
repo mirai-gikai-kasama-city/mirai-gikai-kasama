@@ -1426,6 +1426,163 @@ const H26_1_RECORDS: readonly GeneralQuestionRecord[] = [
   }),
 ];
 
+/** 平成26年第2回定例会（6月）。一般質問は11日・12日・13日の3日間で13人 */
+const H26_2 = {
+  sessionKey: "h26-2-teirei",
+  sessionName: "平成26年第2回定例会",
+} as const;
+const H26_2_DAY1 = {
+  ...H26_2,
+  questionDate: "2014-06-11",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1407463864_doc_56_3.pdf",
+} as const;
+const H26_2_DAY2 = {
+  ...H26_2,
+  questionDate: "2014-06-12",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1407463864_doc_56_4.pdf",
+} as const;
+const H26_2_DAY3 = {
+  ...H26_2,
+  questionDate: "2014-06-13",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1407463864_doc_56_5.pdf",
+} as const;
+
+const H26_2_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H26_2_DAY1,
+    order: 1,
+    memberName: "鈴木 貞夫",
+    // 2つ目は会議録で題を読み上げていないので、議会だより第34号の見出しを使っている
+    items: [
+      "東海第二原発の安全審査、いわゆる再稼働の申請等について",
+      "原子力災害対策計画について",
+      "環境保全の問題について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY1,
+    order: 2,
+    memberName: "鹿志村 清一",
+    items: ["笠間の科学理科教育について", "洪水への防災・減災への取り組みについて"],
+  }),
+  fromMinutes({
+    ...H26_2_DAY1,
+    order: 3,
+    memberName: "大貫 千尋",
+    // 会議録で題を読み上げているのは5つ目（市の外交について）だけ。1つ目・2つ目は議会だより第34号の見出し（形が外れる）、
+    // 3つ目は議会だよりの見出し、4つ目は会議録の問いから言葉を切り出した案を入れている。運営者に相談中
+    items: [
+      "子育てするなら笠間に住もう",
+      "笠間市に大学を誘致しよう",
+      "観光都市笠間市総合計画の策定について",
+      "北川根地区の流通業務団地として取得した土地について",
+      "市の外交について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY1,
+    order: 4,
+    memberName: "横倉 きん",
+    items: [
+      "教育環境の整備について",
+      "市民交流センターの運営について",
+      "東海第二原発と避難計画について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY1,
+    order: 5,
+    memberName: "飯田 正憲",
+    items: [
+      "肺炎球菌その他予防接種に関する公費の助成について",
+      "お年寄りに優しく体をいたわるごみ出しについて",
+      "通学路が危険な道路について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY2,
+    order: 6,
+    memberName: "石松 俊雄",
+    // 2つ目のほかは会議録で題を読み上げていない。3つ目は議会だより第34号の見出し、1つ目・4つ目は会議録の問いから言葉を切り出した案。運営者に相談中
+    items: [
+      "医療介護一括改正法案の笠間市への影響と対策について",
+      "介護健診クラウド事業の進捗状況について",
+      "笠間市立病院建設事業について",
+      "公共施設の資産管理について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY2,
+    order: 7,
+    memberName: "畑岡 洋二",
+    items: [
+      "筑波山地域ジオパーク構想について",
+      "国際化に対応した人事交流について",
+      "外国人観光客受け入れ対策について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY2,
+    order: 8,
+    memberName: "市村 博之",
+    // 1つ目は「３期目の市政運営を担うに当たっての政治姿勢」と名乗っていて形が外れるので、議会だより第34号の見出しを案として入れている。運営者に相談中
+    items: [
+      "３期目の市政を担うに当たっての市長の政治姿勢を問う",
+      "市財政運営について",
+      "広域行政の推進について",
+      "教育行政について",
+      "産業振興について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY2,
+    order: 9,
+    memberName: "鈴木 裕士",
+    // 1つ目は会議録で題を読み上げていないので、議会だより第34号の見出しを使っている
+    items: ["認知症対策について", "農地・水環境保全活動について", "道路の里親制度について"],
+  }),
+  fromMinutes({
+    ...H26_2_DAY2,
+    order: 10,
+    memberName: "大関 久義",
+    items: [
+      "笠間市の防犯活動について",
+      "子ども・子育て支援新制度について",
+      "友部地区の歩道整備について",
+    ],
+  }),
+  fromMinutes({
+    ...H26_2_DAY3,
+    order: 11,
+    memberName: "野口 圓",
+    // 2つとも会議録の言い方（「人口減少をいかに食いとめるか」「子どもを褒めて育てるまちづくり」）が形から外れる。議会だより第34号の見出しを案として入れている。運営者に相談中
+    items: ["人口減少をくい止められるか", "子どもを褒めて育てる町づくり"],
+  }),
+  fromMinutes({
+    ...H26_2_DAY3,
+    order: 12,
+    memberName: "石田 安夫",
+    items: ["ごみの収集について", "地域包括ケアシステムについて"],
+  }),
+  fromMinutes({
+    ...H26_2_DAY3,
+    order: 13,
+    memberName: "町田 征久",
+    // 2〜4つ目は会議録の言い方（「教育施設の改善」「保育料の無料化」「ターゲットバードゴルフ場の新設及び増設を」）が形から外れる。議会だより第34号の見出しを案として入れている。運営者に相談中
+    items: [
+      "子育て支援について",
+      "教育施設の改善",
+      "保育料の無料化",
+      "ターゲットバードゴルフ場を",
+      "高齢者対策について",
+      "笠間市民球場、電光掲示板について",
+    ],
+  }),
+];
+
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H23_2_RECORDS,
   ...H23_3_RECORDS,
@@ -1513,4 +1670,5 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H25_3_RECORDS,
   ...H25_4_RECORDS,
   ...H26_1_RECORDS,
+  ...H26_2_RECORDS,
 ];

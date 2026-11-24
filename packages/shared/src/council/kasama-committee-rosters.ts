@@ -17,7 +17,7 @@
 export interface CommitteeRoster {
   /** 委員会の名前（「総務委員会」など） */
   committee: string;
-  kind: "常任委員会" | "議会運営委員会" | "議会だより編集委員会" | "特別委員会";
+  kind: "常任委員会" | "議会運営委員会" | "議会だより編集委員会" | "特別委員会" | "予算決算委員会";
   /** 委員長。資料で分からないときは null */
   chair: string | null;
   /** 副委員長。資料で分からないときは null */
@@ -42,7 +42,9 @@ export interface OutsideCouncilPost {
 
 export type RosterSource =
   | { kind: "議会だより"; issue: number; pages: readonly number[]; url: string }
-  | { kind: "会議録"; note: string };
+  | { kind: "会議録"; note: string }
+  /** 市のサイトの「各種議員名簿」のページ。昔の姿はインターネットアーカイブの保存版 */
+  | { kind: "市のサイト"; urls: readonly string[]; asOf: string; note?: string };
 
 export interface RosterSnapshot {
   /** 委員を選任した日（YYYY-MM-DD） */
@@ -906,7 +908,7 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
         viceChair: "安見貴志",
         members: ["村上寿之", "石井栄", "石田安夫", "西山猛", "市村博之"],
         note:
-          "石田安夫は令和3年5月31日に辞職した（筑北環境衛生組合議会の議員は 2021-06-16 に田村幸子が後を継いだ）。令和4年4月の補欠選挙で当選した髙野聖也がどの常任委員会に入ったかは、会議録・議会だより（第65・66号）で確かめられていない",
+          "石田安夫は令和3年5月31日に辞職した（筑北環境衛生組合議会の議員は 2021-06-16 に田村幸子が後を継いだ）。令和4年4月の補欠選挙で当選した髙野聖也は教育福祉委員会に入った（2022-06-02 の名簿）",
       },
       {
         committee: "建設土木委員会",
@@ -1009,6 +1011,44 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
     chair: "田村泰之",
     chairReportedOn: "2022-03-18",
   }),
+  {
+    // 補欠選挙の後に委員会に入った日は資料に無い。議席の指定（2022-06-02）の日付で入れる
+    selectedOn: "2022-06-02",
+    sessionKey: "r4-2-teirei",
+    occasion: "石田安夫（2021-05-31 辞職）の後、令和4年4月の補欠選挙で当選した髙野聖也が委員会に入った",
+    source: {
+      kind: "市のサイト",
+      urls: [
+        "http://web.archive.org/web/20220809161743/https://www.city.kasama.lg.jp/page/page000011.html",
+      ],
+      asOf: "2022-06-02",
+      note: "「議会議員名簿（令和4年6月2日現在）」の所属常任委員会の欄（インターネットアーカイブの 2022-08-09 の保存版）。議会運営委員会・広報委員会はこのページに無いので入れていない",
+    },
+    committees: [
+      {
+        committee: "総務産業委員会",
+        kind: "常任委員会",
+        chair: "田村幸子",
+        viceChair: "林田美代子",
+        members: ["田村泰之", "小松﨑均", "藤枝浩", "飯田正憲", "小薗江一三"],
+      },
+      {
+        committee: "教育福祉委員会",
+        kind: "常任委員会",
+        chair: "大関久義",
+        viceChair: "安見貴志",
+        members: ["髙野聖也", "村上寿之", "石井栄", "西山猛", "市村博之"],
+        note: "辞職した石田安夫に代わって髙野聖也が入った",
+      },
+      {
+        committee: "建設土木委員会",
+        kind: "常任委員会",
+        chair: "内桶克之",
+        viceChair: "益子康子",
+        members: ["坂本奈央子", "中野英一", "畑岡洋二", "大貫千尋", "石﨑勝三"],
+      },
+    ],
+  },
   specialCommittee({
     selectedOn: "2022-09-01",
     sessionKey: "r4-3-teirei",
@@ -1269,7 +1309,7 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
         viceChair: "河原井信之",
         members: ["坂本奈央子", "田村幸子", "西山猛", "大関久義"],
         note:
-          "委員だった内桶克之が辞職した。その後の補欠選挙で当選し、2026-06-02 の本会議で議席が決まった長沼恵がどの常任委員会に入ったかは、会議録・議会だより（第81・82号）で確かめられていない",
+          "委員だった内桶克之が辞職した。その後の補欠選挙で当選し、2026-06-02 の本会議で議席が決まった長沼恵は、この委員会に入った（2026-10-01 の名簿）",
       },
       {
         committee: "教育福祉委員会",
@@ -1300,6 +1340,82 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
         viceChair: "鈴木宏治",
         members: ["酒井正輝", "川村和夫", "益子康子", "林田美代子", "大関久義"],
         note: "委員だった内桶克之が辞職した。補充があったかは資料で確かめられていない",
+      },
+    ],
+  },
+  {
+    // 市のサイトの名簿の日付（議員名簿・常任委員会は 2026-10-01 現在）で入れる
+    selectedOn: "2026-10-01",
+    sessionKey: "r8-3-teirei",
+    occasion:
+      "長沼恵（補欠当選、2026-06-02 議席の指定）が委員会に入り、長谷川愛子（2026-09-18 辞職許可）・坂本奈央子が議会を離れた後の顔ぶれ",
+    source: {
+      kind: "市のサイト",
+      urls: [
+        "https://www.city.kasama.lg.jp/page/page000011.html",
+        "https://www.city.kasama.lg.jp/page/page000012.html",
+        "https://www.city.kasama.lg.jp/page/page000013.html",
+        "https://www.city.kasama.lg.jp/page/page017007.html",
+        "https://www.city.kasama.lg.jp/page/page000014.html",
+      ],
+      asOf: "2026-10-01",
+      note:
+        "議員名簿・常任委員会のページは 2026-10-01、議会運営委員会は 2026-03-01、予算決算運営委員会は 2026-09-19、広報委員会は 2026-10-28 の更新。議席2番（長谷川愛子）・7番（坂本奈央子）は欠員。坂本奈央子が離れた日はまだ確かめていない（2026-09-18 の本会議には出席）",
+    },
+    committees: [
+      {
+        committee: "総務企画委員会",
+        kind: "常任委員会",
+        chair: "川村和夫",
+        viceChair: "河原井信之",
+        members: ["長沼恵", "田村幸子", "西山猛", "大関久義"],
+      },
+      {
+        committee: "教育福祉委員会",
+        kind: "常任委員会",
+        chair: "鈴木宏治",
+        viceChair: "酒井正輝",
+        members: ["益子康子", "林田美代子", "田村泰之", "石松俊雄", "大貫千尋"],
+      },
+      {
+        committee: "建設産業委員会",
+        kind: "常任委員会",
+        chair: "安見貴志",
+        viceChair: "村上寿之",
+        members: ["石井栄", "飯田正憲", "小薗江一三", "石﨑勝三"],
+        note: "委員長だった長谷川愛子が辞職し、委員長は安見貴志、副委員長は村上寿之になった",
+      },
+      {
+        committee: "予算決算委員会",
+        kind: "予算決算委員会",
+        chair: "田村幸子",
+        viceChair: "村上寿之",
+        members: [
+          "長沼恵", "酒井正輝", "河原井信之", "鈴木宏治", "川村和夫", "安見貴志", "益子康子", "林田美代子",
+          "田村泰之", "石井栄", "飯田正憲", "西山猛", "石松俊雄", "大貫千尋", "大関久義", "小薗江一三", "石﨑勝三",
+        ],
+        note: "令和8年から、予算・決算の特別委員会に代わって置かれている。議長を除く議員全員",
+      },
+      {
+        committee: "予算決算運営委員会",
+        kind: "予算決算委員会",
+        chair: "田村幸子",
+        viceChair: "村上寿之",
+        members: ["鈴木宏治", "川村和夫", "安見貴志", "益子康子", "田村泰之", "大関久義"],
+      },
+      {
+        committee: "議会運営委員会",
+        kind: "議会運営委員会",
+        chair: "村上寿之",
+        viceChair: "安見貴志",
+        members: ["河原井信之", "川村和夫", "益子康子", "田村泰之", "西山猛", "大貫千尋"],
+      },
+      {
+        committee: "広報委員会",
+        kind: "議会だより編集委員会",
+        chair: "鈴木宏治",
+        viceChair: "川村和夫",
+        members: ["長沼恵", "酒井正輝", "益子康子", "林田美代子", "大関久義"],
       },
     ],
   },

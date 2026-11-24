@@ -113,8 +113,10 @@ describe.each([
     // 石田安夫は令和3年5月31日に辞職、髙野聖也はその後の補欠選挙で当選（議案データの R3_MEMBERS・R4_6_MEMBERS）
     everyone: [...H30_TERM_ELECTED, "髙野聖也"],
     standing: [
-      ["2018-12-27", "飯田正憲"],
-      ["2020-12-16", "石松俊雄"],
+      ["2018-12-27", "飯田正憲", []],
+      ["2020-12-16", "石松俊雄", []],
+      // 石田安夫が辞職し、髙野聖也が入った後
+      ["2022-06-02", "石松俊雄", ["-石田安夫", "+髙野聖也"]],
     ],
     specialEach: 4,
   },
@@ -122,10 +124,12 @@ describe.each([
     label: "令和4年12月からの任期",
     from: "2022-12-11",
     to: "2026-12-31",
-    everyone: R4_TERM_ELECTED,
+    // 内桶克之は令和8年1月31日に辞職、長沼恵はその後の補欠選挙で当選。長谷川愛子は令和8年9月18日に辞職、坂本奈央子もその後に離れた
+    everyone: [...R4_TERM_ELECTED, "長沼恵"],
     standing: [
-      ["2022-12-27", "大関久義"],
-      ["2024-12-13", "畑岡洋二"],
+      ["2022-12-27", "大関久義", []],
+      ["2024-12-13", "畑岡洋二", []],
+      ["2026-10-01", "畑岡洋二", ["-内桶克之", "+長沼恵", "-長谷川愛子", "-坂本奈央子"]],
     ],
     // 令和8年からは予算決算委員会で審査し、特別委員会を作っていない
     specialEach: 3,
@@ -133,14 +137,22 @@ describe.each([
 ])("KASAMA_COMMITTEE_ROSTERS（$label）", ({ from, to, everyone: termMembers, standing, specialEach }) => {
   const term = KASAMA_COMMITTEE_ROSTERS.filter((s) => s.selectedOn >= from && s.selectedOn < to);
 
-  test.each(standing)("%s: 常任委員会は3つで、議長（%s）を除く21人がちょうど1回ずつ出てくる", (date, chairOfCouncil) => {
-    const snapshot = term.find((s) => s.selectedOn === date);
-    const committees = (snapshot?.committees ?? []).filter((c) => c.kind === "常任委員会");
-    expect(committees).toHaveLength(3);
-    const names = committees.flatMap(everyone);
-    const elected = termMembers.filter((n) => n !== "髙野聖也");
-    expect([...names].sort()).toEqual(elected.filter((n) => n !== chairOfCouncil).sort());
-  });
+  test.each(standing as [string, string, string[]][])(
+    "%s: 常任委員会は3つで、議長（%s）を除くその日の議員がちょうど1回ずつ出てくる",
+    (date, chairOfCouncil, changes) => {
+      const snapshot = term.find((s) => s.selectedOn === date);
+      const committees = (snapshot?.committees ?? []).filter((c) => c.kind === "常任委員会");
+      expect(committees).toHaveLength(3);
+      const names = committees.flatMap(everyone);
+      const removed = changes.filter((c) => c.startsWith("-")).map((c) => c.slice(1));
+      const added = changes.filter((c) => c.startsWith("+")).map((c) => c.slice(1));
+      const elected = termMembers.filter((n) => n !== "髙野聖也" && n !== "長沼恵");
+      const expected = [...elected.filter((n) => !removed.includes(n)), ...added].filter(
+        (n) => n !== chairOfCouncil
+      );
+      expect([...names].sort()).toEqual(expected.sort());
+    }
+  );
 
   test("予算・決算特別委員会は同じ回数ずつあり、どれも9人で、名前はその任期の議員", () => {
     const special = term.flatMap((s) => s.committees).filter((c) => c.kind === "特別委員会");

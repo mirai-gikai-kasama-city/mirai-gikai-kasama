@@ -942,6 +942,118 @@ const H25_1_RECORDS: readonly GeneralQuestionRecord[] = [
   }),
 ];
 
+/** 平成25年第2回定例会（6月）。一般質問は12日・13日・14日の3日間で11人 */
+const H25_2 = {
+  sessionKey: "h25-2-teirei",
+  sessionName: "平成25年第2回定例会",
+} as const;
+const H25_2_DAY1 = {
+  ...H25_2,
+  questionDate: "2013-06-12",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1376352164_doc_56_2.pdf",
+} as const;
+const H25_2_DAY2 = {
+  ...H25_2,
+  questionDate: "2013-06-13",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1376352164_doc_56_3.pdf",
+} as const;
+const H25_2_DAY3 = {
+  ...H25_2,
+  questionDate: "2013-06-14",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1376352164_doc_56_4.pdf",
+} as const;
+
+const H25_2_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H25_2_DAY1,
+    order: 1,
+    memberName: "西山 猛",
+    // 3つ目は「懸案であります畜産試験場跡地、そして、そのまちづくり」と名乗っていて形が外れるので、議会だより第30号の見出しを案として入れている（運営者に相談中）
+    items: [
+      "スポーツ振興と健康増進について",
+      "ボートピア岩間の環境整備協力費について",
+      "畜産試験場跡地とまちづくりについて",
+    ],
+  }),
+  fromMinutes({
+    ...H25_2_DAY1,
+    order: 2,
+    memberName: "石松 俊雄",
+    // 3つ目は「消費税増税による市政への影響と対応の質問」と名乗っていて形が外れる。議会だよりにも載っていない（運営者に相談中）
+    items: ["情報化政策について", "教育の情報化について", "消費税増税による市政への影響と対応"],
+  }),
+  fromMinutes({
+    ...H25_2_DAY1,
+    order: 3,
+    memberName: "石田 安夫",
+    items: ["選挙制度改正について", "電線の地中化について", "通学路の改善について"],
+  }),
+  fromMinutes({
+    ...H25_2_DAY1,
+    order: 4,
+    memberName: "鈴木 貞夫",
+    items: ["笠間市の原子力災害対策計画について", "エコフロンティア問題の管理について"],
+  }),
+  fromMinutes({
+    ...H25_2_DAY1,
+    order: 5,
+    memberName: "萩原 瑞子",
+    items: ["市民実感度調査について", "市民憲章を子どもたちの郷土愛について"],
+  }),
+  fromMinutes({
+    ...H25_2_DAY2,
+    order: 6,
+    memberName: "畑岡 洋二",
+    items: [
+      "行政から市民への情報伝達の方法と表現方法について",
+      "笠間市の歴史的遺産を通したふるさと教育と地域振興について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_2_DAY2,
+    order: 7,
+    memberName: "野口 圓",
+    items: ["学校におけるいじめについて", "笠間市防災計画の中の原子力対策計画について"],
+  }),
+  fromMinutes({
+    ...H25_2_DAY2,
+    order: 8,
+    memberName: "横倉 きん",
+    items: [
+      "風疹予防接種の取り組みについて",
+      "子宮頸がんワクチンの接種について",
+      "東海第二原発の再稼働と地域防災計画原子力災害対策編について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_2_DAY2,
+    order: 9,
+    memberName: "大関 久義",
+    items: ["笠間市のごみ問題について"],
+  }),
+  fromMinutes({
+    ...H25_2_DAY3,
+    order: 10,
+    memberName: "町田 征久",
+    // 4つ目は「〜に信号機の設置を」と名乗っていて形が外れるので、議会だより第30号の見出しを案として入れている（運営者に相談中）
+    items: [
+      "岩間工業団地交差点の信号機設置について",
+      "県道石岡城里線下安居バイパス計画のその後について",
+      "少子化対策について",
+      "主要地方道茨城岩間線押辺（椚山）ＢＧ入口十字路について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_2_DAY3,
+    order: 11,
+    memberName: "鈴木 裕士",
+    items: ["協議会や審議会について", "外国人登録者との交流について"],
+  }),
+];
+
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H23_2_RECORDS,
   ...H23_3_RECORDS,
@@ -1025,4 +1137,5 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
     items: ["鳥獣被害防止特措法一部改正について", "有害鳥獣対策について"],
   }),
   ...H25_1_RECORDS,
+  ...H25_2_RECORDS,
 ];

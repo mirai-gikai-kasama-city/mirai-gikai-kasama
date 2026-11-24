@@ -14,13 +14,22 @@ const H22_ELECTED = [
 
 /**
  * 任期の途中で議員になった人。西山猛が平成26年3月17日に辞職した（平成26年6月3日の会議録「諸般の報告」）。
- * 上野登は平成26年第1回定例会の会議録の出席議員・欠席議員のどちらにも名前が無い（離れた日はまだ確かめていない）。
+ * 上野登は平成25年11月30日限りで辞職した（平成25年12月3日の会議録「諸般の報告」）。
  * 平成26年4月13日の補欠選挙で2人が当選した（平成26年6月3日の会議録「議席の指定」）
  */
 const H22_TERM_BY_ELECTION = ["大貫千尋", "菅井信"];
 
 /** この任期に議員だった人全員 */
 const H22_TERM_MEMBERS = [...H22_ELECTED, ...H22_TERM_BY_ELECTION];
+
+/** その日に議員だった人（辞職は上野登 2013-11-30、西山猛 2014-03-17。補欠選挙は 2014-04-13） */
+const membersOn = (date: string) => [
+  ...H22_ELECTED.filter(
+    (name) =>
+      !(name === "上野登" && date > "2013-11-30") && !(name === "西山猛" && date > "2014-03-17")
+  ),
+  ...(date >= "2014-04-13" ? H22_TERM_BY_ELECTION : []),
+];
 
 /** 平成22年12月の選挙から、次の平成26年12月14日の選挙までの任期の名簿 */
 const H22_TERM = KASAMA_COMMITTEE_ROSTERS.filter(
@@ -48,8 +57,7 @@ describe("KASAMA_COMMITTEE_ROSTERS（平成22年12月からの任期）", () => 
     const names = snapshot.committees
       .filter((c) => c.kind === "常任委員会")
       .flatMap(everyone);
-    // 常任委員会の名簿があるのは補欠選挙の前（平成25年まで）なので、選挙で選ばれた24人と比べる
-    expect([...names].sort()).toEqual([...H22_ELECTED].sort());
+    expect([...names].sort()).toEqual([...membersOn(snapshot.selectedOn)].sort());
   });
 
   test("どの委員会・議会の外の役職でも、名前はその任期の議員で、委員会の中で重なりが無い", () => {

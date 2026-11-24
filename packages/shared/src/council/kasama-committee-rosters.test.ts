@@ -91,6 +91,80 @@ describe("KASAMA_COMMITTEE_ROSTERS（平成26年12月からの任期）", () => 
   });
 });
 
+/** 平成30年12月9日の選挙からの任期の22人（議案データの H30_MEMBERS と同じ） */
+const H30_TERM_ELECTED = [
+  "坂本奈央子", "安見貴志", "内桶克之", "田村幸子", "益子康子", "中野英一", "林田美代子", "田村泰之",
+  "村上寿之", "石井栄", "小松﨑均", "畑岡洋二", "石田安夫", "藤枝浩", "西山猛", "石松俊雄",
+  "大貫千尋", "大関久義", "市村博之", "小薗江一三", "石﨑勝三", "飯田正憲",
+];
+
+/** 令和4年12月の選挙からの任期の22人（議案データの R7_MEMBERS と同じ） */
+const R4_TERM_ELECTED = [
+  "長谷川愛子", "酒井正輝", "河原井信之", "鈴木宏治", "川村和夫", "坂本奈央子", "安見貴志", "内桶克之",
+  "田村幸子", "益子康子", "林田美代子", "田村泰之", "村上寿之", "石井栄", "飯田正憲", "西山猛",
+  "石松俊雄", "大貫千尋", "大関久義", "小薗江一三", "石﨑勝三", "畑岡洋二",
+];
+
+describe.each([
+  {
+    label: "平成30年12月からの任期",
+    from: "2018-12-09",
+    to: "2022-12-11",
+    // 石田安夫は令和3年5月31日に辞職、髙野聖也はその後の補欠選挙で当選（議案データの R3_MEMBERS・R4_6_MEMBERS）
+    everyone: [...H30_TERM_ELECTED, "髙野聖也"],
+    standing: [
+      ["2018-12-27", "飯田正憲"],
+      ["2020-12-16", "石松俊雄"],
+    ],
+    specialEach: 4,
+  },
+  {
+    label: "令和4年12月からの任期",
+    from: "2022-12-11",
+    to: "2026-12-31",
+    everyone: R4_TERM_ELECTED,
+    standing: [
+      ["2022-12-27", "大関久義"],
+      ["2024-12-13", "畑岡洋二"],
+    ],
+    // 令和8年からは予算決算委員会で審査し、特別委員会を作っていない
+    specialEach: 3,
+  },
+])("KASAMA_COMMITTEE_ROSTERS（$label）", ({ from, to, everyone: termMembers, standing, specialEach }) => {
+  const term = KASAMA_COMMITTEE_ROSTERS.filter((s) => s.selectedOn >= from && s.selectedOn < to);
+
+  test.each(standing)("%s: 常任委員会は3つで、議長（%s）を除く21人がちょうど1回ずつ出てくる", (date, chairOfCouncil) => {
+    const snapshot = term.find((s) => s.selectedOn === date);
+    const committees = (snapshot?.committees ?? []).filter((c) => c.kind === "常任委員会");
+    expect(committees).toHaveLength(3);
+    const names = committees.flatMap(everyone);
+    const elected = termMembers.filter((n) => n !== "髙野聖也");
+    expect([...names].sort()).toEqual(elected.filter((n) => n !== chairOfCouncil).sort());
+  });
+
+  test("予算・決算特別委員会は同じ回数ずつあり、どれも9人で、名前はその任期の議員", () => {
+    const special = term.flatMap((s) => s.committees).filter((c) => c.kind === "特別委員会");
+    expect(special.filter((c) => c.committee === "予算特別委員会")).toHaveLength(specialEach);
+    expect(special.filter((c) => c.committee === "決算特別委員会")).toHaveLength(specialEach);
+    for (const committee of special) {
+      const names = everyone(committee);
+      expect(new Set(names).size).toBe(9);
+      for (const name of names) expect(termMembers).toContain(name);
+    }
+  });
+
+  test("どの委員会・議会の外の役職でも、名前はその任期の議員", () => {
+    for (const snapshot of term) {
+      for (const committee of snapshot.committees) {
+        for (const name of everyone(committee)) expect(termMembers).toContain(name);
+      }
+      for (const post of snapshot.outsideCouncilPosts ?? []) {
+        for (const { name } of post.posts) expect(termMembers).toContain(name);
+      }
+    }
+  });
+});
+
 describe("KASAMA_COMMITTEE_ROSTERS（平成22年12月からの任期）", () => {
   test("この任期の名簿がある", () => {
     expect(H22_TERM.length).toBeGreaterThan(0);

@@ -1142,12 +1142,12 @@ const H25_3_RECORDS: readonly GeneralQuestionRecord[] = [
     ...H25_3_DAY2,
     order: 8,
     memberName: "鈴木 貞夫",
-    // 3つ目は「市民の安全安心のために市内の放射線の定期的な測定を」と名乗っていて形が外れる。運営者に相談中
+    // 3つ目は「市民の安全安心のために市内の放射線の定期的な測定を」と名乗っていて形が外れるので、議会だより第31号の見出しを使っている（運営者が選んだ。2026-11-24）
     // 4つ目は読み上げた言い方の形が外れるので、議会だより第31号の見出しを使っている
     items: [
       "笠間市の原子力災害対策計画、東海第二原発の再稼働問題について",
       "再生可能な自然エネルギーの促進の問題について",
-      "市民の安全安心のために市内の放射線の定期的な測定を",
+      "市民の安心安全のために市内の放射線の定期的な測定を",
       "「平成25年度笠間産米の放射性物質検査」の報告について",
       "エコフロンティアの問題について",
     ],
@@ -1190,6 +1190,130 @@ const H25_3_RECORDS: readonly GeneralQuestionRecord[] = [
       "笠間市の消防団について",
       "笠間市のヘルスロードについて",
       "笠間市駅周辺整備活性化プランについて",
+    ],
+  }),
+];
+
+/** 平成25年第4回定例会（12月）。一般質問は16日・17日・18日の3日間で12人 */
+const H25_4 = {
+  sessionKey: "h25-4-teirei",
+  sessionName: "平成25年第4回定例会",
+} as const;
+const H25_4_DAY1 = {
+  ...H25_4,
+  questionDate: "2013-12-16",
+  dayIndex: 1,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1392362820_doc_56_2.pdf",
+} as const;
+const H25_4_DAY2 = {
+  ...H25_4,
+  questionDate: "2013-12-17",
+  dayIndex: 2,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1392362820_doc_56_3.pdf",
+} as const;
+const H25_4_DAY3 = {
+  ...H25_4,
+  questionDate: "2013-12-18",
+  dayIndex: 3,
+  minutesPdfUrl: "https://www.city.kasama.lg.jp/data/doc/1392362820_doc_56_4.pdf",
+} as const;
+
+const H25_4_RECORDS: readonly GeneralQuestionRecord[] = [
+  fromMinutes({
+    ...H25_4_DAY1,
+    order: 1,
+    memberName: "西山 猛",
+    items: ["笠間市総合計画について", "行政機構及び執行について"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY1,
+    order: 2,
+    memberName: "畑岡 洋二",
+    // 2つ目は「学校教育に関しましてですけれども、薬物乱用防止教育について」と読み上げている
+    items: ["佐白山富士山（つつじ公園）周辺の環境整備について", "薬物乱用防止教育について"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY1,
+    order: 3,
+    memberName: "町田 征久",
+    items: [
+      "生活保護について",
+      "岩間地区弁天池下の排水路の改善について",
+      "笠間市の公共下水道、農業集落排水事業の今後の計画について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_4_DAY1,
+    order: 4,
+    memberName: "横倉 きん",
+    items: [
+      "都市宣言について",
+      "マル福制度について",
+      "高齢者社会の取り組みについて",
+      "災害に強いまちづくりについて",
+    ],
+  }),
+  fromMinutes({
+    ...H25_4_DAY1,
+    order: 5,
+    memberName: "鈴木 貞夫",
+    // 1つ目（再稼働と原子力災害対策）は会議録で題を読み上げていないので、議会だより第32号の見出しを使っている
+    items: ["福島原発と東海第二原発の再稼働問題について", "エコフロンティアの問題について"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY2,
+    order: 6,
+    memberName: "野口 圓",
+    items: ["地域福祉の支援体制について", "児童虐待について", "自殺者について"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY2,
+    order: 7,
+    memberName: "飯田 正憲",
+    items: ["旧石岡採石場跡地埋め立てについて", "廃食油の再生利用のメリットについて"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY2,
+    order: 8,
+    memberName: "大関 久義",
+    // 会議録で題を読み上げていないので、議会だより第32号の見出しを使っている
+    items: ["笠間市総合計画３カ年実施計画について（Ｈ26～Ｈ28年度）"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY2,
+    order: 9,
+    memberName: "鈴木 裕士",
+    // 1つ目は「友部駅プラットホームのブラインドに関連すること」と名乗っていて形が外れるので、議会だより第32号の見出しを案として入れている。運営者に相談中
+    items: ["ＪＲ友部駅について", "道路わきに設置されています道路案内標識について"],
+  }),
+  fromMinutes({
+    ...H25_4_DAY2,
+    order: 10,
+    memberName: "石松 俊雄",
+    // 3つ目の通告は時間の都合で取り下げ（次回に再通告）
+    items: [
+      "し尿・浄化槽清掃業務の現状と今後について",
+      "「笠間学校給食配送及び回収業務の委託」に関する入札中止と入札制度改革について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_4_DAY3,
+    order: 11,
+    memberName: "石田 安夫",
+    items: [
+      "防災について",
+      "太陽光発電施設について",
+      "佐白山及び芸術の森公園周辺の事業について",
+    ],
+  }),
+  fromMinutes({
+    ...H25_4_DAY3,
+    order: 12,
+    memberName: "鹿志村 清一",
+    items: [
+      "笠間市防災計画について",
+      "平成25年度全国学力・学習状況調査の結果における笠間市の教育について",
+      "児童館・児童クラブの図書室及び図書について",
     ],
   }),
 ];
@@ -1279,4 +1403,5 @@ export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   ...H25_1_RECORDS,
   ...H25_2_RECORDS,
   ...H25_3_RECORDS,
+  ...H25_4_RECORDS,
 ];

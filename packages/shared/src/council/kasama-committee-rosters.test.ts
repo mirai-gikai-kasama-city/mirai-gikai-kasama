@@ -4,13 +4,23 @@ import {
   KASAMA_COMMITTEE_ROSTERS,
 } from "./kasama-committee-rosters";
 
-/** 平成22年12月の選挙で選ばれた24人（任期中に入れ替わりは無い） */
-const H22_TERM_MEMBERS = [
+/** 平成22年12月の選挙で選ばれた24人 */
+const H22_ELECTED = [
   "畑岡洋二", "橋本良一", "小磯節子", "飯田正憲", "石田安夫", "鹿志村清一",
   "蛯澤幸一", "野口圓", "藤枝浩", "鈴木裕士", "鈴木貞夫", "西山猛",
   "石松俊雄", "海老澤勝", "萩原瑞子", "中澤猛", "上野登", "横倉きん",
   "町田征久", "大関久義", "市村博之", "柴沼広", "石﨑勝三", "小薗江一三",
 ];
+
+/**
+ * 任期の途中で議員になった人。西山猛が平成26年3月17日に辞職した（平成26年6月3日の会議録「諸般の報告」）。
+ * 上野登は平成26年第1回定例会の会議録の出席議員・欠席議員のどちらにも名前が無い（離れた日はまだ確かめていない）。
+ * 平成26年4月13日の補欠選挙で2人が当選した（平成26年6月3日の会議録「議席の指定」）
+ */
+const H22_TERM_BY_ELECTION = ["大貫千尋", "菅井信"];
+
+/** この任期に議員だった人全員 */
+const H22_TERM_MEMBERS = [...H22_ELECTED, ...H22_TERM_BY_ELECTION];
 
 /** 平成22年12月の選挙から、次の平成26年12月14日の選挙までの任期の名簿 */
 const H22_TERM = KASAMA_COMMITTEE_ROSTERS.filter(
@@ -38,7 +48,8 @@ describe("KASAMA_COMMITTEE_ROSTERS（平成22年12月からの任期）", () => 
     const names = snapshot.committees
       .filter((c) => c.kind === "常任委員会")
       .flatMap(everyone);
-    expect([...names].sort()).toEqual([...H22_TERM_MEMBERS].sort());
+    // 常任委員会の名簿があるのは補欠選挙の前（平成25年まで）なので、選挙で選ばれた24人と比べる
+    expect([...names].sort()).toEqual([...H22_ELECTED].sort());
   });
 
   test("どの委員会・議会の外の役職でも、名前はその任期の議員で、委員会の中で重なりが無い", () => {

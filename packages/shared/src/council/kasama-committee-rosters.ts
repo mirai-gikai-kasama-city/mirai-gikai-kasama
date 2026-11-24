@@ -413,4 +413,13 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
     chair: "野口圓",
     chairReportedOn: "2014-03-14",
   }),
+  specialCommittee({
+    selectedOn: "2014-09-04",
+    sessionKey: "h26-3-teirei",
+    committee: "決算特別委員会",
+    occasion: "平成25年度の決算の審査のため（第3回定例会）",
+    names: ["菅井信", "小磯節子", "野口圓", "鈴木裕士", "石松俊雄", "海老澤勝", "横倉きん", "大関久義"],
+    chair: "鈴木裕士",
+    chairReportedOn: "2014-09-19",
+  }),
 ];

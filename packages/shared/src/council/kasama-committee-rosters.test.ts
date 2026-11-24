@@ -57,6 +57,25 @@ describe("KASAMA_COMMITTEE_ROSTERS（平成26年12月からの任期）", () => 
     expect(special.filter((c) => c.committee === "決算特別委員会")).toHaveLength(4);
   });
 
+  test("選挙の後の常任委員会は3つで、議長（藤枝浩）を除く21人がちょうど1回ずつ出てくる", () => {
+    const first = term.find((s) => s.selectedOn === "2014-12-25");
+    const names = (first?.committees ?? [])
+      .filter((c) => c.kind === "常任委員会")
+      .flatMap(everyone);
+    expect([...names].sort()).toEqual(H26_TERM_MEMBERS.filter((n) => n !== "藤枝浩").sort());
+  });
+
+  test("どの委員会・議会の外の役職でも、名前はその任期の議員", () => {
+    for (const snapshot of term) {
+      for (const committee of snapshot.committees) {
+        for (const name of everyone(committee)) expect(H26_TERM_MEMBERS).toContain(name);
+      }
+      for (const post of snapshot.outsideCouncilPosts ?? []) {
+        for (const { name } of post.posts) expect(H26_TERM_MEMBERS).toContain(name);
+      }
+    }
+  });
+
   test("特別委員会は9人で、名前はその任期の議員", () => {
     for (const snapshot of term) {
       for (const committee of snapshot.committees.filter((c) => c.kind === "特別委員会")) {

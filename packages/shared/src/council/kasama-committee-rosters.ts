@@ -489,7 +489,77 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
   }),
 
   // ── 平成26年12月14日の選挙からの任期（定数22人。特別委員会は9人） ──
-  // 常任委員会などの顔ぶれ（議会だよりの名簿）はまだ入れていない
+  {
+    selectedOn: "2014-12-25",
+    sessionKey: "h26-1-rinji",
+    occasion: "平成26年12月の市議会議員一般選挙の後、最初の議会（第1回臨時会）",
+    source: {
+      kind: "議会だより",
+      issue: 36,
+      pages: [4, 5],
+      url: "https://www.city.kasama.lg.jp/page/page006030.html",
+    },
+    committees: [
+      {
+        committee: "総務産業委員会",
+        kind: "常任委員会",
+        chair: "飯田正憲",
+        viceChair: "小松﨑均",
+        members: ["田村泰之", "蛯澤幸一", "野口圓", "萩原瑞子", "横倉きん"],
+        note: "定数が22人になったことから、常任委員会を4つから3つにした（議会だより第36号4ページ）。議長は委員にならない",
+      },
+      {
+        committee: "教育福祉委員会",
+        kind: "常任委員会",
+        chair: "畑岡洋二",
+        viceChair: "石井栄",
+        members: ["菅井信", "石田安夫", "石松俊雄", "海老澤勝", "市村博之"],
+      },
+      {
+        committee: "建設土木委員会",
+        kind: "常任委員会",
+        chair: "西山猛",
+        viceChair: "橋本良一",
+        members: ["村上寿之", "大貫千尋", "大関久義", "小薗江一三", "石﨑勝三"],
+      },
+      {
+        committee: "議会運営委員会",
+        kind: "議会運営委員会",
+        chair: "石松俊雄",
+        viceChair: "橋本良一",
+        members: ["畑岡洋二", "海老澤勝", "萩原瑞子", "横倉きん", "大貫千尋", "市村博之"],
+      },
+      {
+        committee: "広報委員会",
+        kind: "議会だより編集委員会",
+        chair: "大関久義",
+        viceChair: "村上寿之",
+        members: ["石井栄", "菅井信", "畑岡洋二", "橋本良一", "石田安夫", "西山猛"],
+        note: "議会だより編集委員会から名前が変わった（議会だより第36号5ページ「広報委員会（旧議会だより編集委員会）」）",
+      },
+    ],
+    outsideCouncilPosts: [
+      {
+        body: "笠間地方広域事務組合議会（斎場）",
+        posts: ["村上寿之", "小松﨑均", "橋本良一", "蛯澤幸一", "飯田正憲", "横倉きん"].map(unionMember),
+      },
+      {
+        body: "茨城地方広域環境事務組合議会（し尿処理）",
+        posts: ["西山猛", "海老澤勝", "大貫千尋", "石﨑勝三"].map(unionMember),
+      },
+      { body: "笠間市農業委員会", posts: [member("西山猛")] },
+      {
+        body: "笠間・水戸環境組合議会（ごみ処理）",
+        posts: ["橋本良一", "大貫千尋", "小薗江一三", "石﨑勝三"].map(unionMember),
+      },
+      {
+        body: "筑北環境衛生組合議会（し尿処理）",
+        posts: ["田村泰之", "菅井信", "石田安夫", "蛯澤幸一"].map(unionMember),
+      },
+      { body: "茨城県後期高齢者医療広域連合議会", posts: [unionMember("石田安夫")] },
+      { body: "笠間市監査委員", posts: [member("蛯澤幸一")] },
+    ],
+  },
   specialCommittee({
     selectedOn: "2015-03-05",
     sessionKey: "h27-1-teirei",

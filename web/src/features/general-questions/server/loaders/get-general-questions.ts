@@ -5,9 +5,11 @@ import { cache } from "react";
 import { getCommitteeMeetingListItems } from "@/features/committees/server/loaders/get-committee-meeting-list-items";
 import { getAllDietSessions } from "@/features/diet-sessions/server/loaders/get-all-diet-sessions";
 import { getMemberNameSet } from "@/features/members/server/loaders/get-member-vote-data";
-import { GENERAL_QUESTIONS } from "../../shared/data/general-questions-data";
 import { AI_QUESTION_SUMMARIES } from "../../shared/data/general-questions-ai-summaries";
+import { GENERAL_QUESTIONS } from "../../shared/data/general-questions-data";
 import { DAYORI_QUESTION_SUMMARIES } from "../../shared/data/general-questions-dayori";
+import { withDayoriItems } from "../../shared/data/general-questions-dayori-items";
+import { withItemFixes } from "../../shared/data/general-questions-item-fixes";
 import { MINUTES_GENERAL_QUESTIONS } from "../../shared/data/general-questions-minutes";
 import { PENDING_GENERAL_QUESTIONS } from "../../shared/data/general-questions-pending";
 import {
@@ -40,7 +42,8 @@ export interface QuestionLinkContext extends MemberLinkContext {
  * 一般質問の全記録。会議録検索システムから自動生成した記録に、まだそこに載っていない会期の
  * 手で起こした記録（通告一覧の PDF から）と、通告が公開されていない時期（平成26年8月まで）に
  * 会議録から起こした記録を足す。同じ会期が自動生成のほうに入ったら、そちらを使う。
- * 議会だよりの「問」「答」を写したものがあれば、id で合わせる
+ * 議会だよりの「問」「答」を写したものがあれば、id で合わせる。
+ * 題は通告を優先する。通告の誤りを直したもの、通告の無い時期に議会だよりの見出しにそろえたものがあれば差し替える
  */
 const SCRAPED_SESSION_KEYS = new Set(
   GENERAL_QUESTIONS.map((r) => r.sessionKey)
@@ -55,7 +58,7 @@ const ALL_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   const dayoriSummary = DAYORI_QUESTION_SUMMARIES[record.id];
   const minutesSummary = AI_QUESTION_SUMMARIES[record.id];
   return {
-    ...record,
+    ...withDayoriItems(withItemFixes(record)),
     ...(dayoriSummary ? { dayoriSummary } : {}),
     ...(minutesSummary ? { minutesSummary } : {}),
   };

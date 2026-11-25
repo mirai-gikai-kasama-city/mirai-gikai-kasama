@@ -144,9 +144,10 @@ export interface GeneralQuestionRecord {
   items: string[];
   /**
    * 質問事項をどこから取ったか。省略時は一般質問通告。"minutes" は通告が公開されていない時期
-   * （平成26年8月まで）に、会議録で議員が読み上げた題から起こしたもの
+   * （平成26年8月まで）に、会議録で議員が読み上げた題から起こしたもの。
+   * "dayori" は議会だよりの見出しを使ったもの（議会だよりに無い題は会議録から。運営者の判断。2026-11-26）
    */
-  itemsSource?: "minutes";
+  itemsSource?: "minutes" | "dayori";
   /** 議会だよりの一般質問のページ（問と答の要約）。まだ写していない・無いときは省略 */
   dayoriSummary?: QuestionDayoriSummary;
   /** 議会だよりに載っていない題の、会議録をもとにしたAIによる要約 */

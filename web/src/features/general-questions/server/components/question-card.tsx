@@ -152,7 +152,7 @@ export function QuestionCard({
         answerRecordId ||
         record.pdfUrl ||
         outlineFromDisclosure ||
-        record.itemsSource === "minutes") && (
+        record.itemsSource) && (
         <footer className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
           {hideHeading && (
             <TextLink href={sessionAnchorHref}>
@@ -189,6 +189,12 @@ export function QuestionCard({
           )}
           {record.itemsSource === "minutes" && !compact && (
             <SourceBadge kind="official" detail="質問事項は会議録から" />
+          )}
+          {record.itemsSource === "dayori" && !compact && (
+            <SourceBadge
+              kind="official"
+              detail="質問事項は議会だよりの見出しから（議会だよりに無い題は会議録から）"
+            />
           )}
         </footer>
       )}

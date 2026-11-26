@@ -648,7 +648,7 @@ export const H18_H22_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
       "新交通システムについて",
       "エコフロンティアかさまについて",
       "市税のコンビニ収納実施について",
-      "農、山間地の活性化とイノシシ、ハクビシン対策について",
+      "農山間地の活性化とイノシシ、ハクビシン対策について",
     ]
   ),
   fromMinutesH18(

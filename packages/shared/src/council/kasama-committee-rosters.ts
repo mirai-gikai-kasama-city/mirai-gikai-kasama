@@ -178,6 +178,15 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
         viceChair: "市村博之",
         members: ["野口圓", "石松俊雄", "鹿志村清一", "海老澤勝", "萩原瑞子", "斉藤清英", "山口滋雄"],
       },
+      {
+        committee: "議会だより編集委員会",
+        kind: "議会だより編集委員会",
+        chair: "杉山一秀",
+        viceChair: "川澄清子",
+        members: ["鹿志村清一", "佐宗裕子", "鈴木努", "鈴木裕士", "成田正", "野口圓", "村上武"],
+        note:
+          "選任の日は分からない（当時は議会の正式な場ではなく、会議録に記録が無い）。名前は議会だより創刊号〜第3号の裏表紙「編集後記」の欄（ChatGPT の書き起こしを運営者が紙面で確認。2026-11-27）",
+      },
     ],
   },
   earlySpecial(

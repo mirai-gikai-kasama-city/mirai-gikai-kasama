@@ -23,6 +23,7 @@ import { H21_4_TEIREI_BILLS, H21_4_TEIREI_SESSION } from "./h21-4-teirei";
 import { H22_1_TEIREI_BILLS, H22_1_TEIREI_SESSION } from "./h22-1-teirei";
 import { H22_2_TEIREI_BILLS, H22_2_TEIREI_SESSION } from "./h22-2-teirei";
 import { H22_3_TEIREI_BILLS, H22_3_TEIREI_SESSION } from "./h22-3-teirei";
+import { H22_4_TEIREI_BILLS, H22_4_TEIREI_SESSION } from "./h22-4-teirei";
 import { H23_1_RINJI_BILLS, H23_1_RINJI_SESSION } from "./h23-1-rinji";
 import { H23_1_TEIREI_BILLS, H23_1_TEIREI_SESSION } from "./h23-1-teirei";
 import { H23_2_RINJI_BILLS, H23_2_RINJI_SESSION } from "./h23-2-rinji";
@@ -285,6 +286,10 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(H22_3_TEIREI_SESSION, {
     ...dayori(19, "page000049", "1314796815", [], 3),
     bills: H22_3_TEIREI_BILLS,
+  }),
+  toSession(H22_4_TEIREI_SESSION, {
+    ...dayori(20, "page000048", "1314796109", [], 7),
+    bills: H22_4_TEIREI_BILLS,
   }),
   // 平成26年9月〜11月は平成22年12月からの任期の終わり。12月の一般選挙の後、平成26年第1回臨時会からが
   // 平成30年11月までの任期。議会だよりに議員ごとの賛否一覧が載るのは第44号からで、それより前の

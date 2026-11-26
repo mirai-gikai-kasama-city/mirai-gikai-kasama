@@ -12,6 +12,8 @@ export interface CouncilTerm {
   label: string;
   /** 一覧のカードなど、狭いところに使う短い名前 */
   shortLabel: string;
+  /** 任期が始まった年（4年より短い任期だけ書く。省略時は endYear の3年前） */
+  firstYear?: number;
 }
 
 /** 新しい順 */
@@ -36,6 +38,18 @@ export const COUNCIL_TERMS: readonly CouncilTerm[] = [
     label: "平成22年12月〜平成26年12月の任期",
     shortLabel: "平成22〜26年",
   },
+  {
+    endYear: 2010,
+    label: "平成18年12月〜平成22年12月の任期",
+    shortLabel: "平成18〜22年",
+  },
+  // 平成18年3月19日の合併から、旧1市2町の議員がそのまま在任（在任特例）。11月17日に自主解散し、12月24日に一般選挙
+  {
+    endYear: 2006,
+    label: "合併〜平成18年11月（在任特例）",
+    shortLabel: "平成18年（合併直後）",
+    firstYear: 2006,
+  },
 ];
 
 /**
@@ -53,7 +67,8 @@ export function sessionKeyYear(sessionKey: string): number | null {
 function termForYear(year: number): CouncilTerm | null {
   return (
     COUNCIL_TERMS.find(
-      (term) => term.endYear >= year && year > term.endYear - 4
+      (term) =>
+        term.endYear >= year && year >= (term.firstYear ?? term.endYear - 3)
     ) ?? null
   );
 }

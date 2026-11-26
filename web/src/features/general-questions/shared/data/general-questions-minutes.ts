@@ -8,6 +8,7 @@
  * - 答弁の要約は付けない。議会だよりの「問」「答」を general-questions-dayori.ts に写して、読み込み時に合わせる
  */
 import type { GeneralQuestionRecord } from "@mirai-gikai/shared/council/types";
+import { H18_H22_GENERAL_QUESTIONS } from "./general-questions-minutes-h18";
 
 function fromMinutes(input: {
   sessionKey: string;
@@ -1586,6 +1587,8 @@ const H26_2_RECORDS: readonly GeneralQuestionRecord[] = [
 ];
 
 export const MINUTES_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
+  // 平成18〜22年は会議録の順番＋議会だよりの題（別ファイルに書き出したもの）
+  ...H18_H22_GENERAL_QUESTIONS,
   ...H23_2_RECORDS,
   ...H23_3_RECORDS,
   ...H23_4_RECORDS,

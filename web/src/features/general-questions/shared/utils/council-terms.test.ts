@@ -25,8 +25,14 @@ describe("termForSessionKey", () => {
     expect(termForSessionKey("kasama-h26-3-teirei")?.endYear).toBe(2014);
   });
 
-  it("表に無い年は null", () => {
-    expect(termForSessionKey("kasama-h20-1-teirei")).toBeNull();
+  it("平成18〜22年も任期に入る。合併直後（平成18年）は在任特例の短い任期", () => {
+    expect(termForSessionKey("kasama-h20-1-teirei")?.endYear).toBe(2010);
+    expect(termForSessionKey("kasama-h19-1-teirei")?.endYear).toBe(2010);
+    expect(termForSessionKey("kasama-h18-3-teirei")?.endYear).toBe(2006);
+  });
+
+  it("表に無い年（合併の前）は null", () => {
+    expect(termForSessionKey("kasama-h17-1-teirei")).toBeNull();
   });
 });
 
@@ -39,7 +45,7 @@ describe("termForDate", () => {
   });
 
   it("表に無い日付や読めない文字列は null", () => {
-    expect(termForDate("2008-06-01")).toBeNull();
+    expect(termForDate("2005-06-01")).toBeNull();
     expect(termForDate("不明")).toBeNull();
   });
 });
@@ -47,7 +53,7 @@ describe("termForDate", () => {
 describe("groupByTerm", () => {
   it("任期の分からない記録は入れない", () => {
     const groups = groupByTerm(
-      ["2023-03-01", "2008-01-01", "2021-06-01"],
+      ["2023-03-01", "2005-01-01", "2021-06-01"],
       (d) => termForDate(d)
     );
     expect(groups.map((g) => [g.term.endYear, g.records])).toEqual([

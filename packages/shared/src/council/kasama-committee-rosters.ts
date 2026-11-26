@@ -93,6 +93,123 @@ function specialCommittee(input: {
 }
 
 export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
+  // 名前は議会だよりのPDFを ChatGPT に書き起こしてもらい、PDFから抜き出した文字と1人ずつ照らし合わせた（2026-11-26）
+  {
+    selectedOn: "2007-01-05",
+    sessionKey: "h19-1-rinji",
+    occasion: "平成18年12月の市議会議員一般選挙（合併後初めて）の後、最初の議会（第1回臨時会）",
+    source: {
+      kind: "議会だより",
+      issue: 4,
+      pages: [3, 4],
+      url: "https://www.city.kasama.lg.jp/page/page000139.html",
+    },
+    committees: [
+      {
+        committee: "総務委員会",
+        kind: "常任委員会",
+        chair: "海老澤勝",
+        viceChair: "石田安夫",
+        members: ["蛯澤幸一", "西山猛", "横倉きん", "大関久義", "市村博之"],
+      },
+      {
+        committee: "産業経済委員会",
+        kind: "常任委員会",
+        chair: "上野登",
+        viceChair: "野口圓",
+        members: ["小磯節子", "村上典男", "石松俊雄", "小薗江一三", "石﨑勝三"],
+      },
+      {
+        committee: "文教厚生委員会",
+        kind: "常任委員会",
+        chair: "海老澤勝男",
+        viceChair: "杉山一秀",
+        members: ["畑岡進", "萩原瑞子", "町田征久", "須藤勝雄", "竹江浩"],
+      },
+      {
+        committee: "土木建設委員会",
+        kind: "常任委員会",
+        chair: "常井好美",
+        viceChair: "藤枝浩",
+        members: ["鈴木裕士", "鈴木貞夫", "中澤猛", "野原義昭", "柴沼広"],
+      },
+      {
+        committee: "議会運営委員会",
+        kind: "議会運営委員会",
+        chair: "市村博之",
+        viceChair: "柴沼広",
+        members: ["畑岡進", "小薗江一三", "須藤勝雄", "竹江浩", "常井好美", "海老澤勝男"],
+      },
+      {
+        committee: "議会だより編集委員会",
+        kind: "議会だより編集委員会",
+        chair: "町田征久",
+        viceChair: "鈴木裕士",
+        members: ["石田安夫", "野口圓", "鈴木貞夫", "西山猛", "横倉きん", "杉山一秀"],
+      },
+    ],
+    outsideCouncilPosts: [
+      { body: "水戸地方広域市町村圏事務組合議会", posts: ["小磯節子", "横倉きん"].map(unionMember) },
+      {
+        body: "茨城地方広域環境事務組合議会",
+        posts: ["鈴木裕士", "町田征久", "大関久義", "柴沼広", "竹江浩", "海老澤勝男"].map(unionMember),
+      },
+      {
+        body: "笠間・水戸環境組合議会",
+        posts: ["海老澤勝", "上野登", "須藤勝雄", "常井好美"].map(unionMember),
+      },
+      {
+        body: "筑北環境衛生組合議会",
+        posts: ["石田安夫", "鈴木貞夫", "中澤猛", "杉山一秀"].map(unionMember),
+      },
+      {
+        body: "笠間地方広域事務組合議会",
+        posts: ["野口圓", "藤枝浩", "西山猛", "石松俊雄", "横倉きん", "野原義昭"].map(unionMember),
+      },
+      { body: "笠間市監査委員", posts: [member("大関久義")] },
+      { body: "男女共同参画審議会", posts: [member("横倉きん")] },
+      {
+        body: "笠間市社会福祉協議会",
+        posts: [
+          { role: "理事", name: "石﨑勝三" },
+          { role: "評議員", name: "畑岡進" },
+        ],
+      },
+      { body: "保育料審議会", posts: [member("海老澤勝男")] },
+      { body: "民生委員推薦会", posts: ["海老澤勝男", "石﨑勝三"].map(member) },
+      { body: "ねんりんピック茨城実行委員会", posts: [{ role: "副会長", name: "石﨑勝三" }] },
+      {
+        body: "国民健康保険運営協議会",
+        posts: ["石田安夫", "野口圓", "海老澤勝", "杉山一秀", "須藤勝雄", "竹江浩"].map(member),
+      },
+      { body: "交通安全対策協議会", posts: [member("中澤猛")] },
+      { body: "次世代育成支援対策地域協議会", posts: [member("海老澤勝男")] },
+      {
+        body: "（財）笠間市開発公社",
+        posts: [
+          { role: "理事", name: "蛯澤幸一" },
+          { role: "理事", name: "中澤猛" },
+          { role: "監事", name: "野原義昭" },
+          { role: "評議員", name: "野口圓" },
+          { role: "評議員", name: "萩原瑞子" },
+        ],
+      },
+      { body: "行政改革推進委員会", posts: [member("須藤勝雄")] },
+      {
+        body: "都市計画審議会",
+        posts: ["西山猛", "村上典男", "畑岡進", "常井好美"].map(member),
+      },
+      {
+        body: "総合計画審議会",
+        posts: ["蛯澤幸一", "鈴木貞夫", "大関久義", "市村博之"].map(member),
+      },
+      {
+        body: "下水道審議会",
+        posts: ["藤枝浩", "鈴木裕士", "村上典男", "杉山一秀", "小薗江一三", "竹江浩"].map(member),
+      },
+      { body: "水道運営審議会", posts: ["鈴木貞夫", "海老澤勝男"].map(member) },
+    ],
+  },
   {
     selectedOn: "2011-01-05",
     sessionKey: "h23-1-rinji",

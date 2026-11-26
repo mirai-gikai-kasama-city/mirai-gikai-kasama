@@ -1,6 +1,10 @@
 import { H18_1_RINJI_BILLS, H18_1_RINJI_SESSION } from "./h18-1-rinji";
 import { H18_1_TEIREI_BILLS, H18_1_TEIREI_SESSION } from "./h18-1-teirei";
+import { H18_2_RINJI_BILLS, H18_2_RINJI_SESSION } from "./h18-2-rinji";
 import { H18_2_TEIREI_BILLS, H18_2_TEIREI_SESSION } from "./h18-2-teirei";
+import { H18_3_TEIREI_BILLS, H18_3_TEIREI_SESSION } from "./h18-3-teirei";
+import { H19_1_RINJI_BILLS, H19_1_RINJI_SESSION } from "./h19-1-rinji";
+import { H19_2_RINJI_BILLS, H19_2_RINJI_SESSION } from "./h19-2-rinji";
 import { H23_1_RINJI_BILLS, H23_1_RINJI_SESSION } from "./h23-1-rinji";
 import { H23_1_TEIREI_BILLS, H23_1_TEIREI_SESSION } from "./h23-1-teirei";
 import { H23_2_RINJI_BILLS, H23_2_RINJI_SESSION } from "./h23-2-rinji";
@@ -158,7 +162,8 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
-  // 平成18年3月19日の合併（旧笠間市・友部町・岩間町）の後、最初の任期（平成18年4月〜平成22年11月）。
+  // 平成18年3月19日の合併（旧笠間市・友部町・岩間町）の後、在任特例で旧3市町の議員53人が務めた
+  // 平成18年4月〜11月（11月17日に自主解散）と、12月24日の一般選挙（28人）から平成22年12月までの任期。
   // 議会だよりに議員ごとの賛否一覧は無いので、賛否が分かれた議案はすべて vote.unpublished
   toSession(H18_1_RINJI_SESSION, {
     ...dayori(1, "page000142", "1314874759", [], 3),
@@ -168,9 +173,27 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
     ...dayori(2, "page000141", "1314874307", [], 3),
     bills: H18_1_TEIREI_BILLS,
   }),
+  toSession(H18_2_RINJI_SESSION, {
+    ...dayori(2, "page000141", "1314874307", [], 3),
+    bills: H18_2_RINJI_BILLS,
+  }),
   toSession(H18_2_TEIREI_SESSION, {
     ...dayori(3, "page000140", "1314873815", [], 3),
     bills: H18_2_TEIREI_BILLS,
+  }),
+  // 第4号には審議結果の表が無い（会議録から作った）。出典は号全体のPDF
+  toSession(H18_3_TEIREI_SESSION, {
+    ...dayori(4, "page000139", "1314873340", [], 0),
+    bills: H18_3_TEIREI_BILLS,
+  }),
+  // 平成18年12月24日の一般選挙の後の最初の議会。審議結果の表はどの号にも無い（会議録から作った）
+  toSession(H19_1_RINJI_SESSION, {
+    ...dayori(4, "page000139", "1314873340", [], 0),
+    bills: H19_1_RINJI_BILLS,
+  }),
+  toSession(H19_2_RINJI_SESSION, {
+    ...dayori(5, "page000138", "1314872930", [], 3),
+    bills: H19_2_RINJI_BILLS,
   }),
   // 平成26年9月〜11月は平成22年12月からの任期の終わり。12月の一般選挙の後、平成26年第1回臨時会からが
   // 平成30年11月までの任期。議会だよりに議員ごとの賛否一覧が載るのは第44号からで、それより前の

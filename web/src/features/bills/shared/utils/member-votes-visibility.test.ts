@@ -60,8 +60,25 @@ describe("isMemberVotesSectionVisible", () => {
     ).toBe(false);
   });
 
-  it("member_votesはあるが議員別の表が空の議案は、可決系でも表示されない", () => {
-    // 笠間市で、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案
+  it("議員別の表が空でも、記録が無い理由の注記があれば表示される", () => {
+    // 笠間市の起立採決（平成28年12月より前）など、議員ごとの賛否の記録が無い議案
+    expect(
+      isMemberVotesSectionVisible(
+        {
+          member_votes: {
+            ...validMemberVotes,
+            entries: [],
+            notes: ["議会だより・会議録に議員ごとの賛否の記録がありません"],
+          },
+          name: "議案第1号　テスト条例",
+          status_note: "原案可決",
+        },
+        "kasama-h25-2-teirei"
+      )
+    ).toBe(true);
+  });
+
+  it("議員別の表が空で注記も無い議案は、可決系でも表示されない", () => {
     expect(
       isMemberVotesSectionVisible(
         {

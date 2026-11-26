@@ -10,6 +10,7 @@ import {
   formatVoteCounts,
   groupEntriesByFaction,
   parseMemberVotes,
+  parseUnrecordedVoteNotes,
 } from "../../../shared/utils/member-votes";
 import { resolveVoteDisclosure } from "../../../shared/utils/vote-disclosure";
 
@@ -45,11 +46,30 @@ function UnanimousVotesBody() {
         </summary>
         <div className="mt-2 space-y-2">
           <p>
-            ※議会だよりには、賛否が分かれた議案だけ議員別の賛否が載っています。この議案は載っておらず、会議録では異議なく議決されています（欠席した議員がいる場合があります）
+            ※会議録では異議なく議決されています（欠席した議員がいる場合があります）。議会だよりに議員別の賛否が載るのは、賛否が分かれた議案だけです（平成28年12月発行の第44号から）
           </p>
           <p>出典: かさま市議会だより、笠間市議会 会議録</p>
         </div>
       </details>
+    </>
+  );
+}
+
+/**
+ * 議員ごとの賛否の記録が無い議案の表示（平成28年12月より前の起立採決、無記名投票など）。
+ * 理由は seed が議案ごとに notes へ入れた文をそのまま出す
+ */
+function UnrecordedVotesBody({ notes }: { notes: string[] }) {
+  return (
+    <>
+      {notes.map((note) => (
+        <p key={note} className="mt-2 text-sm text-mirai-text">
+          {note}
+        </p>
+      ))}
+      <p className="mt-4 text-xs text-mirai-text-note">
+        ※議会だよりに議員別の賛否が載るのは、平成28年12月発行の第44号からです。それより前の本会議は起立による採決で、議会だより・会議録のどちらにも議員ごとの賛否や人数の記録がありません
+      </p>
     </>
   );
 }
@@ -80,6 +100,16 @@ export function MemberVotesSection({
 }: MemberVotesSectionProps) {
   const memberVotes = parseMemberVotes(bill.member_votes);
   if (memberVotes === null) {
+    const unrecordedNotes = parseUnrecordedVoteNotes(bill.member_votes);
+    if (unrecordedNotes !== null) {
+      return (
+        <section className="my-8 rounded-md bg-white px-4 py-6">
+          <h3 className="text-sm font-bold text-black">議員別の賛否</h3>
+          <UnrecordedVotesBody notes={unrecordedNotes} />
+        </section>
+      );
+    }
+
     const disclosure = resolveVoteDisclosure({
       hasMemberVotes: false,
       hasRecordedVote: bill.member_votes != null,

@@ -1,3 +1,6 @@
+import { H18_1_RINJI_BILLS, H18_1_RINJI_SESSION } from "./h18-1-rinji";
+import { H18_1_TEIREI_BILLS, H18_1_TEIREI_SESSION } from "./h18-1-teirei";
+import { H18_2_TEIREI_BILLS, H18_2_TEIREI_SESSION } from "./h18-2-teirei";
 import { H23_1_RINJI_BILLS, H23_1_RINJI_SESSION } from "./h23-1-rinji";
 import { H23_1_TEIREI_BILLS, H23_1_TEIREI_SESSION } from "./h23-1-teirei";
 import { H23_2_RINJI_BILLS, H23_2_RINJI_SESSION } from "./h23-2-rinji";
@@ -136,7 +139,7 @@ const dayori = (
   docNo = 56
 ) => ({
   sourceUrl: `https://www.city.kasama.lg.jp/page/${pageId}.html`,
-  sourceTitle: `かさま市議会だより 第${issueNo}号（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
+  sourceTitle: `かさま市議会だより ${issueNo === 1 ? "創刊号" : `第${issueNo}号`}（${members.length > 0 ? "審議結果・賛否一覧" : "審議結果"}）`,
   voteSourceUrl: `https://www.city.kasama.lg.jp/data/doc/${pdfDocId}_doc_${docNo}_${pdfIndex}.pdf`,
   members,
 });
@@ -155,6 +158,20 @@ function toSession(
 
 /** サイトに載せる笠間市議会の会期。会期を増やすときはここに足す */
 export const KASAMA_SESSIONS: readonly KasamaSession[] = [
+  // 平成18年3月19日の合併（旧笠間市・友部町・岩間町）の後、最初の任期（平成18年4月〜平成22年11月）。
+  // 議会だよりに議員ごとの賛否一覧は無いので、賛否が分かれた議案はすべて vote.unpublished
+  toSession(H18_1_RINJI_SESSION, {
+    ...dayori(1, "page000142", "1314874759", [], 3),
+    bills: H18_1_RINJI_BILLS,
+  }),
+  toSession(H18_1_TEIREI_SESSION, {
+    ...dayori(2, "page000141", "1314874307", [], 3),
+    bills: H18_1_TEIREI_BILLS,
+  }),
+  toSession(H18_2_TEIREI_SESSION, {
+    ...dayori(3, "page000140", "1314873815", [], 3),
+    bills: H18_2_TEIREI_BILLS,
+  }),
   // 平成26年9月〜11月は平成22年12月からの任期の終わり。12月の一般選挙の後、平成26年第1回臨時会からが
   // 平成30年11月までの任期。議会だよりに議員ごとの賛否一覧が載るのは第44号からで、それより前の
   // 賛否が分かれた議案は vote.unpublished（議員ごとの記録なし）。第44号より前は members を持たない

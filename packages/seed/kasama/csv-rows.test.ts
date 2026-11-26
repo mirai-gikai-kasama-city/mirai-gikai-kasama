@@ -156,7 +156,7 @@ describe("buildCsvRows", () => {
 
   it("田川市の表記が混ざらない", () => {
     const text = JSON.stringify(rows);
-    // 笠間市の川の名前「飯田川」は除く
-    expect(text).not.toMatch(/(?<!飯)田川|tagawa|福岡/);
+    // 笠間市の川の名前「飯田川」と、平成18年の飲酒運転追放の決議の提案理由（福岡県で起きた事故）は除く
+    expect(text).not.toMatch(/(?<!飯)田川|tagawa|福岡(?!県で起きた飲酒運転)/);
   });
 });

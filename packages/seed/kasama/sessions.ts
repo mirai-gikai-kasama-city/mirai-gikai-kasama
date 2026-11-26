@@ -124,6 +124,7 @@ import {
   R7_MEMBERS,
 } from "./r7-4-teirei";
 import { R8_2_BILLS, R8_2_MEMBERS, R8_2_SESSION } from "./r8-2-teirei";
+import { R8_3_BILLS, R8_3_MEMBERS, R8_3_SESSION } from "./r8-3-teirei";
 import {
   R8_4_PRESS_URL,
   R8_4_TEIREI_BILLS,
@@ -546,6 +547,10 @@ export const KASAMA_SESSIONS: readonly KasamaSession[] = [
   toSession(R8_2_SESSION, {
     ...dayori(82, "page017485", "1785817747", R8_2_MEMBERS),
     bills: R8_2_BILLS,
+  }),
+  toSession(R8_3_SESSION, {
+    ...dayori(83, "page017718", "1795156490", R8_3_MEMBERS),
+    bills: R8_3_BILLS,
   }),
   // 令和8年第4回は会期中。議会だよりがまだ無いので、出典は市の提出議案のプレスリリースの PDF
   toSession(R8_4_TEIREI_SESSION, {

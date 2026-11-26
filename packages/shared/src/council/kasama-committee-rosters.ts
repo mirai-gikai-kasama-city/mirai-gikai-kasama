@@ -69,30 +69,129 @@ function specialCommittee(input: {
   committee: string;
   occasion: string;
   names: readonly string[];
-  chair: string;
-  chairReportedOn: string;
+  chair: string | null;
+  /** 委員長報告をした日。委員会の会議録で互選が分かるときは chairElectedInCommittee を使う */
+  chairReportedOn?: string;
+  /** 平成18〜22年は特別委員会の会議録（第1日）に正副委員長の互選が載っている */
+  chairElectedInCommittee?: boolean;
+  viceChair?: string;
 }): RosterSnapshot {
+  const chairNote = input.chairElectedInCommittee
+    ? "正副委員長は、その日の特別委員会の会議録の互選"
+    : input.chairReportedOn
+      ? `委員長は ${input.chairReportedOn} の本会議で委員長報告をした議員`
+      : "委員長は会議録で確かめていない";
   return {
     selectedOn: input.selectedOn,
     sessionKey: input.sessionKey,
     occasion: input.occasion,
     source: {
       kind: "会議録",
-      note: `${input.selectedOn} の本会議で議長が委員を指名。委員長は ${input.chairReportedOn} の本会議で委員長報告をした議員`,
+      note: `${input.selectedOn} の本会議で議長が委員を指名。${chairNote}`,
     },
     committees: [
       {
         committee: input.committee,
         kind: "特別委員会",
         chair: input.chair,
-        viceChair: null,
-        members: input.names.filter((name) => name !== input.chair),
+        viceChair: input.viceChair ?? null,
+        members: input.names.filter((name) => name !== input.chair && name !== input.viceChair),
       },
     ],
   };
 }
 
+/** 平成18〜22年の予算・決算特別委員会（本会議の指名と、特別委員会第1日の正副委員長の互選） */
+const earlySpecial = (
+  selectedOn: string,
+  sessionKey: string,
+  committee: "予算特別委員会" | "決算特別委員会",
+  occasion: string,
+  names: readonly string[],
+  chair: string,
+  viceChair: string
+) =>
+  specialCommittee({ selectedOn, sessionKey, committee, occasion, names, chair, viceChair, chairElectedInCommittee: true });
+
 export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
+  // 合併直後（在任特例の53人）。議長が会議録で全員の名前を読み上げている。正副委員長は翌日の諸般の報告の資料（2026-11-27）
+  {
+    selectedOn: "2006-04-04",
+    sessionKey: "h18-1-rinji",
+    occasion: "平成18年3月19日の合併の後、最初の議会（第1回臨時会）。旧1市2町の議員がそのまま在任（在任特例）",
+    source: {
+      kind: "会議録",
+      note: "2006-04-04 の本会議で議長が委員を指名（議席番号つきで読み上げ）。正副委員長は 2006-04-05 の諸般の報告で配られた「正副委員長名簿」",
+    },
+    committees: [
+      {
+        committee: "総務委員会",
+        kind: "常任委員会",
+        chair: "石﨑勝三",
+        viceChair: "西山猛",
+        members: [
+          "蛯澤幸一", "佐宗裕子", "成田正", "村上武", "海老澤勝", "菅原毅", "村田定男",
+          "町田征久", "野原義昭", "大貫千尋", "柴沼広", "山口滋雄",
+        ],
+      },
+      {
+        committee: "文教厚生委員会",
+        kind: "常任委員会",
+        chair: "斉藤清英",
+        viceChair: "石田安夫",
+        members: [
+          "野口圓", "石松俊雄", "畑岡進", "飯田正憲", "上野龍一", "川澄清子", "大関久義",
+          "杉山一秀", "小薗江一三", "須藤勝雄", "海老澤勝男",
+        ],
+      },
+      {
+        committee: "産業経済委員会",
+        kind: "常任委員会",
+        chair: "萩原瑞子",
+        viceChair: "鹿志村清一",
+        members: [
+          "金澤克彦", "鈴木裕士", "鈴木貞夫", "上野登", "箱田信夫", "宮本曻", "小磯章一",
+          "枝川永男", "市村博之", "石田好一", "竹江浩",
+        ],
+      },
+      {
+        committee: "土木建設委員会",
+        kind: "常任委員会",
+        chair: "常井茂男",
+        viceChair: "鈴木努",
+        members: [
+          "藤枝浩", "中澤猛", "川﨑幸助", "阿内武臣", "髙安勝美", "横倉きん", "赤津榮之",
+          "渡辺浩一", "常井好美", "藤枝一弘", "小池忠",
+        ],
+      },
+      {
+        committee: "議会運営委員会",
+        kind: "議会運営委員会",
+        chair: "須藤勝雄",
+        viceChair: "石田好一",
+        members: ["畑岡進", "上野龍一", "中澤猛", "菅原毅", "渡辺浩一", "柴沼広", "常井好美"],
+      },
+      {
+        committee: "笠間市政治倫理調査特別委員会",
+        kind: "特別委員会",
+        chair: "小池忠",
+        viceChair: "市村博之",
+        members: ["野口圓", "石松俊雄", "鹿志村清一", "海老澤勝", "萩原瑞子", "斉藤清英", "山口滋雄"],
+      },
+    ],
+  },
+  earlySpecial(
+    "2006-06-12", "h18-1-teirei", "予算特別委員会", "平成18年度の当初予算の審査のため（第1回定例会。15人）",
+    ["鈴木努", "金澤克彦", "成田正", "鈴木貞夫", "西山猛", "石松俊雄", "鹿志村清一", "海老澤勝",
+      "萩原瑞子", "飯田正憲", "川澄清子", "横倉きん", "町田征久", "杉山一秀", "柴沼広"],
+    "杉山一秀", "海老澤勝"
+  ),
+  earlySpecial(
+    "2006-09-08", "h18-2-teirei", "決算特別委員会", "平成17年度の決算（旧1市2町と合併後の笠間市）の審査のため（第2回定例会。15人）",
+    ["石田安夫", "蛯澤幸一", "佐宗裕子", "藤枝浩", "鈴木裕士", "枝川永男", "市村博之", "石田好一",
+      "赤津榮之", "斉藤清英", "小薗江一三", "常井茂男", "常井好美", "山口滋雄", "小池忠"],
+    "常井茂男", "斉藤清英"
+  ),
   // 名前は議会だよりのPDFを ChatGPT に書き起こしてもらい、PDFから抜き出した文字と1人ずつ照らし合わせた（2026-11-26）
   {
     selectedOn: "2007-01-05",
@@ -210,6 +309,37 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
       { body: "水道運営審議会", posts: ["鈴木貞夫", "海老澤勝男"].map(member) },
     ],
   },
+  specialCommittee({
+    selectedOn: "2007-03-09",
+    sessionKey: "h19-1-teirei",
+    committee: "議員定数等調査特別委員会",
+    occasion: "議員の定数などを調べるため（第1回定例会。委員会提出議案第1号で設置、12人）",
+    names: [
+      "石田安夫", "蛯澤幸一", "西山猛", "畑岡進", "須藤勝雄", "竹江浩",
+      "野口圓", "石松俊雄", "上野登", "藤枝浩", "鈴木裕士", "中澤猛",
+    ],
+    chair: null,
+  }),
+  earlySpecial(
+    "2007-03-09", "h19-1-teirei", "予算特別委員会", "平成19年度の当初予算の審査のため（第1回定例会）",
+    ["市村博之", "横倉きん", "竹江浩", "萩原瑞子", "上野登", "野口圓", "常井好美", "藤枝浩"],
+    "常井好美", "藤枝浩"
+  ),
+  earlySpecial(
+    "2007-09-06", "h19-3-teirei", "決算特別委員会", "平成18年度の決算の審査のため（第3回定例会）",
+    ["西山猛", "蛯澤幸一", "杉山一秀", "畑岡進", "野口圓", "石松俊雄", "鈴木裕士", "藤枝浩"],
+    "畑岡進", "藤枝浩"
+  ),
+  earlySpecial(
+    "2008-03-06", "h20-1-teirei", "予算特別委員会", "平成20年度の当初予算の審査のため（第1回定例会）",
+    ["西山猛", "横倉きん", "須藤勝雄", "町田征久", "村上典男", "小磯節子", "常井好美", "藤枝浩"],
+    "須藤勝雄", "小磯節子"
+  ),
+  earlySpecial(
+    "2008-09-04", "h20-3-teirei", "決算特別委員会", "平成19年度の決算の審査のため（第3回定例会）",
+    ["石田安夫", "西山猛", "海老澤勝男", "竹江浩", "野口圓", "上野登", "鈴木裕士", "藤枝浩"],
+    "海老澤勝男", "西山猛"
+  ),
   {
     selectedOn: "2008-12-15",
     sessionKey: "h20-4-teirei",
@@ -322,6 +452,77 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
       { body: "次世代育成支援対策地域協議会", posts: [member("畑岡進")] },
     ],
   },
+  earlySpecial(
+    "2009-03-05", "h21-1-teirei", "予算特別委員会", "平成21年度の当初予算の審査のため（第1回定例会）",
+    ["蛯澤幸一", "上野登", "横倉きん", "竹江浩", "大関久義", "萩原瑞子", "小磯節子", "藤枝浩"],
+    "上野登", "藤枝浩"
+  ),
+  earlySpecial(
+    "2009-09-03", "h21-3-teirei", "決算特別委員会", "平成20年度の決算の審査のため（第3回定例会）",
+    ["野口圓", "鈴木裕士", "鈴木貞夫", "海老澤勝", "杉山一秀", "小薗江一三", "須藤勝雄", "常井好美"],
+    "常井好美", "海老澤勝"
+  ),
+  earlySpecial(
+    "2010-03-04", "h22-1-teirei", "予算特別委員会", "平成22年度の当初予算の審査のため（第1回定例会）",
+    ["常井好美", "海老澤勝男", "石田安夫", "畑岡進", "石松俊雄", "大関久義", "小磯節子", "町田征久"],
+    "石松俊雄", "常井好美"
+  ),
+  // 平成20年12月の名簿からの入れ替わり（会議録）:
+  // - 村上典男が平成21年6月19日に辞職（文教厚生委員会と議会運営委員会が1人欠ける）。6月の第2回定例会で議会運営委員会に竹江浩
+  // - 竹江浩が議会運営委員会委員を辞め、平成22年3月2日に海老澤勝（第1回定例会）
+  // - 平成22年の補欠選挙で当選した飯田正憲を、6月1日に文教厚生委員会に（第2回定例会）
+  // 正副委員長が代わったという記録は会議録に無いので、平成20年12月のまま。議会だより編集委員会と議会の外の役職は分からないので書かない
+  {
+    selectedOn: "2010-06-01",
+    sessionKey: "h22-2-teirei",
+    occasion: "補欠選挙で当選した飯田正憲を文教厚生委員会に（第2回定例会）。それまでの入れ替わりも反映した、この日の常任委員会と議会運営委員会",
+    source: {
+      kind: "会議録",
+      note: "平成20年12月の名簿（議会だより第12号）に、2009-06-19（村上典男の辞職と議会運営委員会委員の選任）、2010-03-02（議会運営委員会委員の選任）、2010-06-01（常任委員会委員の選任）の会議録の入れ替わりを当てはめた",
+    },
+    committees: [
+      {
+        committee: "総務委員会",
+        kind: "常任委員会",
+        chair: "西山猛",
+        viceChair: "蛯澤幸一",
+        members: ["鈴木貞夫", "上野登", "常井好美", "海老澤勝男", "市村博之"],
+      },
+      {
+        committee: "産業経済委員会",
+        kind: "常任委員会",
+        chair: "杉山一秀",
+        viceChair: "野口圓",
+        members: ["石松俊雄", "萩原瑞子", "中澤猛", "大関久義", "石﨑勝三"],
+      },
+      {
+        committee: "文教厚生委員会",
+        kind: "常任委員会",
+        chair: "畑岡進",
+        viceChair: "石田安夫",
+        members: ["海老澤勝", "横倉きん", "須藤勝雄", "竹江浩", "飯田正憲"],
+      },
+      {
+        committee: "土木建設委員会",
+        kind: "常任委員会",
+        chair: "藤枝浩",
+        viceChair: "鈴木裕士",
+        members: ["小磯節子", "町田征久", "野原義昭", "柴沼広", "小薗江一三"],
+      },
+      {
+        committee: "議会運営委員会",
+        kind: "議会運営委員会",
+        chair: "海老澤勝男",
+        viceChair: "柴沼広",
+        members: ["西山猛", "萩原瑞子", "大関久義", "野原義昭", "須藤勝雄", "海老澤勝"],
+      },
+    ],
+  },
+  earlySpecial(
+    "2010-09-03", "h22-3-teirei", "決算特別委員会", "平成21年度の決算の審査のため（第3回定例会）",
+    ["野口圓", "鈴木裕士", "海老澤勝", "町田征久", "杉山一秀", "須藤勝雄", "常井好美", "海老澤勝男"],
+    "海老澤勝", "鈴木裕士"
+  ),
   {
     selectedOn: "2011-01-05",
     sessionKey: "h23-1-rinji",

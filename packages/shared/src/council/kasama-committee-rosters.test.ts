@@ -177,6 +177,37 @@ describe.each([
   });
 });
 
+describe("KASAMA_COMMITTEE_ROSTERS（平成18〜22年）", () => {
+  test("2006-04-04: 在任特例の53人が、常任委員会4つにちょうど1回ずつ出てくる（議長の大関久義も入っている）", () => {
+    const snapshot = KASAMA_COMMITTEE_ROSTERS.find((s) => s.selectedOn === "2006-04-04");
+    const names = (snapshot?.committees ?? []).filter((c) => c.kind === "常任委員会").flatMap(everyone);
+    expect(names).toHaveLength(53);
+    expect(new Set(names).size).toBe(53);
+  });
+
+  test("予算・決算特別委員会は、平成18年度は15人、平成19年からは8人で、正副委員長が委員の中にいる", () => {
+    const early = KASAMA_COMMITTEE_ROSTERS.filter((s) => s.selectedOn < "2010-12-12")
+      .flatMap((s) => s.committees.map((c) => ({ date: s.selectedOn, c })))
+      .filter(({ c }) => /^(予算|決算)特別委員会$/.test(c.committee));
+    expect(early).toHaveLength(10);
+    for (const { date, c } of early) {
+      const names = everyone(c);
+      expect(new Set(names).size).toBe(date < "2007-01-01" ? 15 : 8);
+      expect(c.chair).not.toBeNull();
+      expect(c.viceChair).not.toBeNull();
+    }
+  });
+
+  test("2010-06-01: 常任委員会4つに28人がちょうど1回ずつ（辞職した村上典男に代わり飯田正憲）", () => {
+    const snapshot = KASAMA_COMMITTEE_ROSTERS.find((s) => s.selectedOn === "2010-06-01");
+    const names = (snapshot?.committees ?? []).filter((c) => c.kind === "常任委員会").flatMap(everyone);
+    expect(names).toHaveLength(28);
+    expect(new Set(names).size).toBe(28);
+    expect(names).toContain("飯田正憲");
+    expect(names).not.toContain("村上典男");
+  });
+});
+
 describe("KASAMA_COMMITTEE_ROSTERS（平成22年12月からの任期）", () => {
   test("この任期の名簿がある", () => {
     expect(H22_TERM.length).toBeGreaterThan(0);

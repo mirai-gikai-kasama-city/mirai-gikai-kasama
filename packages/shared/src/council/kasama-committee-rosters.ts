@@ -211,6 +211,118 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
     ],
   },
   {
+    selectedOn: "2008-12-15",
+    sessionKey: "h20-4-teirei",
+    occasion:
+      "任期の途中の選び直し（第4回定例会。12月15日に正副議長の選挙と常任委員会委員の選任、16日に議会運営委員会委員の選任）",
+    source: {
+      kind: "議会だより",
+      issue: 12,
+      pages: [5, 6],
+      url: "https://www.city.kasama.lg.jp/page/page000096.html",
+    },
+    committees: [
+      {
+        committee: "総務委員会",
+        kind: "常任委員会",
+        chair: "西山猛",
+        viceChair: "蛯澤幸一",
+        members: ["鈴木貞夫", "上野登", "常井好美", "海老澤勝男", "市村博之"],
+      },
+      {
+        committee: "産業経済委員会",
+        kind: "常任委員会",
+        chair: "杉山一秀",
+        viceChair: "野口圓",
+        members: ["石松俊雄", "萩原瑞子", "中澤猛", "大関久義", "石﨑勝三"],
+      },
+      {
+        committee: "文教厚生委員会",
+        kind: "常任委員会",
+        chair: "畑岡進",
+        viceChair: "石田安夫",
+        members: ["村上典男", "海老澤勝", "横倉きん", "須藤勝雄", "竹江浩"],
+      },
+      {
+        committee: "土木建設委員会",
+        kind: "常任委員会",
+        chair: "藤枝浩",
+        viceChair: "鈴木裕士",
+        members: ["小磯節子", "町田征久", "野原義昭", "柴沼広", "小薗江一三"],
+      },
+      {
+        committee: "議会運営委員会",
+        kind: "議会運営委員会",
+        chair: "海老澤勝男",
+        viceChair: "柴沼広",
+        members: ["西山猛", "村上典男", "萩原瑞子", "大関久義", "野原義昭", "須藤勝雄"],
+      },
+      {
+        committee: "議会だより編集委員会",
+        kind: "議会だより編集委員会",
+        chair: "萩原瑞子",
+        viceChair: "小磯節子",
+        members: ["石松俊雄", "上野登", "横倉きん", "大関久義", "杉山一秀", "小薗江一三"],
+      },
+    ],
+    outsideCouncilPosts: [
+      { body: "水戸地方広域市町村圏事務組合議会", posts: ["鈴木貞夫", "大関久義"].map(unionMember) },
+      {
+        body: "笠間地方広域事務組合議会",
+        posts: ["藤枝浩", "萩原瑞子", "中澤猛", "上野登", "杉山一秀", "常井好美"].map(unionMember),
+      },
+      {
+        body: "笠間・水戸環境組合議会",
+        posts: ["石田安夫", "西山猛", "石松俊雄", "海老澤勝"].map(unionMember),
+      },
+      {
+        body: "茨城地方広域環境事務組合議会",
+        posts: ["大関久義", "柴沼広", "竹江浩", "海老澤勝男"].map(unionMember),
+      },
+      {
+        body: "筑北環境衛生組合議会",
+        posts: ["石田安夫", "蛯澤幸一", "鈴木貞夫", "杉山一秀"].map(unionMember),
+      },
+      { body: "笠間市監査委員", posts: [member("石﨑勝三")] },
+      {
+        body: "（財）笠間市開発公社",
+        posts: [
+          { role: "理事", name: "蛯澤幸一" },
+          { role: "理事", name: "野原義昭" },
+          { role: "評議員", name: "石田安夫" },
+          { role: "評議員", name: "鈴木貞夫" },
+          { role: "監事", name: "畑岡進" },
+        ],
+      },
+      {
+        body: "笠間市社会福祉協議会",
+        posts: [
+          { role: "理事", name: "畑岡進" },
+          { role: "評議員", name: "須藤勝雄" },
+        ],
+      },
+      { body: "下水道審議会", posts: ["野口圓", "鈴木裕士", "横倉きん"].map(member) },
+      { body: "水道運営審議会", posts: ["上野登", "常井好美"].map(member) },
+      { body: "行政改革推進委員会", posts: [member("村上典男")] },
+      { body: "交通安全対策協議会", posts: [member("中澤猛")] },
+      { body: "高齢者福祉計画・介護保険事業計画策定委員会", posts: [member("畑岡進")] },
+      { body: "民生委員推薦会", posts: ["市村博之", "畑岡進"].map(member) },
+      { body: "男女共同参画審議会", posts: [member("小磯節子")] },
+      {
+        body: "国民健康保険運営協議会",
+        posts: ["鈴木裕士", "海老澤勝", "横倉きん", "杉山一秀", "須藤勝雄", "海老澤勝男"].map(member),
+      },
+      { body: "公共事業再評価委員会", posts: [member("藤枝浩")] },
+      {
+        body: "都市計画審議会",
+        posts: ["西山猛", "小薗江一三", "竹江浩", "常井好美"].map(member),
+      },
+      { body: "スポーツ振興審議会", posts: [member("畑岡進")] },
+      { body: "地域公共交通会議", posts: [member("市村博之")] },
+      { body: "次世代育成支援対策地域協議会", posts: [member("畑岡進")] },
+    ],
+  },
+  {
     selectedOn: "2011-01-05",
     sessionKey: "h23-1-rinji",
     occasion: "平成22年12月の市議会議員一般選挙の後、最初の議会（第1回臨時会）",

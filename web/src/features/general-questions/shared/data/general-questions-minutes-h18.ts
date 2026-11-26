@@ -2092,7 +2092,7 @@ export const H18_H22_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   fromMinutesH18(
     "h21-4-teirei",
     "平成21年第4回定例会",
-    "2009-12-12",
+    "2009-12-11",
     2,
     6,
     "萩原 瑞子",
@@ -2106,7 +2106,7 @@ export const H18_H22_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   fromMinutesH18(
     "h21-4-teirei",
     "平成21年第4回定例会",
-    "2009-12-12",
+    "2009-12-11",
     2,
     7,
     "町田 征久",
@@ -2120,7 +2120,7 @@ export const H18_H22_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   fromMinutesH18(
     "h21-4-teirei",
     "平成21年第4回定例会",
-    "2009-12-12",
+    "2009-12-11",
     2,
     8,
     "畑岡 進",
@@ -2130,7 +2130,7 @@ export const H18_H22_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   fromMinutesH18(
     "h21-4-teirei",
     "平成21年第4回定例会",
-    "2009-12-12",
+    "2009-12-11",
     2,
     9,
     "野口 圓",
@@ -2140,7 +2140,7 @@ export const H18_H22_GENERAL_QUESTIONS: readonly GeneralQuestionRecord[] = [
   fromMinutesH18(
     "h21-4-teirei",
     "平成21年第4回定例会",
-    "2009-12-12",
+    "2009-12-11",
     2,
     10,
     "石松 俊雄",

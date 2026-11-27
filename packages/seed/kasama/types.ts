@@ -66,6 +66,8 @@ export type KasamaResultLabel =
   | "修正可決"
   | "否決"
   | "不採択"
+  /** 請願者からの取り下げの申し出を、議会が承認した請願・陳情（結論は出ていない。平成21年第2回の請願第21-3号） */
+  | "取り下げ"
   // 市の番号が無い議事（当サイトの番号「種類-番号」を付けるもの）の結果。会議録の言い方に合わせる
   /** 会期の決定、閉会中の継続審査、農業委員の推薦、議席の変更、特別委員会の設置、議員の派遣 */
   | "決定"
@@ -80,10 +82,11 @@ export type KasamaResultLabel =
   /** 諸般の報告、施政方針、特別委員会の中間報告（採決は無い） */
   | "報告";
 
-/** 成立しなかった結果。bills.status を rejected にする */
+/** 成立しなかった結果。bills.status を rejected にする（取り下げは願意が実現しなかったので、こちらに入れる） */
 export const REJECTED_RESULT_LABELS: ReadonlySet<KasamaResultLabel> = new Set([
   "否決",
   "不採択",
+  "取り下げ",
 ]);
 
 export interface KasamaBill {

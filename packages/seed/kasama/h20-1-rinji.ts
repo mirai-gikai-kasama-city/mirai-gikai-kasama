@@ -11,7 +11,8 @@
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  * 議員の評価につながる表現は避け、質疑・討論の内容は発言者の名前を出さずに書く。
  *
- * 載せなかったもの: 番号の無い議事（会議録署名議員の指名、会期の決定）は載せていない。
+ * 市の番号が無い議事（会議録署名議員の指名、会期の決定）は、
+ * 当サイトの番号（「種類-番号」。種類ごとに会議録の議事の順で1から）を付けて UNNUMBERED_BILLS に載せた。
  *
  * 議会だよりと会議録の食い違い: 番号・結果・議決日は一致。議会だよりの概要は「4議案を原案のとおり
  * 可決しました」とだけ書き、賛否が分かれたことには触れていない。
@@ -21,6 +22,7 @@
  * 平成20年度の数とみられる（会議録の表記のまま。解説文には使っていない）。
  */
 import type { KasamaBill } from "./types";
+import { signers, unnumbered } from "./unnumbered";
 
 export const H20_1_RINJI_SESSION = {
   key: "h20-1-rinji",
@@ -39,6 +41,23 @@ const KOUKI_KOUREISHA =
 
 const NO_DEBATE =
   `7月4日に提案され、質疑はありませんでした。委員会への付託を省いて討論が行われ、討論はありませんでした。起立により採決され、賛成多数で可決されました。${UNPUBLISHED_NOTE}`;
+
+/** 市の番号が無い議事。順番は会議録の議事の順（種類ごとに1から） */
+const UNNUMBERED_BILLS: readonly KasamaBill[] = [
+  signers({
+    number: 1,
+    lastDay: DAY,
+    sessionName: H20_1_RINJI_SESSION.name,
+    days: [{ dateText: "7月4日", names: "19番 市村博之議員、20番 野原義昭議員" }],
+  }),
+  unnumbered("手続", 2, {
+    title: "会期の決定について",
+    resultLabel: "決定",
+    decidedOn: DAY,
+    summary: "この臨時会の会期を、7月4日の1日限りとすることを決めた。",
+    body: `7月4日に、議長が、この臨時会の会期を本日1日限りとすることを諮り、異議なく決まりました。会議録には、議会運営委員会の報告や日ごとの予定は載っていません。`,
+  }),
+];
 
 export const H20_1_RINJI_BILLS: readonly KasamaBill[] = [
   {
@@ -116,4 +135,5 @@ ${NO_DEBATE}`,
 ## 審議の経過
 ${NO_DEBATE}`,
   },
+  ...UNNUMBERED_BILLS,
 ];

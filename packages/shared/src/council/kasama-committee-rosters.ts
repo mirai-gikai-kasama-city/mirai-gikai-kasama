@@ -366,10 +366,10 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
     chairReportedOn: "2010-09-17",
   }),
   {
-    selectedOn: "2008-12-15",
+    selectedOn: "2008-12-16",
     sessionKey: "h20-4-teirei",
     occasion:
-      "任期の途中の選び直し（第4回定例会。12月15日に正副議長の選挙と常任委員会委員の選任、16日に議会運営委員会委員の選任）",
+      "任期の途中の選び直し（第4回定例会。12月16日に正副議長の選挙と常任委員会・議会運営委員会委員の選任。会議録第6号で確認）",
     source: {
       kind: "議会だより",
       issue: 12,

@@ -10,13 +10,15 @@
  * 解説文はこれらをもとにAIが下書きしたもの。運営者の確認が済むまで公開しない。
  * 議員の評価につながる表現は避け、質疑の内容は発言者の名前を出さずに書く。
  *
- * 載せなかったもの: 番号の無い議事（会議録署名議員の指名、会期の決定）は載せていない。
+ * 市の番号が無い議事（会議録署名議員の指名、会期の決定）は、
+ * 当サイトの番号（「種類-番号」。種類ごとに会議録の議事の順で1から）を付けて UNNUMBERED_BILLS に載せた。
  *
  * 議会だよりと会議録の食い違い: なし（件名・結果・議決日とも一致）。
  * 議会だよりの概要は「3月に開通した友部駅南北自由通路」と書いているが、臨時会の時点では
  * 会議録で「ことしの３月４日に供用の運びとなりました」と説明されている（開通は臨時会の後）。
  */
 import type { KasamaBill } from "./types";
+import { signers, unnumbered } from "./unnumbered";
 
 export const H19_2_RINJI_SESSION = {
   key: "h19-2-rinji",
@@ -32,6 +34,23 @@ const PUBLIC_FACILITY =
 
 const PROCEDURE =
   "1月30日に提案され、委員会への付託を省いて、すぐに討論・採決が行われました。討論はなく、異議なく可決されました。";
+
+/** 市の番号が無い議事。順番は会議録の議事の順（種類ごとに1から） */
+const UNNUMBERED_BILLS: readonly KasamaBill[] = [
+  signers({
+    number: 1,
+    lastDay: DAY,
+    sessionName: H19_2_RINJI_SESSION.name,
+    days: [{ dateText: "1月30日", names: "3番 蛯澤幸一議員、5番 藤枝浩議員" }],
+  }),
+  unnumbered("手続", 2, {
+    title: "会期の決定について",
+    resultLabel: "決定",
+    decidedOn: DAY,
+    summary: "この臨時会の会期を、1月30日の1日間とすることを決めた。",
+    body: `議会運営委員会が1月19日に会期と日程を話し合い、その結果を委員長が報告しました。この臨時会に出される議案は条例の制定1件と改正2件の3件のため、会期を1月30日の1日間とするという内容です。委員長の報告のとおりとすることに異議はなく、1月30日に決まりました。`,
+  }),
+];
 
 export const H19_2_RINJI_BILLS: readonly KasamaBill[] = [
   {
@@ -87,4 +106,5 @@ ${PROCEDURE}`,
 
 ${PROCEDURE}`,
   },
+  ...UNNUMBERED_BILLS,
 ];

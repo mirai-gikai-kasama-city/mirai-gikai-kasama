@@ -6,7 +6,10 @@ import type {
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/utils";
 
-/** 「問」「答」「要望」を紙面の並びのまま並べる */
+/**
+ * 「問」「答」「要望」「意見」を紙面の並びのまま並べる。印には種類の名前をそのまま出す。
+ * 「答」（市側）だけ白地にし、議員側の「問」「要望」「意見」は同じ色にする
+ */
 function QaEntries({ entries }: { entries: QuestionDayoriEntry[] }) {
   return (
     <dl className="mt-2 flex flex-col gap-2">

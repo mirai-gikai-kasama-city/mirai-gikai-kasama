@@ -25,9 +25,16 @@ const KINDS: readonly QuestionDayoriEntry["kind"][] = [
   "意見",
 ];
 
+/**
+ * 紙面に「問」の印が無く、見出しが問の代わりで、すぐ「答」が続くページ。紙面どおり「答」から始める
+ * （運営者の判断。2026-11-28）
+ * - kasama-r6-3-teirei-11: 第75号 p17（西山猛議員）。見出し「かゆいところに手が届く行政とは。各行政組織における見解は」のあとに7部署の「答」
+ */
+const STARTS_WITH_ANSWER = new Set(["kasama-r6-3-teirei-11"]);
+
 /** 議会だよりの問と答の並びが「問」から始まり、「答」があり、種類が分かるもので、空の文が無いことを確かめる */
-function expectValidDayoriEntries(entries: QuestionDayoriEntry[]) {
-  expect(entries[0]?.kind).toBe("問");
+function expectValidDayoriEntries(entries: QuestionDayoriEntry[], id?: string) {
+  expect(entries[0]?.kind).toBe(id && STARTS_WITH_ANSWER.has(id) ? "答" : "問");
   expect(entries.some((e) => e.kind === "答")).toBe(true);
   for (const entry of entries) {
     expect(KINDS).toContain(entry.kind);
@@ -40,7 +47,7 @@ describe("DAYORI_QUESTION_SUMMARIES", () => {
     Object.entries(DAYORI_QUESTION_SUMMARIES)
   )("%s: 一般質問の記録があり、「問」から始まり、空の文が無い", (id, summary) => {
     expect(ALL_IDS.has(id)).toBe(true);
-    expectValidDayoriEntries(summary.entries);
+    expectValidDayoriEntries(summary.entries, id);
   });
 
   it("議員の「意見」が最後に入った並びも通る", () => {

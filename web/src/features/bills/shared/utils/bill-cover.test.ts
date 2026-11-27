@@ -61,6 +61,21 @@ describe("extractBillNumberLabel", () => {
     ).toBe("諮問第8号");
   });
 
+  test("当サイトが付けた番号（種類-番号）も抽出する", () => {
+    expect(extractBillNumberLabel("選任-1　常任委員会委員の選任について")).toBe(
+      "選任-1"
+    );
+  });
+
+  test("決議案第N号と選挙第N号を抽出する", () => {
+    expect(extractBillNumberLabel("決議案第1号　平和的解決を求める決議")).toBe(
+      "決議案第1号"
+    );
+    expect(extractBillNumberLabel("選挙第2号　選挙管理委員の選挙")).toBe(
+      "選挙第2号"
+    );
+  });
+
   test("先頭以外に番号がある場合はマッチしない", () => {
     expect(extractBillNumberLabel("○○について（議案第10号関連）")).toBeNull();
   });

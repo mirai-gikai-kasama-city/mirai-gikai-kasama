@@ -1,0 +1,97 @@
+import { describe, expect, it } from "vitest";
+import { KASAMA_SESSIONS } from "./sessions";
+
+/** 議案ごとの賛否データのうち、議会だよりの賛否一覧があるもの。全会期を同じ基準で確かめる */
+const votedBills = KASAMA_SESSIONS.flatMap((session) =>
+  session.bills.flatMap((bill) => {
+    const marks = bill.vote?.marks;
+    return bill.vote && marks
+      ? [
+          {
+            session,
+            bill,
+            label: `${session.name} ${bill.billNumberLabel}`,
+            vote: { ...bill.vote, marks },
+          },
+        ]
+      : [];
+  })
+);
+
+describe("全会期の賛否データ", () => {
+  it.each(votedBills)("$label の賛否一覧は全議員分ある", ({ session, vote }) => {
+    expect(vote.marks).toHaveLength(session.members.length);
+  });
+
+  it("賛否一覧の無い採決は、会議録の票数で賛否が分かれている", () => {
+    // 議員ごとの賛否が公開されていない時期（unpublished）は、票数も無いので除く
+    const unlisted = KASAMA_SESSIONS.flatMap((session) =>
+      session.bills.flatMap((bill) =>
+        bill.vote && !bill.vote.marks && !bill.vote.unpublished
+          ? [bill.vote.minutes]
+          : []
+      )
+    );
+    // 今は0件（賛否一覧に無かった採決も、録画配信の採決画面で確かめて marks を入れた）。
+    // 確かめられない採決を足したら、ここの件数も増やす
+    expect(unlisted).toHaveLength(0);
+    for (const minutes of unlisted) {
+      expect(minutes.for).toBeGreaterThan(0);
+      expect(minutes.against).toBeGreaterThan(0);
+    }
+  });
+
+  // 起立による採決は会議録に人数が無いので、照らし合わせられない
+  const matchedBills = votedBills.flatMap(({ label, vote }) =>
+    vote.minutes && !vote.mismatchNote
+      ? [{ label, marks: vote.marks, minutes: vote.minutes }]
+      : []
+  );
+  const mismatchedBills = votedBills.filter(({ vote }) => vote.mismatchNote);
+
+  it.each(matchedBills)("$label の賛否一覧は会議録の採決人数と一致する", ({
+    marks,
+    minutes,
+  }) => {
+    const count = (mark: string) =>
+      marks.filter((item) => item === mark).length;
+    expect(count("○")).toBe(minutes.for);
+    expect(count("●")).toBe(minutes.against);
+    expect(count("○") + count("●")).toBe(minutes.total);
+  });
+
+  it.each(mismatchedBills)("$label の人数の食い違いは本文に書いてある", ({
+    bill,
+    vote,
+  }) => {
+    // 食い違いを残す場合は、読む人に分かるよう本文に書いてあること
+    expect(bill.body).toContain(vote.mismatchNote);
+  });
+
+  it.each(votedBills)("$label で議長は採決に加わらない", ({ bill, vote }) => {
+    // 議長は任期の途中で替わる（大関久義→畑岡洋二）が、賛否一覧ではどの会期も最後の列にいる。
+    // 「－」が最後の列にちょうど1つあることで、列のずれも見つける。
+    // ただし議長が欠席して副議長が議長の職務を代行した日は、2人とも採決に加わらない（平成30年第3回）
+    const notVoting = vote.marks.filter((item) => item === "－").length;
+    if (notVoting === 2) {
+      expect(bill.body).toContain("代行");
+    } else {
+      expect(notVoting).toBe(1);
+    }
+    expect(vote.marks.at(-1)).toBe("－");
+  });
+});
+
+describe.each(KASAMA_SESSIONS)("$name の議案", ({ bills }) => {
+  it("全議案に一覧用の要約と本文がある", () => {
+    for (const bill of bills) {
+      expect(bill.summary.length).toBeGreaterThan(0);
+      expect(bill.body.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("議案番号が重複していない", () => {
+    const labels = bills.map((bill) => bill.billNumberLabel);
+    expect(new Set(labels).size).toBe(labels.length);
+  });
+});

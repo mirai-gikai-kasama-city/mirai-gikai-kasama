@@ -135,6 +135,14 @@
     "./council/bill-source-section": {
       "types": "./src/council/bill-source-section.ts",
       "default": "./src/council/bill-source-section.ts"
+    },
+    "./council/site-bill-number": {
+      "types": "./src/council/site-bill-number.ts",
+      "default": "./src/council/site-bill-number.ts"
+    },
+    "./council/kasama-committee-rosters": {
+      "types": "./src/council/kasama-committee-rosters.ts",
+      "default": "./src/council/kasama-committee-rosters.ts"
     }
   },
   "dependencies": {

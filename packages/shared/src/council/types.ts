@@ -81,6 +81,42 @@ export interface QuestionOutlineItem {
   points: QuestionOutlinePoint[];
 }
 
+/**
+ * 議会だよりの一般質問のページの「問」「答」「要望」「意見」のどれか1つ（議会だよりの文のまま）。
+ * 「問」のあとに「答」が2つ続くこともあるので、組にせず紙面の並びのまま並べる。
+ * 「要望」は議員が要望を述べた段落（PDFの隠れた文字で「要望」と区切られている。紙面に印が無いこともある）。
+ * 「意見」は議員が最後に意見を述べた欄（紙面に「意見」とある。紙面どおりに載せる。運営者の判断。2026-11-28）
+ */
+export interface QuestionDayoriEntry {
+  kind: "問" | "答" | "要望" | "意見";
+  text: string;
+}
+
+/**
+ * 議会だよりの一般質問のページ（議員ごと）。議会側がまとめた質問と答弁の要約で、
+ * AIによる要約ではない。ページの「問」「答」（と「要望」「意見」）を並びのまま写す
+ */
+export interface QuestionDayoriSummary {
+  /** 号 */
+  issue: number;
+  /** ページ */
+  page: number;
+  /** その号の公式サイトのページ */
+  url: string;
+  entries: QuestionDayoriEntry[];
+}
+
+/**
+ * 議会だよりに要約が載っていない題について、会議録をもとにAI（Claude）がまとめた「問」「答」。
+ * 議会だよりの要約とは分けて持ち、画面でもAIによる要約だと分かるように出す（運営者の判断。2026-11-24）
+ */
+export interface QuestionMinutesSummary {
+  /** もとにした会議録（PDF） */
+  minutesUrl: string;
+  /** 題ごとの要約（議会だよりに載っていない題だけ） */
+  topics: { item: string; entries: QuestionDayoriEntry[] }[];
+}
+
 /** 議員1人の1回の一般質問（通告） */
 export interface GeneralQuestionRecord {
   /** 安定ID（会期キー-順番） */
@@ -107,12 +143,24 @@ export interface GeneralQuestionRecord {
   format: QuestionFormat | null;
   /** 質問事項（公式ページの表記） */
   items: string[];
+  /**
+   * 質問事項をどこから取ったか。省略時は一般質問通告。"minutes" は通告が公開されていない時期
+   * （平成26年8月まで）に、会議録で議員が読み上げた題から起こしたもの。
+   * "dayori" は議会だよりの見出しを使ったもの（議会だよりに無い題は会議録から。運営者の判断。2026-11-26）
+   */
+  itemsSource?: "minutes" | "dayori";
+  /** 議会だよりの一般質問のページ（問と答の要約）。まだ写していない・無いときは省略 */
+  dayoriSummary?: QuestionDayoriSummary;
+  /** 議会だよりに載っていない題の、会議録をもとにしたAIによる要約 */
+  minutesSummary?: QuestionMinutesSummary;
   /** 通告書PDFの要旨（PDFが無い・読み取れない場合は null） */
   outline: QuestionOutlineItem[] | null;
   /** 要旨を情報開示請求で交付を受けた通告書から起こした場合だけ "disclosure" */
   outlineSource?: "disclosure";
-  /** 公式YouTubeチャンネルの録画（議員ごとに1本ある場合） */
+  /** 公式の録画（議員ごとに1本ある場合） */
   videoUrl: string | null;
+  /** この質問の公式の会議録（ある場合） */
+  minutesUrl?: string | null;
   /** 公式ページのURL */
   sourceUrl: string;
   /** 通告書PDFのURL */

@@ -24,7 +24,7 @@ export async function SearchPage() {
             議案を検索
           </h1>
           <p className="text-xs text-mirai-text-secondary">
-            気になるキーワードで、田川市議会に提出された議案をさがせます。
+            笠間市議会に提出された議案を、キーワード・暮らしのテーマ・議案の種類（タグ）からさがせます。
           </p>
         </div>
 

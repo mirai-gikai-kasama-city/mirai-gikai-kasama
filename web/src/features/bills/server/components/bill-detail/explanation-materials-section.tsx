@@ -43,7 +43,7 @@ export function ExplanationMaterialsSection({
         ))}
       </ul>
       <p className="mt-3 text-xs leading-relaxed text-mirai-text-note">
-        議会への提出時に配布された議案説明資料です。リンク先は田川市公式サイトに掲載されたPDFファイルです。
+        議会への提出時に配布された議案説明資料です。リンク先は笠間市公式サイトに掲載されたPDFファイルです。
       </p>
     </section>
   );

@@ -2,7 +2,7 @@
  * ビジュアルスモークチェック
  *
  * 主要ページをスマホ幅(375px)とPC幅(1280px)で開き、以下を機械検査する:
- *   1. HTTPステータスが400未満であること
+ *   1. HTTPステータスが400未満であること（公開していないページは、逆に404であること）
  *   2. 横スクロール（コンテンツのはみ出し）が発生していないこと
  *   3. ページ内JSエラー・コンソールエラーが出ていないこと
  *   4. 重なり検査: トップページのヒーロー見出しがチャットウィンドウと
@@ -19,7 +19,7 @@
  * アップロードされるので、崩れの目視確認にも使える）
  */
 
-import { mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync } from "node:fs";
 import { chromium } from "playwright";
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
@@ -48,6 +48,28 @@ const STATIC_PATHS = [
   "/privacy",
   "/terms",
 ];
+
+/**
+ * 公開していないページ（web/src/config/site-sections.ts の HIDDEN_SECTION_PREFIXES）。
+ * ミドルウェアが 404 を返すので、ほかの検査はせず「404 になること」だけを確かめる。
+ * 一覧を二重に持たないよう、TypeScript のファイルから文字列を読み取る
+ */
+const HIDDEN_SECTION_PREFIXES = (() => {
+  const source = readFileSync(
+    new URL("../web/src/config/site-sections.ts", import.meta.url),
+    "utf8"
+  );
+  const block = source.match(/HIDDEN_SECTION_PREFIXES = \[([^\]]*)\]/);
+  if (!block) {
+    throw new Error("site-sections.ts から HIDDEN_SECTION_PREFIXES を読み取れません");
+  }
+  return [...block[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+})();
+
+const isHiddenPath = (path) =>
+  HIDDEN_SECTION_PREFIXES.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`)
+  );
 
 /** sitemapから1件ずつ拾う動的ルート（正規表現→代表1パス） */
 const DYNAMIC_ROUTE_PATTERNS = [
@@ -185,6 +207,25 @@ async function main() {
 
       const label = `${viewport.name} ${path}`;
       const failures = [];
+      if (isHiddenPath(path)) {
+        // 非公開のページは中身を出していなければよい。本番の作り方（next start）では 404、
+        // 開発サーバー（next dev）ではトップページへの転送になる
+        const res = await page.goto(`${BASE_URL}${path}`, {
+          waitUntil: "load",
+          timeout: 45_000,
+        });
+        const finalPath = new URL(page.url()).pathname;
+        await page.close();
+        const status = res ? res.status() : "no response";
+        if (status === 404 || !isHiddenPath(finalPath)) {
+          console.log(`✓ ${label}（非公開: ${status === 404 ? "404" : `${finalPath} へ転送`}）`);
+        } else {
+          console.error(`✗ ${label}`);
+          console.error(`  - 非公開のはずが HTTP ${status} で表示されている`);
+          allFailures.push({ label, failures: [`非公開のはずが HTTP ${status} で表示`] });
+        }
+        continue;
+      }
       try {
         const res = await page.goto(`${BASE_URL}${path}`, {
           waitUntil: "load",

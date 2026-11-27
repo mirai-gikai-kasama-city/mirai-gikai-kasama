@@ -41,7 +41,7 @@ type CoverFamily =
   | "beige";
 
 // カテゴリ（bill.tags[0].label）→ 背景系統・アイコンの対応表
-// カテゴリ判定は packages/seed/tagawa/build-csv.ts の categorize() と揃える
+// カテゴリ判定は packages/seed/kasama/csv-rows.ts の categorizeBill()（田川市分は tagawa/build-csv.ts）と揃える
 const CATEGORY_STYLE: Record<
   string,
   { family: CoverFamily; icon: LucideIcon }
@@ -52,7 +52,9 @@ const CATEGORY_STYLE: Record<
   人事: { family: "sage", icon: Users },
   意見書: { family: "ochre", icon: Send },
   決議: { family: "ochre", icon: Megaphone },
+  "意見書・決議": { family: "ochre", icon: Send },
   "契約・工事": { family: "brown", icon: HardHat },
+  指定管理者: { family: "brown", icon: Building2 },
   "財産処分・取得": { family: "brown", icon: Building2 },
   一部事務組合: { family: "beige", icon: Network },
   専決処分承認: { family: "beige", icon: Zap },

@@ -3,6 +3,7 @@ import { fetchAllPages } from "@mirai-gikai/shared/supabase/fetch-all-pages";
 import { selectTagSectionBills } from "@mirai-gikai/shared/top-page/select-tag-section-bills";
 import { createAdminClient } from "@mirai-gikai/supabase";
 import type { DifficultyLevelEnum } from "@/features/bill-difficulty/shared/types";
+import { compareSessionBills } from "../../shared/utils/bill-number-order";
 import {
   computeBillInterestScore,
   sortByInterestKey,
@@ -47,20 +48,16 @@ export async function findPublishedBillProposerSources(
   return data ?? [];
 }
 
-/**
- * 公開済み議案を難易度コンテンツ付きで取得（bill_contents.contentなしの軽量版）。
- * 全件レスポンスを約2.2MB→約0.8MBに抑え、Next.js Data Cacheの
- * 1エントリ2MB上限内に収めてキャッシュ可能にする
- */
-export async function findPublishedBillsLiteWithContents(
-  difficultyLevel: DifficultyLevelEnum
+/** 公開済み議案の軽量一覧（本文なし）の from〜to 件目を取るクエリ。並びは議決日の新しい順・id順 */
+function selectPublishedBillsLite(
+  difficultyLevel: DifficultyLevelEnum,
+  from: number,
+  to: number
 ) {
-  const supabase = createAdminClient();
-  const { data, error } = await fetchAllPages((from, to) =>
-    supabase
-      .from("bills")
-      .select(
-        `
+  return createAdminClient()
+    .from("bills")
+    .select(
+      `
       *,
       bill_contents!inner (
         id,
@@ -72,16 +69,49 @@ export async function findPublishedBillsLiteWithContents(
         updated_at
       )
     `
-      )
-      .eq("publish_status", "published")
-      .eq("bill_contents.difficulty_level", difficultyLevel)
-      .order("submitted_date", { ascending: false, nullsFirst: false })
-      .order("id")
-      .range(from, to)
+    )
+    .eq("publish_status", "published")
+    .eq("bill_contents.difficulty_level", difficultyLevel)
+    .order("submitted_date", { ascending: false, nullsFirst: false })
+    .order("id")
+    .range(from, to);
+}
+
+/**
+ * 公開済み議案を難易度コンテンツ付きで取得（bill_contents.contentなしの軽量版）。
+ * 本文を省いてレスポンスを軽くする（全件のキャッシュは get-bills.ts で件数ごとに分ける）
+ */
+export async function findPublishedBillsLiteWithContents(
+  difficultyLevel: DifficultyLevelEnum
+) {
+  const { data, error } = await fetchAllPages((from, to) =>
+    selectPublishedBillsLite(difficultyLevel, from, to)
   );
 
   if (error) {
     throw new Error(`Failed to fetch bills (lite): ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+/**
+ * 公開済み議案の軽量一覧のうち、offset 件目から limit 件を取る（並びは
+ * findPublishedBillsLiteWithContents と同じ）。limit は PostgREST の1回の上限（1000）以下にする
+ */
+export async function findPublishedBillsLiteWithContentsRange(
+  difficultyLevel: DifficultyLevelEnum,
+  offset: number,
+  limit: number
+) {
+  const { data, error } = await selectPublishedBillsLite(
+    difficultyLevel,
+    offset,
+    offset + limit - 1
+  );
+
+  if (error) {
+    throw new Error(`Failed to fetch bills (lite range): ${error.message}`);
   }
 
   return data ?? [];
@@ -288,7 +318,9 @@ export async function findPublishedBillsByDietSession(
     throw new Error(`Failed to fetch bills by diet session: ${error.message}`);
   }
 
-  return data ?? [];
+  // データベースの並びでは同じ日の議案が id 順になるので、番号順にそろえる
+  // （会期まとめページの全議案リストと、議案ページの前後ナビの両方がこの順を使う）
+  return [...(data ?? [])].sort(compareSessionBills);
 }
 
 /**

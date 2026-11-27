@@ -17,6 +17,8 @@ interface SectionJumpNavProps {
   tagLabels: string[];
   /** 前回の会期セクション（Archive）を表示しているか */
   hasPreviousSession: boolean;
+  /** 注目の議案セクションを表示しているか */
+  hasFeaturedBills: boolean;
 }
 
 /**
@@ -27,9 +29,12 @@ interface SectionJumpNavProps {
 export function SectionJumpNav({
   tagLabels,
   hasPreviousSession,
+  hasFeaturedBills,
 }: SectionJumpNavProps) {
   const entries: JumpNavEntry[] = [
-    { label: "注目の議案", href: `#${TOP_SECTION_IDS.featured}` },
+    ...(hasFeaturedBills
+      ? [{ label: "注目の議案", href: `#${TOP_SECTION_IDS.featured}` }]
+      : []),
     ...tagLabels.map((label) => ({
       label,
       href: `#${tagSectionId(label)}`,
@@ -37,7 +42,7 @@ export function SectionJumpNav({
     ...(hasPreviousSession
       ? [{ label: "過去の会期", href: `#${TOP_SECTION_IDS.previousSession}` }]
       : []),
-    { label: "みらい議会とは", href: `#${TOP_SECTION_IDS.about}` },
+    { label: "かさま議会ノートとは", href: `#${TOP_SECTION_IDS.about}` },
   ];
 
   return <JumpNav entries={entries} />;

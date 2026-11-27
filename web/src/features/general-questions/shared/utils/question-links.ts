@@ -6,30 +6,20 @@ import { compactMemberName } from "./group-questions";
 
 /** 議員ページへリンクしてよいか判定するための情報 */
 export interface MemberLinkContext {
-  /** 議員ページがある姓 */
+  /** 議員ページがある議員のキー（空白なしのフルネーム） */
   memberNames: ReadonlySet<string>;
-  /** 姓 → 公式名簿のフルネーム（名簿に無い姓は含まれない） */
-  profileFullNameByFamily: ReadonlyMap<string, string>;
 }
 
 /**
- * 記録の氏名が指す議員のページがあればその姓（リンクのキー）を返す。
- * 姓の議員ページがあっても、公式名簿のフルネームと違う人物（同姓の別人）には
- * リンクしない。名簿に無い姓は姓だけで判断する
+ * 記録の氏名が指す議員のページがあれば、そのキー（空白なしのフルネーム）を返す。
+ * 名字だけでは同じ名字の別人（田村幸子・田村泰之）を見分けられないため、フルネームで照合する
  */
 export function resolveMemberPageKey(
-  person: { familyName: string; name: string },
+  person: { name: string },
   context: MemberLinkContext
 ): string | null {
-  if (!context.memberNames.has(person.familyName)) return null;
-  const profileName = context.profileFullNameByFamily.get(person.familyName);
-  if (
-    profileName &&
-    compactMemberName(profileName) !== compactMemberName(person.name)
-  ) {
-    return null;
-  }
-  return person.familyName;
+  const key = compactMemberName(person.name);
+  return context.memberNames.has(key) ? key : null;
 }
 
 /**

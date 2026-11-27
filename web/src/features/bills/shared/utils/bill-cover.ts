@@ -1,33 +1,14 @@
 // 議案カード用の動的カバー（BillCover）を構成するための純粋関数群。
 // カテゴリ共通の静的サムネイル画像に代えて、議案ごとに見た目が
 // 決定的に変化するカバーをCSS+アイコンで組み立てるために使用する。
-
-/** 議案名冒頭の番号ラベルを検出する接頭辞（田川市議会の議案区分） */
-const BILL_NUMBER_PREFIXES = [
-  "議案",
-  "認定",
-  "報告",
-  "承認",
-  "発議",
-  "意見書",
-  "請願",
-  "陳情",
-  "諮問",
-] as const;
-
-const BILL_NUMBER_LABEL_PATTERN = new RegExp(
-  `^(${BILL_NUMBER_PREFIXES.join("|")})第\\d+号`
-);
+import { extractBillNumber } from "./bill-seo";
 
 /**
  * 議案名冒頭の番号ラベルを抽出する
  * 例: "議案第59号　令和元年度田川市一般会計補正予算（第3号）" → "議案第59号"
  * マッチしない場合は null を返す
  */
-export function extractBillNumberLabel(name: string): string | null {
-  const match = BILL_NUMBER_LABEL_PATTERN.exec(name);
-  return match ? match[0] : null;
-}
+export const extractBillNumberLabel = extractBillNumber;
 
 /**
  * 議案IDから決定的に 0〜variantCount-1 の数値を返す軽量ハッシュ

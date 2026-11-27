@@ -6,6 +6,7 @@ import { AuthGate } from "@/components/layouts/auth-gate";
 import { Footer } from "@/components/layouts/footer/footer";
 import { MainContent } from "@/components/layouts/main-content";
 import { MainLayout } from "@/components/layouts/main-layout";
+import { OperatorContact } from "@/components/layouts/operator-contact";
 import { env } from "@/lib/env";
 import { RubyfulInitializer } from "@/lib/rubyful";
 
@@ -25,7 +26,10 @@ export default function MainGroupLayout({
         <Header />
         <MainContent>{children}</MainContent>
         <Footer />
+        {/* 右下の連絡先の枠に、ページ末尾の文字が隠れないための余白 */}
+        <div aria-hidden className="h-16 md:h-20" />
       </MainLayout>
+      <OperatorContact />
     </>
   );
 }

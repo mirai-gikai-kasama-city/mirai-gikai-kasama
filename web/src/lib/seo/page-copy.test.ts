@@ -184,21 +184,20 @@ describe("describeProposerBills", () => {
 describe("describeMember", () => {
   it("賛否の数が評価ではないことを添え、80〜120 字に収まる", () => {
     const description = describeMember({
-      displayName: "榊原 大祐",
-      voteCount: 78,
+      displayName: "小薗江 一三",
+      faction: "政研会",
     });
     expectDescriptionLength(description);
-    expect(description).toContain("榊原 大祐 議員");
-    expect(description).toContain("78議案");
+    expect(description).toContain("小薗江 一三 議員（政研会）");
     expect(description).toContain("評価を示すものではありません");
   });
 
-  it("賛否の記録が無い議員は議案数を書かない", () => {
+  it("名簿の会派の欄が空の議員は会派を書かない", () => {
     const description = describeMember({
-      displayName: "世羅 翔二郎",
-      voteCount: 0,
+      displayName: "林田 美代子",
+      faction: null,
     });
-    expect(description).not.toContain("0議案");
+    expect(description).toContain("林田 美代子 議員の");
     expectDescriptionLength(description);
   });
 });

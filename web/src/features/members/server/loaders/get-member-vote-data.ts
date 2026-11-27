@@ -7,6 +7,7 @@ import { findPublishedBillProposerSources } from "@/features/bills/server/reposi
 import type { BillWithContentLite } from "@/features/bills/shared/types";
 import { parseMemberVotes } from "@/features/bills/shared/utils/member-votes";
 import { CACHE_TAGS } from "@/lib/cache-tags";
+import { MEMBER_PROFILES } from "../../shared/data/member-profiles";
 import type { BillWithMemberVotes } from "../../shared/utils/aggregate-members";
 import {
   getProposerType,
@@ -33,19 +34,12 @@ export async function getBillsWithMemberVotes(): Promise<
 }
 
 /**
- * 議員別賛否データ（member_votes）に登場する議員名（姓）の集合を取得する。
- * 議案の提出者・賛成者チップを議員個人ページへリンクさせるかどうかの
- * 判定（歴代議員等、名簿に無い人物はリンクしない）に使う
+ * 議員ページがある議員（現職）のキー（空白なしのフルネーム）の集合を取得する。
+ * 議員ページを持つのは名簿に載る現職だけなので、前の任期の議員などにはリンクしない。
+ * 一般質問・提出者などのチップを議員ページへリンクさせるかどうかの判定に使う
  */
 export async function getMemberNameSet(): Promise<Set<string>> {
-  const items = await getBillsWithMemberVotes();
-  const names = new Set<string>();
-  for (const { memberVotes } of items) {
-    for (const entry of memberVotes.entries) {
-      names.add(entry.name);
-    }
-  }
-  return names;
+  return new Set(Object.keys(MEMBER_PROFILES));
 }
 
 /**

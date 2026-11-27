@@ -93,6 +93,31 @@ export function parseMemberVotes(value: unknown): MemberVotes | null {
   };
 }
 
+/**
+ * 賛否は分かれた（または全会一致と言えない）が、議員ごとの賛否の記録が無い採決の注記を取り出す。
+ * seed は entries を空にし、notes に理由（起立採決で記録が無い、無記名投票など）を入れている。
+ * entries が空でない、または notes が無い・空・不正な値なら null
+ */
+export function parseUnrecordedVoteNotes(value: unknown): string[] | null {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return null;
+  }
+  const candidate = value as Record<string, unknown>;
+
+  if (!Array.isArray(candidate.entries) || candidate.entries.length !== 0) {
+    return null;
+  }
+  const { notes } = candidate;
+  if (
+    !Array.isArray(notes) ||
+    notes.length === 0 ||
+    !notes.every((note) => typeof note === "string" && note !== "")
+  ) {
+    return null;
+  }
+  return notes as string[];
+}
+
 export interface FactionGroup {
   faction: string;
   members: { name: string; vote: MemberVoteValue }[];

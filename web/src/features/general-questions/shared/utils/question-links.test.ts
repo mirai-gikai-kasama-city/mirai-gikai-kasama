@@ -2,36 +2,25 @@ import { describe, expect, it } from "vitest";
 import { alignOutlineWithItems, resolveMemberPageKey } from "./question-links";
 
 const context = {
-  memberNames: new Set(["髙瀬", "山野", "佐藤"]),
-  profileFullNameByFamily: new Map([
-    ["髙瀬", "髙瀬 冨士夫"],
-    ["山野", "山野 義人"],
-  ]),
+  memberNames: new Set(["田村幸子", "田村泰之", "石井栄"]),
 };
 
 describe("resolveMemberPageKey", () => {
-  it("議員ページがあり名簿のフルネームと一致すれば姓を返す", () => {
-    expect(
-      resolveMemberPageKey({ familyName: "山野", name: "山野 義人" }, context)
-    ).toBe("山野");
+  it("議員ページがあれば、空白を除いたフルネームを返す", () => {
+    expect(resolveMemberPageKey({ name: "石井 栄" }, context)).toBe("石井栄");
   });
 
-  it("同じ姓でも名簿と違う人物にはリンクしない", () => {
-    expect(
-      resolveMemberPageKey({ familyName: "髙瀬", name: "髙瀬 春美" }, context)
-    ).toBeNull();
-    expect(
-      resolveMemberPageKey({ familyName: "髙瀬", name: "髙瀬 冨士夫" }, context)
-    ).toBe("髙瀬");
+  it("同じ名字の別人をフルネームで見分ける", () => {
+    expect(resolveMemberPageKey({ name: "田村 幸子" }, context)).toBe(
+      "田村幸子"
+    );
+    expect(resolveMemberPageKey({ name: "田村　泰之" }, context)).toBe(
+      "田村泰之"
+    );
   });
 
-  it("名簿に無い姓は議員ページの有無だけで決める", () => {
-    expect(
-      resolveMemberPageKey({ familyName: "佐藤", name: "佐藤 俊一" }, context)
-    ).toBe("佐藤");
-    expect(
-      resolveMemberPageKey({ familyName: "植木", name: "植木 康太" }, context)
-    ).toBeNull();
+  it("議員ページが無い人（前の任期の議員など）にはリンクしない", () => {
+    expect(resolveMemberPageKey({ name: "長谷川 愛子" }, context)).toBeNull();
   });
 });
 

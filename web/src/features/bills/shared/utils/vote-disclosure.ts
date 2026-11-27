@@ -1,5 +1,9 @@
 /**
- * 議員別賛否の公開状況の判定【田川市専用】
+ * 議員別賛否の公開状況の判定
+ *
+ * 笠間市議会も、議会だよりの賛否一覧に載せるのは賛否が分かれた議案だけなので、同じ判定を使う
+ * （異議なく決まったことは会議録で確かめて seed に入れている）。
+ * 下の無記名投票と会期の一覧は、フォーク元の田川市のデータ。
  *
  * 田川市議会は「賛否が分かれた案件」についてのみ、議員別の賛否（○×表）を
  * 議決結果ページに公開している。このため bills.member_votes が無い議案は
@@ -46,27 +50,43 @@ const SECRET_BALLOT_BILL_KEYS: ReadonlySet<string> = new Set([
   "r8-5-rinji:議案第49号　田川市副市長の選任について（盛坪 達人 氏）",
 ]);
 
-/** 議決結果ページが存在しない会期（議決結果は会議録から補完している） */
-const SESSIONS_WITHOUT_RESULT_PAGE: ReadonlySet<string> = new Set([
+/**
+ * 議員別の賛否を確かめられない会期。賛否表の有無から全会一致とは言えないので unknown にする。
+ * - 田川市 r1-5-teirei: 議決結果ページが存在しない（議決結果は会議録から補完している）
+ */
+const SESSIONS_WITHOUT_MEMBER_VOTES: ReadonlySet<string> = new Set([
   "r1-5-teirei",
 ]);
 
 /**
- * 「全会一致」と判定してよい議決結果。可決系のみを対象とし、
- * 否決系・修正議決・懲罰などの特殊な結果は unknown 扱いにする
+ * 「全会一致」と判定してよい議決結果。可決系と、笠間市の諮問への答申
+ * （議案と同じく異議の有無で決め、賛否が分かれれば賛否一覧に載る）を対象とし、
+ * 否決系・修正議決・懲罰・選挙（当選）などの特殊な結果は unknown 扱いにする
  */
 const UNANIMOUS_ELIGIBLE_RESULTS: ReadonlySet<string> = new Set([
   "原案可決",
   "可決",
   "同意",
+  "原案同意",
   "承認",
+  "原案承認",
   "認定",
+  "原案認定",
   "採択",
+  "趣旨採択",
+  "棄却すべきと答申",
 ]);
 
 export function resolveVoteDisclosure(input: {
   /** member_votes（parseMemberVotes済みでなくてよい。null/undefined = データ無し） */
   hasMemberVotes: boolean;
+  /**
+   * bills.member_votes が入っているか（議員別の表が空でも true）。
+   * 笠間市には、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案があり、
+   * seed は entries が空の member_votes を入れる。この場合は全会一致と言えない。
+   * 読み取れない壊れた値でも、何か入っていれば同じく全会一致と言わない（安全側）
+   */
+  hasRecordedVote: boolean;
   /** 議案名（bills.name） */
   billName: string;
   /** 所属会期のslug。不明な場合はnull */
@@ -78,7 +98,7 @@ export function resolveVoteDisclosure(input: {
     return "published";
   }
 
-  if (input.sessionSlug === null) {
+  if (input.hasRecordedVote || input.sessionSlug === null) {
     return "unknown";
   }
 
@@ -86,7 +106,7 @@ export function resolveVoteDisclosure(input: {
     return "secret_ballot";
   }
 
-  if (SESSIONS_WITHOUT_RESULT_PAGE.has(input.sessionSlug)) {
+  if (SESSIONS_WITHOUT_MEMBER_VOTES.has(input.sessionSlug)) {
     return "unknown";
   }
 

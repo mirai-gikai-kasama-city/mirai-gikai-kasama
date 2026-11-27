@@ -77,7 +77,7 @@ describe("buildBillMetaDescription", () => {
     });
     const result = buildBillMetaDescription(bill);
     expect(
-      result.startsWith("田川市議会に提出された「議案第59号」の解説。")
+      result.startsWith("笠間市議会に提出された「議案第59号」の解説。")
     ).toBe(true);
     expect(result).toContain("空き家のうち危険な状態のもの");
   });
@@ -96,7 +96,7 @@ describe("buildBillMetaDescription", () => {
   it("要約が無い議案は定型文で補う", () => {
     const result = buildBillMetaDescription(makeBill({ name: "議案第59号" }));
     expect(result).toBe(
-      "田川市議会に提出された「議案第59号」の解説。提出日・審議状況・議決結果をやさしくまとめています。"
+      "笠間市議会に提出された「議案第59号」の解説。提出日・審議状況・議決結果をやさしくまとめています。"
     );
   });
 });

@@ -11,7 +11,7 @@ interface SessionArchiveListProps {
 
 /**
  * 会期一覧ページ（/sessions）のメインコンテンツ。
- * 会期を年度（令和N年）ごとにグルーピングし、開始日の新しい順に表示する
+ * 会期を西暦の年ごとにグルーピングし（見出しに元号の年を添える）、開始日の新しい順に表示する
  */
 export function SessionArchiveList({ items }: SessionArchiveListProps) {
   if (items.length === 0) {
@@ -33,7 +33,7 @@ export function SessionArchiveList({ items }: SessionArchiveListProps) {
   return (
     <div className="flex flex-col gap-10">
       {groups.map((group) => (
-        <section key={group.label} className="flex flex-col gap-3">
+        <section key={group.year} className="flex flex-col gap-3">
           <h2 className="text-lg font-bold text-mirai-text">
             {formatEraGroupHeading(group)}
           </h2>

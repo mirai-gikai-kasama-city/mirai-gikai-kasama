@@ -6,6 +6,7 @@ function input(
 ) {
   return {
     hasMemberVotes: false,
+    hasRecordedVote: false,
     billName: "議案第1号　田川市一般会計補正予算",
     sessionSlug: "r7-6-teirei",
     statusNote: "原案可決",
@@ -26,11 +27,37 @@ describe("resolveVoteDisclosure", () => {
       "可決",
       "同意",
       "承認",
+      "原案承認",
       "認定",
+      "原案認定",
       "採択",
+      "趣旨採択",
+      "棄却すべきと答申",
     ]) {
       expect(resolveVoteDisclosure(input({ statusNote }))).toBe("unanimous");
     }
+  });
+
+  it("議決結果ページの無い田川市の会期は、可決系でも全会一致にしない", () => {
+    expect(resolveVoteDisclosure(input({ sessionSlug: "r1-5-teirei" }))).toBe(
+      "unknown"
+    );
+    // 笠間市の会期は、賛否一覧を取り込んだので全会一致と判定する
+    expect(
+      resolveVoteDisclosure(input({ sessionSlug: "kasama-r5-1-teirei" }))
+    ).toBe("unanimous");
+  });
+
+  it("member_votesはあるが議員別の表が空の議案は、全会一致にしない", () => {
+    // 笠間市で、賛否が分かれたのに議会だよりの賛否一覧に載っていない議案
+    expect(
+      resolveVoteDisclosure(
+        input({ sessionSlug: "kasama-r3-1-teirei", hasRecordedVote: true })
+      )
+    ).toBe("unknown");
+    expect(
+      resolveVoteDisclosure(input({ sessionSlug: "kasama-r3-1-teirei" }))
+    ).toBe("unanimous");
   });
 
   it("無記名投票の議案はsecret_ballot（可決系でも全会一致にしない）", () => {

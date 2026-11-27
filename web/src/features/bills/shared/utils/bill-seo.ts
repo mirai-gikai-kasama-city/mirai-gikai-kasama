@@ -1,3 +1,4 @@
+import { parseSiteNumber } from "@mirai-gikai/shared/council/site-bill-number";
 import { formatJapaneseEraDate } from "@/lib/utils/japanese-era";
 import type { BillWithContent } from "../types";
 import { getBillDateLabel } from "./bill-status";
@@ -36,10 +37,15 @@ export function buildBillPageTitle(bill: BillTitleSource): string {
 
 /**
  * 議案名の先頭の議案番号（「議案第1号」「議員提出議案第65号」「認定第1号」など）を取り出す。
+ * 当サイトが便宜的に付けた番号（「選任-1」など）も番号として返す。
  * 名前の先頭に番号が無い議案は null
  */
 export function extractBillNumber(name: string): string | null {
-  return name.match(/^(\S*?第[0-9０-９]+号)(?=\s|$)/)?.[1] ?? null;
+  return (
+    name.match(/^(\S*?第[0-9０-９]+号)(?=\s|$)/)?.[1] ??
+    parseSiteNumber(name)?.label ??
+    null
+  );
 }
 
 /**
@@ -93,7 +99,7 @@ export function buildBillSearchTitle(
  */
 export function buildBillMetaDescription(bill: BillWithContent): string {
   const summary = bill.bill_content?.summary;
-  const prefix = `田川市議会に提出された「${bill.name}」の解説。`;
+  const prefix = `笠間市議会に提出された「${bill.name}」の解説。`;
   if (!summary) {
     return `${prefix}提出日・審議状況・議決結果をやさしくまとめています。`;
   }

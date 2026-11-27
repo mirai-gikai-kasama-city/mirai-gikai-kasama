@@ -15,7 +15,7 @@ export function getCardStatusLabel(
     case "introduced":
     case "in_originating_house":
     case "in_receiving_house":
-      return "田川市議会審議中";
+      return "笠間市議会審議中";
     case "enacted":
     case "rejected":
       return getBillResultLabel(status, statusNote);

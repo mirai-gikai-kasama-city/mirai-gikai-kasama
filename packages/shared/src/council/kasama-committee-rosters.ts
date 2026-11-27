@@ -75,8 +75,12 @@ function specialCommittee(input: {
   /** 平成18〜22年は特別委員会の会議録（第1日）に正副委員長の互選が載っている */
   chairElectedInCommittee?: boolean;
   viceChair?: string;
+  /** 正副委員長の出どころが会議録の互選・委員長報告以外（議会だよりなど）のときに、その説明 */
+  chairSourceNote?: string;
 }): RosterSnapshot {
-  const chairNote = input.chairElectedInCommittee
+  const chairNote = input.chairSourceNote
+    ? input.chairSourceNote
+    : input.chairElectedInCommittee
     ? "正副委員長は、その日の特別委員会の会議録の互選"
     : input.chairReportedOn
       ? `委員長は ${input.chairReportedOn} の本会議で委員長報告をした議員`
@@ -331,9 +335,13 @@ export const KASAMA_COMMITTEE_ROSTERS: readonly RosterSnapshot[] = [
       "野口圓", "石松俊雄", "上野登", "藤枝浩", "鈴木裕士", "中澤猛",
     ],
     // 平成19年第4回定例会の初日（12月3日）、委員会提出議案第5号（議員定数条例の改正）を
-    // 「議員定数等調査特別委員会委員長 竹江浩君」として説明している（会議録第1号）
+    // 「議員定数等調査特別委員会委員長 竹江浩君」として説明している（会議録第1号）。
+    // 正副委員長は かさま市議会だより第5号 P4「議員定数等調査特別委員会を設置」の記事に
+    // 「委員長：竹江浩、副委員長：藤枝浩」とある（紙面の画像で確かめた。2026-11-28）
     chair: "竹江浩",
-    chairReportedOn: "2007-12-03",
+    viceChair: "藤枝浩",
+    chairSourceNote:
+      "正副委員長は かさま市議会だより第5号 P4 の記事による（委員長の竹江浩は 2007-12-03 の本会議でも委員長として議案を説明している）",
   }),
   earlySpecial(
     "2007-03-09", "h19-1-teirei", "予算特別委員会", "平成19年度の当初予算の審査のため（第1回定例会）",
